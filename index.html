@@ -117,61 +117,68 @@
         
         <!-- 左側導覽列 (10% 寬度) -->
         <aside class="w-[15%] bg-red-900 text-white flex flex-col shadow-lg relative z-20 min-w-[100px]">
-            <!-- Logo 區域 -->
-            <div class="h-16 flex flex-col items-center justify-center border-b border-red-800 bg-red-950 p-2">
-                <i class="fa-solid fa-building-columns text-2xl text-red-100"></i>
-                <span class="text-[10px] mt-1 text-red-200 font-bold tracking-wider">西北社區</span>
-            </div>
-
-            <!-- 選單項目 -->
-            <nav class="flex-1 overflow-y-auto py-4">
-                <ul class="space-y-1">
-                    <li>
-                        <a href="#" onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-item flex flex-col items-center py-3 px-1 text-red-100 hover:bg-red-800 hover:text-white transition-colors border-l-4 border-transparent bg-red-800 border-white">
-                            <i class="fa-solid fa-chart-pie text-xl mb-1"></i>
-                            <span class="text-xs">總覽</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" onclick="switchTab('income')" id="nav-income" class="nav-item flex flex-col items-center py-3 px-1 text-red-100 hover:bg-red-800 hover:text-white transition-colors border-l-4 border-transparent">
-                            <i class="fa-solid fa-hand-holding-dollar text-xl mb-1"></i>
-                            <span class="text-xs">收入管理</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" onclick="switchTab('expense')" id="nav-expense" class="nav-item flex flex-col items-center py-3 px-1 text-red-100 hover:bg-red-800 hover:text-white transition-colors border-l-4 border-transparent">
-                            <i class="fa-solid fa-file-invoice-dollar text-xl mb-1"></i>
-                            <span class="text-xs">支出管理</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" onclick="switchTab('reports')" id="nav-reports" class="nav-item flex flex-col items-center py-3 px-1 text-red-100 hover:bg-red-800 hover:text-white transition-colors border-l-4 border-transparent">
-                            <i class="fa-solid fa-print text-xl mb-1"></i>
-                            <span class="text-xs">報表</span>
-                        </a>
-                    </li>
-                     <li>
-                        <a href="#" onclick="switchTab('residents')" id="nav-residents" class="nav-item flex flex-col items-center py-3 px-1 text-red-100 hover:bg-red-800 hover:text-white transition-colors border-l-4 border-transparent">
-                            <i class="fa-solid fa-users text-xl mb-1"></i>
-                            <span class="text-xs">住戶</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-
-            <!-- 底部設定與登出 -->
-            <div class="border-t border-red-800 p-2">
-                 <button onclick="logout()" class="w-full flex flex-col items-center py-2 text-red-300 hover:text-white hover:bg-red-800 rounded transition-colors">
-                    <i class="fa-solid fa-right-from-bracket text-lg mb-1"></i>
-                    <span class="text-[10px]">登出</span>
-                </button>
+            <div class="flex flex-col h-full">
+                <div class="h-[10%] box-border flex-none flex items-center justify-center px-6 border-b border-red-800 bg-red-950">
+                    <i class="fa-solid fa-shield-halved text-[28px] text-red-100"></i>
+                </div>
+                <div class="h-[10%] box-border flex-none flex items-center justify-center">
+                    <span class="text-[20px] font-bold text-red-100">西北保全社區</span>
+                </div>
+                <div class="h-[10%] box-border flex-none">
+                    <a href="#" onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-item w-full h-full flex flex-row items-center justify-center gap-2 text-red-100 hover:bg-red-800 hover:text-white transition-colors border-l-4 border-transparent bg-red-800 border-white">
+                        <i class="fa-solid fa-chart-pie text-[20px]"></i>
+                        <span class="text-[20px]">總覽</span>
+                    </a>
+                </div>
+                <div class="h-[10%] box-border flex-none">
+                    <a href="#" onclick="switchTab('income')" id="nav-income" class="nav-item w-full h-full flex flex-row items-center justify-center gap-2 text-red-100 hover:bg-red-800 hover:text-white transition-colors border-l-4 border-transparent">
+                        <i class="fa-solid fa-hand-holding-dollar text-[20px]"></i>
+                        <span class="text-[20px]">收入</span>
+                    </a>
+                </div>
+                <div class="h-[10%] box-border flex-none">
+                    <a href="#" onclick="switchTab('expense')" id="nav-expense" class="nav-item w-full h-full flex flex-row items-center justify-center gap-2 text-red-100 hover:bg-red-800 hover:text-white transition-colors border-l-4 border-transparent">
+                        <i class="fa-solid fa-file-invoice-dollar text-[20px]"></i>
+                        <span class="text-[20px]">支出</span>
+                    </a>
+                </div>
+                <div class="h-[10%] box-border flex-none">
+                    <a href="#" onclick="switchTab('bank')" id="nav-bank" class="nav-item w-full h-full flex flex-row items-center justify-center gap-2 text-red-100 hover:bg-red-800 hover:text-white transition-colors border-l-4 border-transparent">
+                        <i class="fa-solid fa-building-columns text-[20px]"></i>
+                        <span class="text-[20px]">銀行</span>
+                    </a>
+                </div>
+                <div class="h-[10%] box-border flex-none">
+                    <a href="#" onclick="switchTab('residents')" id="nav-residents" class="nav-item w-full h-full flex flex-row items-center justify-center gap-2 text-red-100 hover:bg-red-800 hover:text-white transition-colors border-l-4 border-transparent">
+                        <i class="fa-solid fa-users text-[20px]"></i>
+                        <span class="text-[20px]">住戶</span>
+                    </a>
+                </div>
+                <div class="h-[10%] box-border flex-none">
+                    <a href="#" onclick="switchTab('reports')" id="nav-reports" class="nav-item w-full h-full flex flex-row items-center justify-center gap-2 text-red-100 hover:bg-red-800 hover:text-white transition-colors border-l-4 border-transparent">
+                        <i class="fa-solid fa-chart-line text-[20px]"></i>
+                        <span class="text-[20px]">報表</span>
+                    </a>
+                </div>
+                <div class="h-[10%] box-border flex-none">
+                    <a href="#" onclick="switchTab('settings')" id="nav-settings" class="nav-item w-full h-full flex flex-row items-center justify-center gap-2 text-red-100 hover:bg-red-800 hover:text-white transition-colors border-l-4 border-transparent">
+                        <i class="fa-solid fa-gear text-[20px]"></i>
+                        <span class="text-[20px]">設定</span>
+                    </a>
+                </div>
+                <div class="h-[10%] border-t border-red-800">
+                    <button onclick="logout()" class="w-full h-full flex flex-row items-center justify-center gap-2 text-red-100 hover:bg-red-800 hover:text-white transition-colors border-l-4 border-transparent">
+                        <i class="fa-solid fa-right-from-bracket text-[20px]"></i>
+                        <span class="text-[20px]">登出</span>
+                    </button>
+                </div>
             </div>
         </aside>
 
         <!-- 右側主要內容 (90% 寬度) -->
         <main class="w-[85%] flex flex-col bg-gray-50">
-            <!-- 頂部標題列 -->
-            <header class="h-16 bg-white shadow-sm flex items-center justify-between px-6 border-b border-gray-200">
+            <!-- R01 標題列 -->
+            <header class="h-[10%] box-border flex-none bg-white shadow-sm flex items-center justify-between px-6 border-b border-gray-200">
                 <h2 id="page-title" class="text-xl font-bold text-gray-800 flex items-center">
                     <i class="fa-solid fa-chart-pie mr-2 text-red-600"></i>
                     財務總覽
@@ -190,9 +197,28 @@
                 </div>
             </header>
 
-            <!-- 內容捲動區 -->
-            <div class="flex-1 overflow-auto p-6 relative">
-                
+            <!-- R02 子分頁按鈕列 -->
+            <div class="h-[10%] bg-white border-b border-gray-200 px-6 flex items-center gap-4">
+                <a id="subtab-dashboard" href="#" onclick="switchTab('dashboard')" class="subtab-item h-full flex items-center px-3 text-gray-700 hover:text-red-700 border-b-2 border-transparent">總覽</a>
+                <a id="subtab-income" href="#" onclick="switchTab('income')" class="subtab-item h-full flex items-center px-3 text-gray-700 hover:text-red-700 border-b-2 border-transparent">收入</a>
+                <a id="subtab-expense" href="#" onclick="switchTab('expense')" class="subtab-item h-full flex items-center px-3 text-gray-700 hover:text-red-700 border-b-2 border-transparent">支出</a>
+                <a id="subtab-bank" href="#" onclick="switchTab('bank')" class="subtab-item h-full flex items-center px-3 text-gray-700 hover:text-red-700 border-b-2 border-transparent">銀行</a>
+                <a id="subtab-residents" href="#" onclick="switchTab('residents')" class="subtab-item h-full flex items-center px-3 text-gray-700 hover:text-red-700 border-b-2 border-transparent">住戶</a>
+                <a id="subtab-settings" href="#" onclick="switchTab('settings')" class="subtab-item h-full flex items-center px-3 text-gray-700 hover:text-red-700 border-b-2 border-transparent">設定</a>
+            </div>
+
+            <!-- R03~R10 10% 列結構，用於與左側對齊 -->
+            <div class="h-[10%] border-b border-gray-100"></div>
+            <div class="h-[10%] border-b border-gray-100"></div>
+            <div class="h-[10%] border-b border-gray-100"></div>
+            <div class="h-[10%] border-b border-gray-100"></div>
+            <div class="h-[10%] border-b border-gray-100"></div>
+            <div class="h-[10%] border-b border-gray-100"></div>
+            <div class="h-[10%] border-b border-gray-100"></div>
+            <div class="h-[10%]"></div>
+
+            <!-- 子分頁內容覆蓋於 R03~R10 區域，保持列高 1:1 對齊 -->
+            <div id="right-content" class="absolute inset-x-0 top-[20%] bottom-0 overflow-auto p-6">
                 <!-- 載入指示器 -->
                 <div id="content-loader" class="hidden absolute inset-0 bg-white/50 flex items-center justify-center z-10">
                     <div class="loader"></div>
@@ -227,12 +253,12 @@
                                     <i class="fa-solid fa-arrow-trend-down"></i>
                                 </div>
                             </div>
-                             <p class="text-xs text-red-500 mt-2 flex items-center">
+                            <p class="text-xs text-red-500 mt-2 flex items-center">
                                 <i class="fa-solid fa-caret-up mr-1"></i> 較上月 +1.2%
                             </p>
                         </div>
 
-                         <div class="bg-white rounded-lg p-5 shadow-sm border-l-4 border-red-800">
+                        <div class="bg-white rounded-lg p-5 shadow-sm border-l-4 border-red-800">
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-xs font-medium text-gray-500 uppercase">目前結餘</p>
@@ -242,7 +268,7 @@
                                     <i class="fa-solid fa-piggy-bank"></i>
                                 </div>
                             </div>
-                             <p class="text-xs text-gray-400 mt-2">包含定存與活儲</p>
+                            <p class="text-xs text-gray-400 mt-2">包含定存與活儲</p>
                         </div>
                         
                         <div class="bg-white rounded-lg p-5 shadow-sm border-l-4 border-orange-400">
@@ -255,7 +281,7 @@
                                     <i class="fa-solid fa-circle-exclamation"></i>
                                 </div>
                             </div>
-                             <p class="text-xs text-orange-500 mt-2 cursor-pointer hover:underline">查看名單</p>
+                            <p class="text-xs text-orange-500 mt-2 cursor-pointer hover:underline">查看名單</p>
                         </div>
                     </div>
 
@@ -278,7 +304,6 @@
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-200" id="transaction-list">
-                                    <!-- JS動態生成內容 -->
                                     <tr>
                                         <td class="px-6 py-4">2023-10-26</td>
                                         <td class="px-6 py-4 font-medium text-gray-800">10月份管理費 - A棟5樓</td>
@@ -287,7 +312,7 @@
                                         <td class="px-6 py-4 text-right text-green-600 font-bold">+$2,500</td>
                                         <td class="px-6 py-4 text-center"><i class="fa-solid fa-circle-check text-green-500"></i></td>
                                     </tr>
-                                     <tr>
+                                    <tr>
                                         <td class="px-6 py-4">2023-10-25</td>
                                         <td class="px-6 py-4 font-medium text-gray-800">公共區域清潔費 (10月)</td>
                                         <td class="px-6 py-4"><span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs">支出</span></td>
@@ -295,7 +320,7 @@
                                         <td class="px-6 py-4 text-right text-red-600 font-bold">-$12,000</td>
                                         <td class="px-6 py-4 text-center"><i class="fa-solid fa-circle-check text-green-500"></i></td>
                                     </tr>
-                                     <tr>
+                                    <tr>
                                         <td class="px-6 py-4">2023-10-24</td>
                                         <td class="px-6 py-4 font-medium text-gray-800">電梯保養費 (第3季)</td>
                                         <td class="px-6 py-4"><span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs">支出</span></td>
@@ -333,6 +358,22 @@
                         <i class="fa-solid fa-chart-line text-4xl text-gray-300 mb-4"></i>
                         <h3 class="text-xl font-bold text-gray-700">財務報表中心</h3>
                         <p class="text-gray-500 mt-2">月報表、季報表與年度預算執行率分析。</p>
+                    </div>
+                </div>
+
+                <div id="view-bank" class="content-view hidden">
+                    <div class="bg-white p-8 rounded-lg shadow-sm text-center">
+                        <i class="fa-solid fa-building-columns text-4xl text-gray-300 mb-4"></i>
+                        <h3 class="text-xl font-bold text-gray-700">銀行模組</h3>
+                        <p class="text-gray-500 mt-2">此處將顯示銀行帳戶餘額與交易整合。</p>
+                    </div>
+                </div>
+
+                <div id="view-settings" class="content-view hidden">
+                    <div class="bg-white p-8 rounded-lg shadow-sm text-center">
+                        <i class="fa-solid fa-gear text-4xl text-gray-300 mb-4"></i>
+                        <h3 class="text-xl font-bold text-gray-700">系統設定</h3>
+                        <p class="text-gray-500 mt-2">此處將顯示使用者偏好與系統參數。</p>
                     </div>
                 </div>
             </div>
@@ -577,9 +618,21 @@
                 activeNav.classList.remove('border-transparent');
             }
 
+            // 1b. 更新右側子分頁按鈕樣式
+            document.querySelectorAll('.subtab-item').forEach(el => {
+                el.classList.remove('text-red-700', 'border-red-700');
+                el.classList.add('text-gray-700');
+            });
+            const activeSub = document.getElementById('subtab-' + tabId);
+            if (activeSub) {
+                activeSub.classList.add('text-red-700', 'border-red-700');
+                activeSub.classList.remove('text-gray-700');
+            }
+
             // 2. 切換視圖內容
             document.querySelectorAll('.content-view').forEach(el => el.classList.add('hidden'));
-            document.getElementById('view-' + tabId).classList.remove('hidden');
+            const viewEl = document.getElementById('view-' + tabId);
+            if (viewEl) viewEl.classList.remove('hidden');
 
             // 3. 更新標題
             const titles = {
@@ -587,7 +640,9 @@
                 'income': '<i class="fa-solid fa-hand-holding-dollar mr-2 text-red-600"></i> 收入管理',
                 'expense': '<i class="fa-solid fa-file-invoice-dollar mr-2 text-red-600"></i> 支出管理',
                 'reports': '<i class="fa-solid fa-print mr-2 text-red-600"></i> 報表中心',
-                'residents': '<i class="fa-solid fa-users mr-2 text-red-600"></i> 住戶資料'
+                'bank': '<i class="fa-solid fa-building-columns mr-2 text-red-600"></i> 銀行',
+                'residents': '<i class="fa-solid fa-users mr-2 text-red-600"></i> 住戶資料',
+                'settings': '<i class="fa-solid fa-gear mr-2 text-red-600"></i> 系統設定'
             };
             document.getElementById('page-title').innerHTML = titles[tabId] || '系統頁面';
         }
