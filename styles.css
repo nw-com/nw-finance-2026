@@ -2,12 +2,22 @@
 * { box-sizing: border-box; }
 html, body { height: 100%; }
 body { margin: 0; font-family: 'Noto Sans TC', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background: linear-gradient(120deg, var(--gray-100), var(--white)); color: var(--gray-900); }
-.page { display: grid; grid-template-columns: 1.2fr 1fr; min-height: 100vh; }
-.brand { display: flex; flex-direction: column; justify-content: center; padding: 64px; background: radial-gradient(800px 400px at left, rgba(211,47,47,0.12), transparent); }
+.page { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; }
+.left, .right { display: grid; place-items: center; }
+.left { position: relative; overflow: hidden; }
+.brand { display: grid; place-items: center; gap: 4px; text-align: center; padding: 64px; background: radial-gradient(800px 400px at left, rgba(211,47,47,0.12), transparent); width: 100%; height: 100%; }
+.brand { position: relative; }
+.brand .logo { position: absolute; inset: 0; opacity: 0.08; pointer-events: none; }
+.brand .logo svg { width: 100%; height: 100%; }
+.brand .system-name, .brand .roles { position: relative; z-index: 1; }
+.brand::before { content: ""; position: absolute; inset: 0; z-index: 0; background: radial-gradient(closest-side, rgba(211,47,47,0.10), transparent 65%); filter: blur(8px); animation: floatBg 8s ease-in-out infinite; }
+.brand .logo { animation: pulseLogo 12s ease-in-out infinite; }
+@keyframes floatBg { 0% { transform: translate(-12%, -8%); } 50% { transform: translate(12%, 8%); } 100% { transform: translate(-12%, -8%); } }
+@keyframes pulseLogo { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
 .logo { width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
 .system-name { font-size: 28px; font-weight: 700; color: var(--red); }
-.roles { margin-top: 8px; color: var(--gray-700); }
-.card { align-self: center; margin: 64px; background: var(--white); border: 1px solid var(--gray-300); border-radius: 16px; box-shadow: 0 10px 24px rgba(0,0,0,0.06); padding: 32px; }
+.roles { margin-top: 2px; color: var(--gray-700); white-space: pre; }
+.card { margin: 0; background: var(--white); border: 1px solid var(--gray-300); border-radius: 16px; box-shadow: 0 10px 24px rgba(0,0,0,0.06); padding: 32px; }
 .card-title { margin: 0 0 16px; font-size: 24px; color: var(--gray-900); }
 .field { margin-bottom: 16px; }
 .field label { display: block; font-size: 14px; color: var(--gray-700); margin-bottom: 8px; }
@@ -28,4 +38,4 @@ body { margin: 0; font-family: 'Noto Sans TC', system-ui, -apple-system, 'Segoe 
 .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.35); }
 .modal-content { position: relative; z-index: 1; margin: auto; width: 560px; max-width: calc(100vw - 48px); background: var(--white); border-radius: 16px; border: 1px solid var(--gray-300); box-shadow: 0 10px 24px rgba(0,0,0,0.12); padding: 24px; }
 .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-@media (max-width: 1080px) { .page { grid-template-columns: 1fr; } .brand { padding: 32px; } .card { margin: 32px; } }
+@media (max-width: 1080px) { .page { grid-template-columns: 1fr; } .left, .right { place-items: center; } .brand { padding: 32px; } .card { margin: 0; } }
