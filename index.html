@@ -67,7 +67,13 @@
 
             <form id="login-form" class="space-y-6">
                 <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700">電子郵件</label>
+                    <div class="flex items-center justify-between">
+                        <label for="email" class="block text-sm font-medium text-gray-700">電子郵件</label>
+                        <label class="inline-flex items-center text-sm text-gray-600">
+                            <input type="checkbox" id="remember-me" class="mr-2 rounded border-gray-300">
+                            記住我
+                        </label>
+                    </div>
                     <div class="mt-1 relative rounded-md shadow-sm">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fa-solid fa-envelope text-gray-400"></i>
@@ -89,12 +95,6 @@
                     </div>
                 </div>
 
-                <div class="mt-2">
-                    <label class="inline-flex items-center text-sm text-gray-600">
-                        <input type="checkbox" id="remember-me" class="mr-2 rounded border-gray-300">
-                        記住我
-                    </label>
-                </div>
 
                 <div id="login-error" class="text-red-600 text-sm hidden">
                     <i class="fa-solid fa-circle-exclamation mr-1"></i> 帳號或密碼錯誤
@@ -104,13 +104,10 @@
                     登入系統
                 </button>
                 
-                <button type="button" id="network-diagnose-btn" class="w-full mt-2 flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none transition-colors">
-                    <i class="fa-solid fa-stethoscope mr-2"></i> 網路診斷
-                </button>
                 <div id="diagnose-output" class="mt-2 hidden text-xs bg-gray-50 border border-gray-200 rounded p-3 text-gray-700"></div>
             </form>
             <div class="mt-6 text-center text-xs text-gray-400">
-                &copy; 2025 西北社區管理委員會
+                &copy; 2025 西北保全
             </div>
         </div>
     </div>
@@ -119,7 +116,7 @@
     <div id="main-app" class="flex h-screen hidden">
         
         <!-- 左側導覽列 (10% 寬度) -->
-        <aside class="w-[10%] bg-red-900 text-white flex flex-col shadow-lg relative z-20 min-w-[100px]">
+        <aside class="w-[15%] bg-red-900 text-white flex flex-col shadow-lg relative z-20 min-w-[100px]">
             <!-- Logo 區域 -->
             <div class="h-16 flex flex-col items-center justify-center border-b border-red-800 bg-red-950 p-2">
                 <i class="fa-solid fa-building-columns text-2xl text-red-100"></i>
@@ -172,7 +169,7 @@
         </aside>
 
         <!-- 右側主要內容 (90% 寬度) -->
-        <main class="w-[90%] flex flex-col bg-gray-50">
+        <main class="w-[85%] flex flex-col bg-gray-50">
             <!-- 頂部標題列 -->
             <header class="h-16 bg-white shadow-sm flex items-center justify-between px-6 border-b border-gray-200">
                 <h2 id="page-title" class="text-xl font-bold text-gray-800 flex items-center">
@@ -421,13 +418,18 @@
         const mainApp = document.getElementById('main-app');
         const loginForm = document.getElementById('login-form');
         const loginError = document.getElementById('login-error');
-        const diagnoseBtn = document.getElementById('network-diagnose-btn');
         const loginBtn = document.getElementById('login-btn');
-        const diagnoseOutput = document.getElementById('diagnose-output');
         const emailInput = document.getElementById('email');
         const passwordInput = document.getElementById('password');
         const togglePasswordBtn = document.getElementById('toggle-password');
         const rememberMe = document.getElementById('remember-me');
+
+        const persistedLogin = localStorage.getItem('persistLogin') === 'true';
+        const lastLoginMode = localStorage.getItem('lastLoginMode');
+        if (persistedLogin) {
+            if (lastLoginMode === 'demo') isDemoMode = true;
+            enterApp();
+        }
 
         function setLoginLoading(loading) {
             if (!loginBtn) return;
@@ -511,42 +513,7 @@
         });
 
 
-        async function ping(url) {
-            const controller = new AbortController();
-            const id = setTimeout(() => controller.abort(), 5000);
-            try {
-                await fetch(url, { mode: 'no-cors', signal: controller.signal });
-                return { url, ok: true };
-            } catch (e) {
-                return { url, ok: false, error: e && e.message };
-            } finally {
-                clearTimeout(id);
-            }
-        }
-
-        async function runNetworkDiagnose() {
-            if (!diagnoseOutput) return;
-            diagnoseOutput.classList.remove('hidden');
-            diagnoseOutput.innerHTML = '檢測中...';
-            const endpoints = [
-                'https://identitytoolkit.googleapis.com',
-                'https://securetoken.googleapis.com',
-                'https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js'
-            ];
-            const results = await Promise.all(endpoints.map(ping));
-            const online = navigator.onLine;
-            const firebaseReady = !!auth;
-            const lines = [];
-            lines.push(`瀏覽器線上狀態: ${online ? 'Online' : 'Offline'}`);
-            lines.push(`Firebase 物件可用: ${firebaseReady ? 'Yes' : 'No'}`);
-            results.forEach(r => {
-                lines.push(`${r.ok ? '✅' : '❌'} ${r.url}${r.ok ? '' : ` - ${r.error || 'Error'}`}`);
-            });
-            diagnoseOutput.innerHTML = lines.join('<br>');
-        }
-        if (diagnoseBtn) {
-            diagnoseBtn.addEventListener('click', runNetworkDiagnose);
-        }
+        
 
         // 3. 監聽認證狀態 (僅在 Firebase 初始化成功時有效)
         if (!isDemoMode && auth) {
@@ -568,6 +535,8 @@
             // 這裡可以觸發資料加載
             loadDashboardData();
             setLoginLoading(false);
+            localStorage.setItem('persistLogin','true');
+            localStorage.setItem('lastLoginMode', isDemoMode ? 'demo' : 'firebase');
         }
 
         // 登出/離開主程式
@@ -576,6 +545,8 @@
             mainApp.classList.add('hidden');
             loginForm.reset();
             loginError.classList.add('hidden');
+            localStorage.removeItem('persistLogin');
+            localStorage.removeItem('lastLoginMode');
             
             // 重置選單
             switchTab('dashboard');
