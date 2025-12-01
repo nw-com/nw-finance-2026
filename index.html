@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>西北社區財務系統</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome (圖示) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Noto Sans TC) -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Firebase SDK (使用兼容版本以確保穩定性) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+        /* 自定義滾動條樣式 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+        
+        /* 載入動畫 */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #dc2626; /* Red-600 */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 overflow-hidden h-screen">
+
+    <!-- 1. 登入頁面容器 -->
+    <div id="login-view" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-200" style="background-image: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);">
+        <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md border-t-4 border-red-700">
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 text-red-700 mb-4">
+                    <i class="fa-solid fa-building-columns text-3xl"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-800">西北社區財務系統</h1>
+                <p class="text-gray-500 text-sm mt-1">安全 • 透明 • 高效</p>
+            </div>
+
+            <form id="login-form" class="space-y-6">
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">電子郵件</label>
+                    <div class="mt-1 relative rounded-md shadow-sm">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fa-solid fa-envelope text-gray-400"></i>
+                        </div>
+                        <input type="email" id="email" class="focus:ring-red-500 focus:border-red-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md p-2 border" placeholder="admin@northwest.com" required>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">密碼</label>
+                    <div class="mt-1 relative rounded-md shadow-sm">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fa-solid fa-lock text-gray-400"></i>
+                        </div>
+                        <input type="password" id="password" class="focus:ring-red-500 focus:border-red-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md p-2 border pr-10" placeholder="••••••••" required>
+                        <button type="button" id="toggle-password" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
+                            <i class="fa-solid fa-eye-slash"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mt-2">
+                    <label class="inline-flex items-center text-sm text-gray-600">
+                        <input type="checkbox" id="remember-me" class="mr-2 rounded border-gray-300">
+                        記住我
+                    </label>
+                </div>
+
+                <div id="login-error" class="text-red-600 text-sm hidden">
+                    <i class="fa-solid fa-circle-exclamation mr-1"></i> 帳號或密碼錯誤
+                </div>
+
+                <button type="submit" id="login-btn" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
+                    登入系統
+                </button>
+                
+                <button type="button" id="network-diagnose-btn" class="w-full mt-2 flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none transition-colors">
+                    <i class="fa-solid fa-stethoscope mr-2"></i> 網路診斷
+                </button>
+                <div id="diagnose-output" class="mt-2 hidden text-xs bg-gray-50 border border-gray-200 rounded p-3 text-gray-700"></div>
+            </form>
+            <div class="mt-6 text-center text-xs text-gray-400">
+                &copy; 2025 西北社區管理委員會
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. 主系統介面容器 (登入後顯示) -->
+    <div id="main-app" class="flex h-screen hidden">
+        
+        <!-- 左側導覽列 (10% 寬度) -->
+        <aside class="w-[10%] bg-red-900 text-white flex flex-col shadow-lg relative z-20 min-w-[100px]">
+            <!-- Logo 區域 -->
+            <div class="h-16 flex flex-col items-center justify-center border-b border-red-800 bg-red-950 p-2">
+                <i class="fa-solid fa-building-columns text-2xl text-red-100"></i>
+                <span class="text-[10px] mt-1 text-red-200 font-bold tracking-wider">西北社區</span>
+            </div>
+
+            <!-- 選單項目 -->
+            <nav class="flex-1 overflow-y-auto py-4">
+                <ul class="space-y-1">
+                    <li>
+                        <a href="#" onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-item flex flex-col items-center py-3 px-1 text-red-100 hover:bg-red-800 hover:text-white transition-colors border-l-4 border-transparent bg-red-800 border-white">
+                            <i class="fa-solid fa-chart-pie text-xl mb-1"></i>
+                            <span class="text-xs">總覽</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="switchTab('income')" id="nav-income" class="nav-item flex flex-col items-center py-3 px-1 text-red-100 hover:bg-red-800 hover:text-white transition-colors border-l-4 border-transparent">
+                            <i class="fa-solid fa-hand-holding-dollar text-xl mb-1"></i>
+                            <span class="text-xs">收入管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="switchTab('expense')" id="nav-expense" class="nav-item flex flex-col items-center py-3 px-1 text-red-100 hover:bg-red-800 hover:text-white transition-colors border-l-4 border-transparent">
+                            <i class="fa-solid fa-file-invoice-dollar text-xl mb-1"></i>
+                            <span class="text-xs">支出管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="switchTab('reports')" id="nav-reports" class="nav-item flex flex-col items-center py-3 px-1 text-red-100 hover:bg-red-800 hover:text-white transition-colors border-l-4 border-transparent">
+                            <i class="fa-solid fa-print text-xl mb-1"></i>
+                            <span class="text-xs">報表</span>
+                        </a>
+                    </li>
+                     <li>
+                        <a href="#" onclick="switchTab('residents')" id="nav-residents" class="nav-item flex flex-col items-center py-3 px-1 text-red-100 hover:bg-red-800 hover:text-white transition-colors border-l-4 border-transparent">
+                            <i class="fa-solid fa-users text-xl mb-1"></i>
+                            <span class="text-xs">住戶</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- 底部設定與登出 -->
+            <div class="border-t border-red-800 p-2">
+                 <button onclick="logout()" class="w-full flex flex-col items-center py-2 text-red-300 hover:text-white hover:bg-red-800 rounded transition-colors">
+                    <i class="fa-solid fa-right-from-bracket text-lg mb-1"></i>
+                    <span class="text-[10px]">登出</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- 右側主要內容 (90% 寬度) -->
+        <main class="w-[90%] flex flex-col bg-gray-50">
+            <!-- 頂部標題列 -->
+            <header class="h-16 bg-white shadow-sm flex items-center justify-between px-6 border-b border-gray-200">
+                <h2 id="page-title" class="text-xl font-bold text-gray-800 flex items-center">
+                    <i class="fa-solid fa-chart-pie mr-2 text-red-600"></i>
+                    財務總覽
+                </h2>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                        <i class="fa-regular fa-clock mr-1"></i> <span id="current-date">2023-10-27</span>
+                    </span>
+                    <span id="connection-status" class="text-sm px-3 py-1 rounded-full"></span>
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center text-sm font-bold mr-2">
+                            A
+                        </div>
+                        <span class="text-sm font-medium text-gray-700" id="user-display-name">管理員</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 內容捲動區 -->
+            <div class="flex-1 overflow-auto p-6 relative">
+                
+                <!-- 載入指示器 -->
+                <div id="content-loader" class="hidden absolute inset-0 bg-white/50 flex items-center justify-center z-10">
+                    <div class="loader"></div>
+                </div>
+
+                <!-- 1. 儀表板視圖 (Dashboard) -->
+                <div id="view-dashboard" class="content-view space-y-6">
+                    <!-- 數據卡片 -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div class="bg-white rounded-lg p-5 shadow-sm border-l-4 border-red-600">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-xs font-medium text-gray-500 uppercase">本月總收入</p>
+                                    <h3 class="text-2xl font-bold text-gray-800 mt-1">$158,200</h3>
+                                </div>
+                                <div class="p-2 bg-red-50 rounded-lg text-red-600">
+                                    <i class="fa-solid fa-arrow-trend-up"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-green-600 mt-2 flex items-center">
+                                <i class="fa-solid fa-caret-up mr-1"></i> 較上月 +5.2%
+                            </p>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-5 shadow-sm border-l-4 border-gray-500">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-xs font-medium text-gray-500 uppercase">本月總支出</p>
+                                    <h3 class="text-2xl font-bold text-gray-800 mt-1">$42,500</h3>
+                                </div>
+                                <div class="p-2 bg-gray-100 rounded-lg text-gray-600">
+                                    <i class="fa-solid fa-arrow-trend-down"></i>
+                                </div>
+                            </div>
+                             <p class="text-xs text-red-500 mt-2 flex items-center">
+                                <i class="fa-solid fa-caret-up mr-1"></i> 較上月 +1.2%
+                            </p>
+                        </div>
+
+                         <div class="bg-white rounded-lg p-5 shadow-sm border-l-4 border-red-800">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-xs font-medium text-gray-500 uppercase">目前結餘</p>
+                                    <h3 class="text-2xl font-bold text-red-800 mt-1">$2,105,700</h3>
+                                </div>
+                                <div class="p-2 bg-red-50 rounded-lg text-red-800">
+                                    <i class="fa-solid fa-piggy-bank"></i>
+                                </div>
+                            </div>
+                             <p class="text-xs text-gray-400 mt-2">包含定存與活儲</p>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg p-5 shadow-sm border-l-4 border-orange-400">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="text-xs font-medium text-gray-500 uppercase">未繳管理費</p>
+                                    <h3 class="text-2xl font-bold text-gray-800 mt-1">5 戶</h3>
+                                </div>
+                                <div class="p-2 bg-orange-50 rounded-lg text-orange-400">
+                                    <i class="fa-solid fa-circle-exclamation"></i>
+                                </div>
+                            </div>
+                             <p class="text-xs text-orange-500 mt-2 cursor-pointer hover:underline">查看名單</p>
+                        </div>
+                    </div>
+
+                    <!-- 最近交易表格 -->
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg">
+                            <h3 class="font-bold text-gray-700">最近收支紀錄</h3>
+                            <button class="text-sm text-red-600 hover:text-red-800 font-medium">查看全部</button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm text-gray-600">
+                                <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-bold">
+                                    <tr>
+                                        <th class="px-6 py-3">日期</th>
+                                        <th class="px-6 py-3">項目/摘要</th>
+                                        <th class="px-6 py-3">類型</th>
+                                        <th class="px-6 py-3">經手人</th>
+                                        <th class="px-6 py-3 text-right">金額</th>
+                                        <th class="px-6 py-3 text-center">狀態</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200" id="transaction-list">
+                                    <!-- JS動態生成內容 -->
+                                    <tr>
+                                        <td class="px-6 py-4">2023-10-26</td>
+                                        <td class="px-6 py-4 font-medium text-gray-800">10月份管理費 - A棟5樓</td>
+                                        <td class="px-6 py-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">收入</span></td>
+                                        <td class="px-6 py-4">總幹事</td>
+                                        <td class="px-6 py-4 text-right text-green-600 font-bold">+$2,500</td>
+                                        <td class="px-6 py-4 text-center"><i class="fa-solid fa-circle-check text-green-500"></i></td>
+                                    </tr>
+                                     <tr>
+                                        <td class="px-6 py-4">2023-10-25</td>
+                                        <td class="px-6 py-4 font-medium text-gray-800">公共區域清潔費 (10月)</td>
+                                        <td class="px-6 py-4"><span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs">支出</span></td>
+                                        <td class="px-6 py-4">財委</td>
+                                        <td class="px-6 py-4 text-right text-red-600 font-bold">-$12,000</td>
+                                        <td class="px-6 py-4 text-center"><i class="fa-solid fa-circle-check text-green-500"></i></td>
+                                    </tr>
+                                     <tr>
+                                        <td class="px-6 py-4">2023-10-24</td>
+                                        <td class="px-6 py-4 font-medium text-gray-800">電梯保養費 (第3季)</td>
+                                        <td class="px-6 py-4"><span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs">支出</span></td>
+                                        <td class="px-6 py-4">財委</td>
+                                        <td class="px-6 py-4 text-right text-red-600 font-bold">-$8,500</td>
+                                        <td class="px-6 py-4 text-center"><i class="fa-solid fa-circle-check text-green-500"></i></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. 其他視圖佔位符 (Other Views Placeholder) -->
+                <div id="view-income" class="content-view hidden">
+                    <div class="bg-white p-8 rounded-lg shadow-sm text-center">
+                        <i class="fa-solid fa-hand-holding-dollar text-4xl text-gray-300 mb-4"></i>
+                        <h3 class="text-xl font-bold text-gray-700">收入管理模組</h3>
+                        <p class="text-gray-500 mt-2">此處將顯示管理費繳納清單與雜項收入登錄功能。</p>
+                        <button class="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">新增收入</button>
+                    </div>
+                </div>
+
+                <div id="view-expense" class="content-view hidden">
+                    <div class="bg-white p-8 rounded-lg shadow-sm text-center">
+                        <i class="fa-solid fa-file-invoice-dollar text-4xl text-gray-300 mb-4"></i>
+                        <h3 class="text-xl font-bold text-gray-700">支出管理模組</h3>
+                        <p class="text-gray-500 mt-2">此處將顯示請款單審核與廠商付款紀錄。</p>
+                        <button class="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">申請支出</button>
+                    </div>
+                </div>
+
+                 <div id="view-reports" class="content-view hidden">
+                    <div class="bg-white p-8 rounded-lg shadow-sm text-center">
+                        <i class="fa-solid fa-chart-line text-4xl text-gray-300 mb-4"></i>
+                        <h3 class="text-xl font-bold text-gray-700">財務報表中心</h3>
+                        <p class="text-gray-500 mt-2">月報表、季報表與年度預算執行率分析。</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // ==========================================
+        // Firebase 設定與初始化
+        // ==========================================
+        
+        // 注意：在真實專案中，建議將此部分配置移至外部 config.js 檔案
+        // 為了讓此範例可直接運行，我們優先檢查環境變數
+        
+        let firebaseConfig = {};
+        let appId = 'default-app';
+
+        // 檢查環境是否提供了配置 (用於預覽環境)
+        if (typeof __firebase_config !== 'undefined') {
+            firebaseConfig = JSON.parse(__firebase_config);
+            if(typeof __app_id !== 'undefined') appId = __app_id;
+        } else {
+            // [使用者需在此填入自己的 Firebase 配置]
+            // 如果您要部署到 GitHub Pages，請取消註解並填入您的金鑰
+            /*
+            firebaseConfig = {
+                apiKey: "您的API_KEY",
+                authDomain: "您的專案ID.firebaseapp.com",
+                projectId: "您的專案ID",
+                storageBucket: "您的專案ID.appspot.com",
+                messagingSenderId: "您的SENDER_ID",
+                appId: "您的APP_ID"
+            };
+            */
+           console.warn("未檢測到 Firebase Config，使用 UI 演示模式");
+        }
+
+        // 初始化 Firebase (如果有配置)
+        let app, auth, db;
+        let isDemoMode = false;
+
+        if (typeof __force_demo_mode !== 'undefined' && __force_demo_mode) {
+            isDemoMode = true;
+        }
+        try {
+            if (Object.keys(firebaseConfig).length > 0) {
+                app = firebase.initializeApp(firebaseConfig);
+                auth = firebase.auth();
+                db = firebase.firestore();
+                console.log("Firebase initialized successfully");
+            } else {
+                isDemoMode = true; // 如果沒有金鑰，進入純前端演示模式
+            }
+        } catch (e) {
+            console.error("Firebase init error:", e);
+            isDemoMode = true;
+        }
+
+        function updateConnectionStatus() {
+            const el = document.getElementById('connection-status');
+            if (!el) return;
+            el.className = 'text-sm px-3 py-1 rounded-full';
+            if (isDemoMode) {
+                el.classList.add('bg-orange-100','text-orange-700');
+                el.innerHTML = '<i class="fa-solid fa-wifi-slash mr-1"></i> 預覽模式';
+            } else {
+                el.classList.add('bg-green-100','text-green-700');
+                el.innerHTML = '<i class="fa-solid fa-cloud mr-1"></i> 已連線';
+            }
+        }
+        updateConnectionStatus();
+
+        // ==========================================
+        // 應用程式邏輯
+        // ==========================================
+
+        // 設定日期
+        const today = new Date();
+        document.getElementById('current-date').textContent = today.toISOString().split('T')[0];
+
+        // UI 參考
+        const loginView = document.getElementById('login-view');
+        const mainApp = document.getElementById('main-app');
+        const loginForm = document.getElementById('login-form');
+        const loginError = document.getElementById('login-error');
+        const diagnoseBtn = document.getElementById('network-diagnose-btn');
+        const loginBtn = document.getElementById('login-btn');
+        const diagnoseOutput = document.getElementById('diagnose-output');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const togglePasswordBtn = document.getElementById('toggle-password');
+        const rememberMe = document.getElementById('remember-me');
+
+        function setLoginLoading(loading) {
+            if (!loginBtn) return;
+            if (loading) {
+                loginBtn.disabled = true;
+                loginBtn.classList.add('opacity-60','cursor-not-allowed');
+                loginBtn.textContent = '登入中...';
+            } else {
+                loginBtn.disabled = false;
+                loginBtn.classList.remove('opacity-60','cursor-not-allowed');
+                loginBtn.textContent = '登入系統';
+            }
+        }
+
+        if (rememberMe) {
+            const savedRemember = localStorage.getItem('rememberMe') === 'true';
+            if (savedRemember && emailInput) {
+                emailInput.value = localStorage.getItem('rememberEmail') || '';
+                rememberMe.checked = true;
+            }
+        }
+
+        if (togglePasswordBtn && passwordInput) {
+            togglePasswordBtn.addEventListener('click', () => {
+                const isHidden = passwordInput.getAttribute('type') === 'password';
+                passwordInput.setAttribute('type', isHidden ? 'text' : 'password');
+                const icon = togglePasswordBtn.querySelector('i');
+                if (icon) {
+                    icon.classList.remove(isHidden ? 'fa-eye-slash' : 'fa-eye');
+                    icon.classList.add(isHidden ? 'fa-eye' : 'fa-eye-slash');
+                }
+            });
+        }
+
+        // 1. 處理登入
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = emailInput.value;
+            const password = passwordInput.value;
+            if (rememberMe && rememberMe.checked) {
+                localStorage.setItem('rememberMe', 'true');
+                localStorage.setItem('rememberEmail', email);
+            } else {
+                localStorage.removeItem('rememberMe');
+                localStorage.removeItem('rememberEmail');
+            }
+            setLoginLoading(true);
+            if (!navigator.onLine) {
+                isDemoMode = true;
+                loginError.classList.remove('hidden');
+                loginError.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-1"></i> 網路離線，進入預覽模式`;
+                setTimeout(() => enterApp(), 300);
+                updateConnectionStatus();
+                setLoginLoading(false);
+                return;
+            }
+
+            if (isDemoMode) {
+                // 演示模式：任何非空輸入都允許登入
+                enterApp();
+            } else {
+                // 真實 Firebase 登入
+                try {
+                    await auth.signInWithEmailAndPassword(email, password);
+                    // 狀態監聽器會處理頁面切換
+                } catch (error) {
+                    console.warn("Login failed:", error);
+                    if (error && error.code === 'auth/network-request-failed') {
+                        isDemoMode = true;
+                        loginError.classList.remove('hidden');
+                        loginError.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-1"></i> 網路異常，切換為離線預覽模式`;
+                        setTimeout(() => enterApp(), 300);
+                        updateConnectionStatus();
+                    } else {
+                        loginError.classList.remove('hidden');
+                        loginError.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-1"></i> ${error.message}`;
+                    }
+                    setLoginLoading(false);
+                }
+            }
+        });
+
+
+        async function ping(url) {
+            const controller = new AbortController();
+            const id = setTimeout(() => controller.abort(), 5000);
+            try {
+                await fetch(url, { mode: 'no-cors', signal: controller.signal });
+                return { url, ok: true };
+            } catch (e) {
+                return { url, ok: false, error: e && e.message };
+            } finally {
+                clearTimeout(id);
+            }
+        }
+
+        async function runNetworkDiagnose() {
+            if (!diagnoseOutput) return;
+            diagnoseOutput.classList.remove('hidden');
+            diagnoseOutput.innerHTML = '檢測中...';
+            const endpoints = [
+                'https://identitytoolkit.googleapis.com',
+                'https://securetoken.googleapis.com',
+                'https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js'
+            ];
+            const results = await Promise.all(endpoints.map(ping));
+            const online = navigator.onLine;
+            const firebaseReady = !!auth;
+            const lines = [];
+            lines.push(`瀏覽器線上狀態: ${online ? 'Online' : 'Offline'}`);
+            lines.push(`Firebase 物件可用: ${firebaseReady ? 'Yes' : 'No'}`);
+            results.forEach(r => {
+                lines.push(`${r.ok ? '✅' : '❌'} ${r.url}${r.ok ? '' : ` - ${r.error || 'Error'}`}`);
+            });
+            diagnoseOutput.innerHTML = lines.join('<br>');
+        }
+        if (diagnoseBtn) {
+            diagnoseBtn.addEventListener('click', runNetworkDiagnose);
+        }
+
+        // 3. 監聽認證狀態 (僅在 Firebase 初始化成功時有效)
+        if (!isDemoMode && auth) {
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    console.log("User logged in:", user.uid);
+                    enterApp();
+                } else {
+                    console.log("User logged out");
+                    exitApp();
+                }
+            });
+        }
+
+        // 進入主程式
+        function enterApp() {
+            loginView.classList.add('hidden');
+            mainApp.classList.remove('hidden');
+            // 這裡可以觸發資料加載
+            loadDashboardData();
+            setLoginLoading(false);
+        }
+
+        // 登出/離開主程式
+        function exitApp() {
+            loginView.classList.remove('hidden');
+            mainApp.classList.add('hidden');
+            loginForm.reset();
+            loginError.classList.add('hidden');
+            
+            // 重置選單
+            switchTab('dashboard');
+        }
+
+        // 登出功能
+        async function logout() {
+            if (!isDemoMode && auth) {
+                await auth.signOut();
+            } else {
+                exitApp();
+            }
+        }
+
+        // ==========================================
+        // 頁面切換邏輯
+        // ==========================================
+        
+        function switchTab(tabId) {
+            // 1. 更新側邊欄樣式
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.remove('bg-red-800', 'border-white');
+                el.classList.add('border-transparent');
+            });
+            const activeNav = document.getElementById('nav-' + tabId);
+            if(activeNav) {
+                activeNav.classList.add('bg-red-800', 'border-white');
+                activeNav.classList.remove('border-transparent');
+            }
+
+            // 2. 切換視圖內容
+            document.querySelectorAll('.content-view').forEach(el => el.classList.add('hidden'));
+            document.getElementById('view-' + tabId).classList.remove('hidden');
+
+            // 3. 更新標題
+            const titles = {
+                'dashboard': '<i class="fa-solid fa-chart-pie mr-2 text-red-600"></i> 財務總覽',
+                'income': '<i class="fa-solid fa-hand-holding-dollar mr-2 text-red-600"></i> 收入管理',
+                'expense': '<i class="fa-solid fa-file-invoice-dollar mr-2 text-red-600"></i> 支出管理',
+                'reports': '<i class="fa-solid fa-print mr-2 text-red-600"></i> 報表中心',
+                'residents': '<i class="fa-solid fa-users mr-2 text-red-600"></i> 住戶資料'
+            };
+            document.getElementById('page-title').innerHTML = titles[tabId] || '系統頁面';
+        }
+
+        // ==========================================
+        // 資料模擬與 Firestore 整合範例
+        // ==========================================
+
+        async function loadDashboardData() {
+            // 如果是真實環境且有登入，可以從 Firestore 抓取資料
+            if (!isDemoMode && db && auth.currentUser) {
+                // 範例：從 Firestore 讀取交易 (須確保有建立對應集合)
+                /*
+                const snapshot = await db.collection('artifacts').doc(appId).collection('public').doc('data').collection('transactions').limit(5).get();
+                // 處理資料並更新 UI...
+                */
+               console.log("Fetch data from Firestore...");
+            } else {
+                // Demo 模式不需要做什麼，HTML 已經有假資料了
+            }
+        }
+
+    </script>
+</body>
+</html>
