@@ -14,9 +14,9 @@
       <div class="left">
         <div class="brand">
           <div class="logo" aria-hidden="true">
-            <svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-              <rect x="6" y="6" width="52" height="52" rx="12" fill="#d32f2f"/>
-              <path d="M20 40 L32 20 L44 40 Z" fill="#ffffff"/>
+            <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ancient Coin Logo">
+              <circle cx="32" cy="32" r="26" fill="none" stroke="#d32f2f" stroke-width="8"/>
+              <rect x="24" y="24" width="16" height="16" fill="#d32f2f"/>
             </svg>
           </div>
           <div class="system-name">2026西北社區財務系統</div>
@@ -28,24 +28,24 @@
           <h1 class="card-title">登入</h1>
           <form id="login-form" novalidate>
             <div class="field">
-              <label for="email">電子郵件</label>
-              <input id="email" name="email" type="email" autocomplete="email" required placeholder="name@example.com">
+              <div class="field-row">
+                <label for="email">電子郵件</label>
+                <label class="checkbox">
+                  <input type="checkbox" id="remember" name="remember">
+                  <span>記住我</span>
+                </label>
+              </div>
+              <input id="email" name="email" type="email" autocomplete="email" required placeholder="請輸入帳號">
             </div>
             <div class="field">
               <label for="password">密碼</label>
               <div class="password-wrap">
-                <input id="password" name="password" type="password" autocomplete="current-password" required minlength="6" pattern="[A-Za-z0-9]{6,}" placeholder="至少6位英數組合">
-                <button type="button" id="toggle-password" class="icon-button" aria-label="顯示/隱藏密碼">👁️</button>
+                <input id="password" name="password" type="password" autocomplete="current-password" required minlength="6" pattern="(?:[A-Za-z]{6,}|\d{6,}|[A-Za-z0-9]{6,})" placeholder="請輸入密碼">
+                <button type="button" id="toggle-password" class="password-toggle" aria-label="顯示/隱藏密碼">👁️</button>
               </div>
             </div>
-            <div class="options">
-              <label class="checkbox">
-                <input type="checkbox" id="remember" name="remember">
-                <span>記住我</span>
-              </label>
-              <a href="#" id="open-register" class="link">註冊申請</a>
-            </div>
             <button type="submit" class="primary">登入</button>
+            <a href="#" id="open-register" class="link register-link">註冊申請</a>
             <div id="message" class="message" role="alert"></div>
           </form>
         </div>
