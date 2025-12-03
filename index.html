@@ -382,6 +382,7 @@
                 </div>
                 <button id="settings-close" class="text-gray-600 hover:text-red-700"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
+            <div id="settings-error" class="px-6 py-2 text-sm text-orange-700 bg-orange-50 border-b hidden">雲端權限不足或讀取失敗，改用本機設定</div>
             <div class="flex-1 overflow-auto p-6">
                 <div id="settings-view-accounts" class="space-y-4 hidden">
                     <div class="flex justify-between items-center">
@@ -538,6 +539,7 @@
 
         // 初始化 Firebase (如果有配置)
         let app, auth, db;
+        let cloudAvailable = true;
         let isDemoMode = false;
 
         if (typeof __force_demo_mode !== 'undefined' && __force_demo_mode) {
@@ -549,6 +551,11 @@
                 auth = firebase.auth();
                 db = firebase.firestore();
                 console.log("Firebase initialized successfully");
+                // 確保有身份以便讀取雲端設定
+                // 若尚未登入，進行匿名登入（需在 Firebase Console 啟用 Anonymous）
+                if (!isDemoMode) {
+                    (async ()=>{ try { if (!auth.currentUser) { await auth.signInAnonymously(); localStorage.setItem('lastLoginMode','anonymous'); } } catch(e){ console.warn('Anonymous sign-in failed:', e); } })();
+                }
             } else {
                 isDemoMode = true; // 如果沒有金鑰，進入純前端演示模式
             }
@@ -945,7 +952,7 @@
             try { return JSON.parse(localStorage.getItem('communities')||'[]'); } catch(e){ return []; }
         }
         function setCommunities(arr){ localStorage.setItem('communities', JSON.stringify(arr)); }
-        function useCloud(){ return !!db; }
+        function useCloud(){ return !!db && cloudAvailable; }
         async function fetchCommunities(){
             if (useCloud()){
                 const snap = await db.collection('communities').get();
@@ -1089,12 +1096,28 @@
         }
         async function openSettingsModal(defaultTab){
             await ensureAuthForSettings();
+            let fallback = false;
             if (useCloud()){
-                const c = await fetchCommunities(); if (c.length===0){ await saveCommunity('NW001','西北保全社區'); }
-                const a = await fetchAccounts(); if (a.length===0){ const seed = {id: genAccountId(), community:'西北保全社區', name:'管理員', email:'admin@example.com', phone:'0912345678'}; await saveAccount(seed); }
-            } else {
+                try {
+                    const c = await fetchCommunities();
+                    const a = await fetchAccounts();
+                    const email = getCurrentUserEmail();
+                    const isAdmin = isAdminEmail(email);
+                    if (isAdmin) {
+                        if (c.length===0){ await saveCommunity('NW001','西北保全社區'); }
+                        if (a.length===0){ const seed = {id: genAccountId(), community:'西北保全社區', name:'管理員', email:'admin@example.com', phone:'0912345678'}; await saveAccount(seed); }
+                    }
+                } catch (e) {
+                    console.warn('Open settings cloud fetch failed:', e);
+                    cloudAvailable = false;
+                    fallback = true;
+                }
+            }
+            if (!useCloud()) {
                 ensureDefaults();
             }
+            const errBar = document.getElementById('settings-error');
+            if (errBar) errBar.classList.toggle('hidden', !fallback);
             await renderCommunityOptions(); await renderAccounts(); await renderCommunities(); settingsModal.classList.remove('hidden');
             activateSettingsTab(defaultTab||'accounts');
         }
@@ -1134,6 +1157,7 @@
         async function openCommunitySwitcher(){
             const email = getCurrentUserEmail();
             if (!isAdminEmail(email)) return;
+            await ensureAuthForSettings();
             const communities = await fetchCommunities();
             communitySwitcherList.innerHTML = communities.map(c => {
                 return '<button data-code="'+c.code+'" data-name="'+c.name+'" class="px-4 py-3 bg-gray-100 hover:bg-red-50 hover:text-red-700 rounded text-left">'+c.name+' <span class="text-xs text-gray-400 ml-2">('+c.code+')</span></button>';
