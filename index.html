@@ -122,7 +122,7 @@
                     <i class="fa-solid fa-shield-halved text-[28px] text-red-100"></i>
                 </div>
                 <div class="h-[10%] box-border flex-none flex items-center justify-center">
-                    <span id="sidebar-community-name" class="text-[20px] font-bold text-red-100">西北保全社區</span>
+                    <span id="sidebar-community-name" class="text-[20px] font-bold text-red-100 cursor-pointer">西北保全社區</span>
                 </div>
                 <div class="h-[10%] box-border flex-none">
                     <a href="#" onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-item w-full h-full flex flex-row items-center justify-center gap-2 text-red-100 hover:bg-red-800 hover:text-white transition-colors border-l-4 border-transparent bg-red-800 border-white">
@@ -492,6 +492,19 @@
         </div>
     </div>
 
+    <div id="community-switcher-modal" class="fixed inset-0 hidden z-[66]">
+        <div class="absolute inset-0 bg-black/40"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-6">
+            <div class="bg-white rounded-lg w-full max-w-2xl p-6 space-y-4">
+                <div class="flex justify-between items-center">
+                    <h4 class="text-lg font-bold">選擇社區</h4>
+                    <button id="community-switcher-close" class="text-gray-600 hover:text-red-700"><i class="fa-solid fa-xmark text-xl"></i></button>
+                </div>
+                <div id="community-switcher-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ==========================================
         // Firebase 設定與初始化
@@ -682,6 +695,7 @@
             auth.onAuthStateChanged((user) => {
                 if (user) {
                     const email = user.email || '';
+                    localStorage.setItem('currentUserEmail', email);
                     setCurrentCommunityByEmail(email);
                     enterApp();
                 } else {
@@ -790,6 +804,7 @@
             if (!acc) return false;
             if (String(acc.phone) === String(password)) {
                 setCurrentCommunityByEmail(email);
+                localStorage.setItem('currentUserEmail', email);
                 localStorage.setItem('persistLogin','true');
                 localStorage.setItem('lastLoginMode','local');
                 enterApp();
@@ -895,6 +910,9 @@
         const cancelAddCommunity = document.getElementById('cancel-add-community');
         const accountsTbody = document.getElementById('accounts-tbody');
         const communitiesTbody = document.getElementById('communities-tbody');
+        const communitySwitcherModal = document.getElementById('community-switcher-modal');
+        const communitySwitcherList = document.getElementById('community-switcher-list');
+        const communitySwitcherClose = document.getElementById('community-switcher-close');
         const modalSettingsPass = document.getElementById('modal-settings-password');
         const settingsPassInput = document.getElementById('settings-pass-input');
         const settingsPassError = document.getElementById('settings-pass-error');
@@ -1001,6 +1019,35 @@
             else { settingsPassError.classList.remove('hidden'); }
         }); }
         if (settingsPassInput){ settingsPassInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ settingsPassConfirm.click(); } }); }
+
+        function getCurrentUserEmail(){
+            if (!isDemoMode && auth && auth.currentUser && auth.currentUser.email) return auth.currentUser.email;
+            return localStorage.getItem('currentUserEmail') || '';
+        }
+        function isAdminEmail(email){ return email === 'nwapp.eason@gmail.com'; }
+        function openCommunitySwitcher(){
+            const email = getCurrentUserEmail();
+            if (!isAdminEmail(email)) return;
+            const communities = getCommunities();
+            communitySwitcherList.innerHTML = communities.map(c => {
+                return '<button data-code="'+c.code+'" data-name="'+c.name+'" class="px-4 py-3 bg-gray-100 hover:bg-red-50 hover:text-red-700 rounded text-left">'+c.name+' <span class="text-xs text-gray-400 ml-2">('+c.code+')</span></button>';
+            }).join('');
+            communitySwitcherModal.classList.remove('hidden');
+            Array.from(communitySwitcherList.querySelectorAll('button')).forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const code = btn.getAttribute('data-code');
+                    const name = btn.getAttribute('data-name');
+                    localStorage.setItem('currentCommunityCode', code);
+                    localStorage.setItem('currentCommunityName', name);
+                    applyCommunityToUI();
+                    communitySwitcherModal.classList.add('hidden');
+                    switchTab('dashboard');
+                });
+            });
+        }
+        if (communitySwitcherClose){ communitySwitcherClose.addEventListener('click', ()=> communitySwitcherModal.classList.add('hidden')); }
+        const sidebarCommunityName = document.getElementById('sidebar-community-name');
+        if (sidebarCommunityName){ sidebarCommunityName.addEventListener('click', openCommunitySwitcher); }
         if (settingsClose){ settingsClose.addEventListener('click', closeSettingsModal); }
         if (tabAccountsBtn){ tabAccountsBtn.addEventListener('click', ()=> activateSettingsTab('accounts')); }
         if (tabCommunitiesBtn){ tabCommunitiesBtn.addEventListener('click', ()=> activateSettingsTab('communities')); }
