@@ -176,7 +176,7 @@
         </aside>
 
         <!-- 右側主要內容 (90% 寬度) -->
-        <main class="w-[85%] flex flex-col bg-gray-50">
+        <main class="w-[85%] flex flex-col bg-gray-50 relative">
             <!-- R01 標題列 -->
             <header class="h-[10%] box-border flex-none bg-white shadow-sm flex items-center justify-between px-6 border-b border-gray-200">
                 <h2 id="page-title" class="text-xl font-bold text-gray-800 flex items-center">
@@ -329,20 +329,94 @@
 
                 <!-- 2. 其他視圖佔位符 (Other Views Placeholder) -->
                 <div id="view-income" class="content-view hidden">
-                    <div class="bg-white p-8 rounded-lg shadow-sm text-center">
-                        <i class="fa-solid fa-hand-holding-dollar text-4xl text-gray-300 mb-4"></i>
-                        <h3 class="text-xl font-bold text-gray-700">收入管理模組</h3>
-                        <p class="text-gray-500 mt-2">此處將顯示管理費繳納清單與雜項收入登錄功能。</p>
-                        <button class="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">新增收入</button>
+                    <div id="income-detail-view" class="bg-white p-8 rounded-lg shadow-sm">
+                        <div class="text-center">
+                            <i class="fa-solid fa-hand-holding-dollar text-4xl text-gray-300 mb-4"></i>
+                            <h3 class="text-xl font-bold text-gray-700">收入明細</h3>
+                            <p class="text-gray-500 mt-2">此處顯示收入記錄與查詢。</p>
+                        </div>
+                    </div>
+                    <div id="income-settings-view" class="space-y-6 hidden">
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg">
+                                <h3 class="font-bold text-gray-700">固定收入列表</h3>
+                                <button id="btn-add-income-fixed" class="px-3 py-2 bg-red-600 text-white rounded">新增</button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm text-gray-600">
+                                    <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-bold">
+                                        <tr>
+                                            <th class="px-6 py-3">項目</th>
+                                            <th class="px-6 py-3">操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="income-fixed-tbody" class="divide-y divide-gray-200"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg">
+                                <h3 class="font-bold text-gray-700">其他收入列表</h3>
+                                <button id="btn-add-income-other" class="px-3 py-2 bg-red-600 text-white rounded">新增</button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm text-gray-600">
+                                    <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-bold">
+                                        <tr>
+                                            <th class="px-6 py-3">項目</th>
+                                            <th class="px-6 py-3">操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="income-other-tbody" class="divide-y divide-gray-200"></tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <div id="view-expense" class="content-view hidden">
-                    <div class="bg-white p-8 rounded-lg shadow-sm text-center">
-                        <i class="fa-solid fa-file-invoice-dollar text-4xl text-gray-300 mb-4"></i>
-                        <h3 class="text-xl font-bold text-gray-700">支出管理模組</h3>
-                        <p class="text-gray-500 mt-2">此處將顯示請款單審核與廠商付款紀錄。</p>
-                        <button class="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">申請支出</button>
+                    <div id="expense-detail-view" class="bg-white p-8 rounded-lg shadow-sm">
+                        <div class="text-center">
+                            <i class="fa-solid fa-file-invoice-dollar text-4xl text-gray-300 mb-4"></i>
+                            <h3 class="text-xl font-bold text-gray-700">支出明細</h3>
+                            <p class="text-gray-500 mt-2">此處顯示支出記錄與查詢。</p>
+                        </div>
+                    </div>
+                    <div id="expense-settings-view" class="space-y-6 hidden">
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg">
+                                <h3 class="font-bold text-gray-700">固定支出列表</h3>
+                                <button id="btn-add-expense-fixed" class="px-3 py-2 bg-red-600 text-white rounded">新增</button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm text-gray-600">
+                                    <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-bold">
+                                        <tr>
+                                            <th class="px-6 py-3">項目</th>
+                                            <th class="px-6 py-3">操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="expense-fixed-tbody" class="divide-y divide-gray-200"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg">
+                                <h3 class="font-bold text-gray-700">其他支出列表</h3>
+                                <button id="btn-add-expense-other" class="px-3 py-2 bg-red-600 text-white rounded">新增</button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm text-gray-600">
+                                    <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-bold">
+                                        <tr>
+                                            <th class="px-6 py-3">項目</th>
+                                            <th class="px-6 py-3">操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="expense-other-tbody" class="divide-y divide-gray-200"></tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -355,10 +429,63 @@
                 </div>
 
                 <div id="view-bank" class="content-view hidden">
-                    <div class="bg-white p-8 rounded-lg shadow-sm text-center">
-                        <i class="fa-solid fa-building-columns text-4xl text-gray-300 mb-4"></i>
-                        <h3 class="text-xl font-bold text-gray-700">銀行模組</h3>
-                        <p class="text-gray-500 mt-2">此處將顯示銀行帳戶餘額與交易整合。</p>
+                    <div id="bank-detail-view" class="bg-white p-8 rounded-lg shadow-sm">
+                        <div class="text-center">
+                            <i class="fa-solid fa-building-columns text-4xl text-gray-300 mb-4"></i>
+                            <h3 class="text-xl font-bold text-gray-700">銀行明細</h3>
+                            <p class="text-gray-500 mt-2">此處顯示銀行相關查詢。</p>
+                        </div>
+                    </div>
+                    <div id="bank-settings-view" class="space-y-6 hidden">
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg">
+                                <h3 class="font-bold text-gray-700">銀行列表</h3>
+                                <button id="btn-add-bank" class="px-3 py-2 bg-red-600 text-white rounded">新增</button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm text-gray-600">
+                                    <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-bold">
+                                        <tr>
+                                            <th class="px-6 py-3">銀行名稱</th>
+                                            <th class="px-6 py-3">分行名稱</th>
+                                            <th class="px-6 py-3">戶名</th>
+                                            <th class="px-6 py-3">帳號</th>
+                                            <th class="px-6 py-3">操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="bank-tbody" class="divide-y divide-gray-200"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="view-residents" class="content-view hidden">
+                    <div id="residents-detail-view" class="bg-white p-8 rounded-lg shadow-sm">
+                        <div class="text-center">
+                            <i class="fa-solid fa-users text-4xl text-gray-300 mb-4"></i>
+                            <h3 class="text-xl font-bold text-gray-700">住戶明細</h3>
+                            <p class="text-gray-500 mt-2">此處顯示住戶相關資料與查詢。</p>
+                        </div>
+                    </div>
+                    <div id="residents-settings-view" class="space-y-6 hidden">
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg">
+                                <h3 class="font-bold text-gray-700">社區分棟列表</h3>
+                                <button id="btn-add-building" class="px-3 py-2 bg-red-600 text-white rounded">新增</button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm text-gray-600">
+                                    <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-bold">
+                                        <tr>
+                                            <th class="px-6 py-3">分棟名稱</th>
+                                            <th class="px-6 py-3">操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="residents-buildings-tbody" class="divide-y divide-gray-200"></tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -493,18 +620,77 @@
         </div>
     </div>
 
-    <div id="community-switcher-modal" class="fixed inset-0 hidden z-[66]">
-        <div class="absolute inset-0 bg-black/40"></div>
-        <div class="absolute inset-0 flex items-center justify-center p-6">
-            <div class="bg-white rounded-lg w-full max-w-2xl p-6 space-y-4">
-                <div class="flex justify-between items-center">
-                    <h4 class="text-lg font-bold">選擇社區</h4>
-                    <button id="community-switcher-close" class="text-gray-600 hover:text-red-700"><i class="fa-solid fa-xmark text-xl"></i></button>
+        <div id="community-switcher-modal" class="fixed inset-0 hidden z-[66]">
+            <div class="absolute inset-0 bg-black/40"></div>
+            <div class="absolute inset-0 flex items-center justify-center p-6">
+                <div class="bg-white rounded-lg w-full max-w-2xl p-6 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h4 class="text-lg font-bold">選擇社區</h4>
+                        <button id="community-switcher-close" class="text-gray-600 hover:text-red-700"><i class="fa-solid fa-xmark text-xl"></i></button>
+                    </div>
+                    <div id="community-switcher-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
                 </div>
-                <div id="community-switcher-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
             </div>
         </div>
+
+        <div id="modal-edit-item" class="fixed inset-0 hidden z-[70]">
+            <div class="absolute inset-0 bg-black/40"></div>
+            <div class="absolute inset-0 flex items-center justify-center p-6">
+                <div class="bg-white rounded-lg w-full max-w-sm p-6 space-y-4">
+                    <h4 class="text-lg font-bold">輸入項目</h4>
+                    <input id="input-item-name" class="w-full border rounded px-3 py-2" placeholder="項目" />
+                    <div class="flex justify-end gap-2">
+                        <button id="cancel-edit-item" class="px-3 py-2 border rounded">取消</button>
+                        <button id="confirm-edit-item" class="px-3 py-2 bg-red-600 text-white rounded">確認</button>
+        </div>
+
+        <div id="modal-edit-bank" class="fixed inset-0 hidden z-[70]">
+            <div class="absolute inset-0 bg-black/40"></div>
+            <div class="absolute inset-0 flex items-center justify-center p-6">
+                <div class="bg-white rounded-lg w-full max-w-lg p-6 space-y-4">
+                    <h4 class="text-lg font-bold">輸入銀行資料</h4>
+                    <div>
+                        <label class="block text-sm mb-1">銀行名稱</label>
+                        <input id="input-bank-name" class="w-full border rounded px-3 py-2" />
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-1">分行名稱</label>
+                        <input id="input-bank-branch" class="w-full border rounded px-3 py-2" />
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-1">戶名</label>
+                        <input id="input-bank-holder" class="w-full border rounded px-3 py-2" />
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-1">帳號</label>
+                        <input id="input-bank-account" class="w-full border rounded px-3 py-2" />
+                    </div>
+                    <div class="flex justify-end gap-2">
+                        <button id="cancel-edit-bank" class="px-3 py-2 border rounded">取消</button>
+                        <button id="confirm-edit-bank" class="px-3 py-2 bg-red-600 text-white rounded">確認</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="modal-edit-building" class="fixed inset-0 hidden z-[70]">
+            <div class="absolute inset-0 bg-black/40"></div>
+            <div class="absolute inset-0 flex items-center justify-center p-6">
+                <div class="bg-white rounded-lg w-full max-w-sm p-6 space-y-4">
+                    <h4 class="text-lg font-bold">輸入分棟名稱</h4>
+                    <input id="input-building-name" class="w-full border rounded px-3 py-2" placeholder="分棟名稱" />
+                    <div class="flex justify-end gap-2">
+                        <button id="cancel-edit-building" class="px-3 py-2 border rounded">取消</button>
+                        <button id="confirm-edit-building" class="px-3 py-2 bg-red-600 text-white rounded">確認</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
+            </div>
+        </div>
+
 
     <script>
         // ==========================================
@@ -805,6 +991,26 @@
             });
             el.classList.add('text-red-700','border-red-700');
             el.classList.remove('text-gray-700');
+            const parts = (el.id||'').split('-');
+            const tab = parts[1];
+            const idx = parseInt(parts[2]||'0');
+            if (tab === 'income'){
+                const d = document.getElementById('income-detail-view');
+                const s = document.getElementById('income-settings-view');
+                if (d && s){ d.classList.toggle('hidden', idx!==0); s.classList.toggle('hidden', idx!==1); if (idx===1) renderIncomeSettings(); }
+            } else if (tab === 'expense'){
+                const d2 = document.getElementById('expense-detail-view');
+                const s2 = document.getElementById('expense-settings-view');
+                if (d2 && s2){ d2.classList.toggle('hidden', idx!==0); s2.classList.toggle('hidden', idx!==1); if (idx===1) renderExpenseSettings(); }
+            } else if (tab === 'bank'){
+                const bd = document.getElementById('bank-detail-view');
+                const bs = document.getElementById('bank-settings-view');
+                if (bd && bs){ bd.classList.toggle('hidden', idx!==0); bs.classList.toggle('hidden', idx!==3); if (idx===3) renderBankSettings(); }
+            } else if (tab === 'residents'){
+                const rd = document.getElementById('residents-detail-view');
+                const rs = document.getElementById('residents-settings-view');
+                if (rd && rs){ rd.classList.toggle('hidden', idx!==0); rs.classList.toggle('hidden', idx!==1); if (idx===1) renderResidentsSettings(); }
+            }
         }
 
         function tryLocalLogin(email, password) {
@@ -1212,6 +1418,123 @@
         if (tabCommunitiesBtn){ tabCommunitiesBtn.addEventListener('click', ()=> activateSettingsTab('communities')); }
         if (btnAddAccount){ btnAddAccount.addEventListener('click', async ()=>{ await ensureAuthForSettings(); await renderCommunityOptions(); inputAccountName.value=''; inputAccountEmail.value=''; inputAccountPhone.value=''; modalAddAccount.classList.remove('hidden'); confirmAddAccount.onclick = async ()=>{ const acc = {id: genAccountId(), community: inputAccountCommunity.value, name: inputAccountName.value, email: inputAccountEmail.value, phone: inputAccountPhone.value}; try { if (useCloud()){ const email = getCurrentUserEmail(); if (!isAdminEmail(email)) throw new Error('非系統管理員不可新增帳號'); await auth.createUserWithEmailAndPassword(acc.email, acc.phone); } await saveAccount(acc); modalAddAccount.classList.add('hidden'); renderAccounts(); } catch(e){ alert('新增帳號失敗：'+(e && e.message ? e.message : e)); } }; cancelAddAccount.onclick = ()=> modalAddAccount.classList.add('hidden'); }); }
         if (btnAddCommunity){ btnAddCommunity.addEventListener('click', async ()=>{ await ensureAuthForSettings(); inputCommunityCode.value=''; inputCommunityName.value=''; modalAddCommunity.classList.remove('hidden'); confirmAddCommunity.onclick = async ()=>{ try { if (useCloud()){ const email = getCurrentUserEmail(); if (!isAdminEmail(email)) throw new Error('非系統管理員不可新增社區'); } await saveCommunity(inputCommunityCode.value, inputCommunityName.value); modalAddCommunity.classList.add('hidden'); renderCommunities(); renderCommunityOptions(); } catch(e){ alert('新增社區失敗：'+(e && e.message ? e.message : e)); } }; cancelAddCommunity.onclick = ()=> modalAddCommunity.classList.add('hidden'); }); }
+
+        function getCurrentCommunityCode(){ return localStorage.getItem('currentCommunityCode') || 'NW001'; }
+        function lsGet(key){ try { return JSON.parse(localStorage.getItem(key)||'[]'); } catch(e){ return []; } }
+        function lsSet(key, arr){ localStorage.setItem(key, JSON.stringify(arr)); }
+        function incomeKey(kind){ return kind+'_'+getCurrentCommunityCode(); }
+        function expenseKey(kind){ return kind+'_'+getCurrentCommunityCode(); }
+        function bankKey(){ return 'bank_accounts_'+getCurrentCommunityCode(); }
+        function buildingKey(){ return 'buildings_'+getCurrentCommunityCode(); }
+        function getIncomeFixed(){ return lsGet(incomeKey('income_fixed')); }
+        function setIncomeFixed(arr){ lsSet(incomeKey('income_fixed'), arr); }
+        function getIncomeOther(){ return lsGet(incomeKey('income_other')); }
+        function setIncomeOther(arr){ lsSet(incomeKey('income_other'), arr); }
+        function getExpenseFixed(){ return lsGet(expenseKey('expense_fixed')); }
+        function setExpenseFixed(arr){ lsSet(expenseKey('expense_fixed'), arr); }
+        function getExpenseOther(){ return lsGet(expenseKey('expense_other')); }
+        function setExpenseOther(arr){ lsSet(expenseKey('expense_other'), arr); }
+        function getBankAccounts(){ return lsGet(bankKey()); }
+        function setBankAccounts(arr){ lsSet(bankKey(), arr); }
+        function getBuildings(){ return lsGet(buildingKey()); }
+        function setBuildings(arr){ lsSet(buildingKey(), arr); }
+
+        const incomeFixedTbody = document.getElementById('income-fixed-tbody');
+        const incomeOtherTbody = document.getElementById('income-other-tbody');
+        const expenseFixedTbody = document.getElementById('expense-fixed-tbody');
+        const expenseOtherTbody = document.getElementById('expense-other-tbody');
+        const btnAddIncomeFixed = document.getElementById('btn-add-income-fixed');
+        const btnAddIncomeOther = document.getElementById('btn-add-income-other');
+        const btnAddExpenseFixed = document.getElementById('btn-add-expense-fixed');
+        const btnAddExpenseOther = document.getElementById('btn-add-expense-other');
+        const bankTbody = document.getElementById('bank-tbody');
+        const btnAddBank = document.getElementById('btn-add-bank');
+        const residentsBuildingsTbody = document.getElementById('residents-buildings-tbody');
+        const btnAddBuilding = document.getElementById('btn-add-building');
+
+        let editCtx = null;
+        const modalEditItem = document.getElementById('modal-edit-item');
+        const inputItemName = document.getElementById('input-item-name');
+        const confirmEditItem = document.getElementById('confirm-edit-item');
+        const cancelEditItem = document.getElementById('cancel-edit-item');
+        const modalEditBank = document.getElementById('modal-edit-bank');
+        const inputBankName = document.getElementById('input-bank-name');
+        const inputBankBranch = document.getElementById('input-bank-branch');
+        const inputBankHolder = document.getElementById('input-bank-holder');
+        const inputBankAccount = document.getElementById('input-bank-account');
+        const confirmEditBank = document.getElementById('confirm-edit-bank');
+        const cancelEditBank = document.getElementById('cancel-edit-bank');
+        const modalEditBuilding = document.getElementById('modal-edit-building');
+        const inputBuildingName = document.getElementById('input-building-name');
+        const confirmEditBuilding = document.getElementById('confirm-edit-building');
+        const cancelEditBuilding = document.getElementById('cancel-edit-building');
+
+        function openEditItem(ctx){ editCtx = ctx; inputItemName.value = ctx.value || ''; if (modalEditItem) modalEditItem.classList.remove('hidden'); }
+        function closeEditItem(){ editCtx = null; if (modalEditItem) modalEditItem.classList.add('hidden'); }
+        function openEditBank(ctx){ editCtx = ctx; if (modalEditBank){ inputBankName.value = ctx.item?.bankName || ''; inputBankBranch.value = ctx.item?.branchName || ''; inputBankHolder.value = ctx.item?.holderName || ''; inputBankAccount.value = ctx.item?.accountNumber || ''; modalEditBank.classList.remove('hidden'); } }
+        function closeEditBank(){ editCtx = null; if (modalEditBank) modalEditBank.classList.add('hidden'); }
+        function openEditBuilding(ctx){ editCtx = ctx; if (modalEditBuilding){ inputBuildingName.value = ctx.value || ''; modalEditBuilding.classList.remove('hidden'); } }
+        function closeEditBuilding(){ editCtx = null; if (modalEditBuilding) modalEditBuilding.classList.add('hidden'); }
+        function renderIncomeSettings(){
+            if (incomeFixedTbody){ const arr = getIncomeFixed(); incomeFixedTbody.innerHTML = arr.map((x,i)=> '<tr><td class="px-6 py-3">'+x+'</td><td class="px-6 py-3"><button data-i="'+i+'" class="edit-if text-blue-600 mr-2">編輯</button><button data-i="'+i+'" class="del-if text-red-600">刪除</button></td></tr>').join('');
+                Array.from(incomeFixedTbody.querySelectorAll('.del-if')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getIncomeFixed(); arr2.splice(i,1); setIncomeFixed(arr2); renderIncomeSettings(); }); });
+                Array.from(incomeFixedTbody.querySelectorAll('.edit-if')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getIncomeFixed(); openEditItem({kind:'income_fixed', index:i, value:arr2[i]}); }); });
+            }
+            if (incomeOtherTbody){ const arr = getIncomeOther(); incomeOtherTbody.innerHTML = arr.map((x,i)=> '<tr><td class="px-6 py-3">'+x+'</td><td class="px-6 py-3"><button data-i="'+i+'" class="edit-io text-blue-600 mr-2">編輯</button><button data-i="'+i+'" class="del-io text-red-600">刪除</button></td></tr>').join('');
+                Array.from(incomeOtherTbody.querySelectorAll('.del-io')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getIncomeOther(); arr2.splice(i,1); setIncomeOther(arr2); renderIncomeSettings(); }); });
+                Array.from(incomeOtherTbody.querySelectorAll('.edit-io')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getIncomeOther(); openEditItem({kind:'income_other', index:i, value:arr2[i]}); }); });
+            }
+        }
+        function renderExpenseSettings(){
+            if (expenseFixedTbody){ const arr = getExpenseFixed(); expenseFixedTbody.innerHTML = arr.map((x,i)=> '<tr><td class="px-6 py-3">'+x+'</td><td class="px-6 py-3"><button data-i="'+i+'" class="edit-ef text-blue-600 mr-2">編輯</button><button data-i="'+i+'" class="del-ef text-red-600">刪除</button></td></tr>').join('');
+                Array.from(expenseFixedTbody.querySelectorAll('.del-ef')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getExpenseFixed(); arr2.splice(i,1); setExpenseFixed(arr2); renderExpenseSettings(); }); });
+                Array.from(expenseFixedTbody.querySelectorAll('.edit-ef')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getExpenseFixed(); openEditItem({kind:'expense_fixed', index:i, value:arr2[i]}); }); });
+            }
+            if (expenseOtherTbody){ const arr = getExpenseOther(); expenseOtherTbody.innerHTML = arr.map((x,i)=> '<tr><td class="px-6 py-3">'+x+'</td><td class="px-6 py-3"><button data-i="'+i+'" class="edit-eo text-blue-600 mr-2">編輯</button><button data-i="'+i+'" class="del-eo text-red-600">刪除</button></td></tr>').join('');
+                Array.from(expenseOtherTbody.querySelectorAll('.del-eo')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getExpenseOther(); arr2.splice(i,1); setExpenseOther(arr2); renderExpenseSettings(); }); });
+                Array.from(expenseOtherTbody.querySelectorAll('.edit-eo')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getExpenseOther(); openEditItem({kind:'expense_other', index:i, value:arr2[i]}); }); });
+            }
+        }
+        function renderBankSettings(){
+            if (bankTbody){ const arr = getBankAccounts(); bankTbody.innerHTML = arr.map((x,i)=> '<tr><td class="px-6 py-3">'+(x.bankName||'')+'</td><td class="px-6 py-3">'+(x.branchName||'')+'</td><td class="px-6 py-3">'+(x.holderName||'')+'</td><td class="px-6 py-3">'+(x.accountNumber||'')+'</td><td class="px-6 py-3"><button data-i="'+i+'" class="edit-bank text-blue-600 mr-2">編輯</button><button data-i="'+i+'" class="del-bank text-red-600">刪除</button></td></tr>').join('');
+                Array.from(bankTbody.querySelectorAll('.del-bank')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getBankAccounts(); arr2.splice(i,1); setBankAccounts(arr2); renderBankSettings(); }); });
+                Array.from(bankTbody.querySelectorAll('.edit-bank')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getBankAccounts(); openEditBank({kind:'bank', index:i, item:arr2[i]}); }); });
+            }
+        }
+        function renderResidentsSettings(){
+            if (residentsBuildingsTbody){ const arr = getBuildings(); residentsBuildingsTbody.innerHTML = arr.map((x,i)=> '<tr><td class="px-6 py-3">'+x+'</td><td class="px-6 py-3"><button data-i="'+i+'" class="edit-building text-blue-600 mr-2">編輯</button><button data-i="'+i+'" class="del-building text-red-600">刪除</button></td></tr>').join('');
+                Array.from(residentsBuildingsTbody.querySelectorAll('.del-building')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getBuildings(); arr2.splice(i,1); setBuildings(arr2); renderResidentsSettings(); }); });
+                Array.from(residentsBuildingsTbody.querySelectorAll('.edit-building')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getBuildings(); openEditBuilding({kind:'building', index:i, value:arr2[i]}); }); });
+            }
+        }
+        function ensureDefaultsIncomeExpense(){
+            if (getIncomeFixed().length===0) setIncomeFixed(['管理費']);
+            if (getIncomeOther().length===0) setIncomeOther(['停車費']);
+            if (getExpenseFixed().length===0) setExpenseFixed(['清潔費']);
+            if (getExpenseOther().length===0) setExpenseOther(['維修費']);
+        }
+        function ensureDefaultsBankResidents(){
+            if (getBankAccounts().length===0) setBankAccounts([{bankName:'台新銀行', branchName:'松德分行', holderName:'社區管理委員會', accountNumber:'123-456-7890'}]);
+            if (getBuildings().length===0) setBuildings(['A棟','B棟']);
+        }
+        ensureDefaultsBankResidents();
+        ensureDefaultsIncomeExpense();
+        if (btnAddIncomeFixed){ btnAddIncomeFixed.addEventListener('click', ()=> openEditItem({kind:'income_fixed', index:-1, value:''})); }
+        if (btnAddIncomeOther){ btnAddIncomeOther.addEventListener('click', ()=> openEditItem({kind:'income_other', index:-1, value:''})); }
+        if (btnAddExpenseFixed){ btnAddExpenseFixed.addEventListener('click', ()=> openEditItem({kind:'expense_fixed', index:-1, value:''})); }
+        if (btnAddExpenseOther){ btnAddExpenseOther.addEventListener('click', ()=> openEditItem({kind:'expense_other', index:-1, value:''})); }
+        if (confirmEditItem){ confirmEditItem.addEventListener('click', ()=>{ if(!editCtx) return; const name = (inputItemName.value||'').trim(); if(!name){ closeEditItem(); return; } if (editCtx.kind==='income_fixed'){ const arr = getIncomeFixed(); if (editCtx.index>=0) arr[editCtx.index]=name; else arr.push(name); setIncomeFixed(arr); renderIncomeSettings(); }
+            else if (editCtx.kind==='income_other'){ const arr = getIncomeOther(); if (editCtx.index>=0) arr[editCtx.index]=name; else arr.push(name); setIncomeOther(arr); renderIncomeSettings(); }
+            else if (editCtx.kind==='expense_fixed'){ const arr = getExpenseFixed(); if (editCtx.index>=0) arr[editCtx.index]=name; else arr.push(name); setExpenseFixed(arr); renderExpenseSettings(); }
+            else if (editCtx.kind==='expense_other'){ const arr = getExpenseOther(); if (editCtx.index>=0) arr[editCtx.index]=name; else arr.push(name); setExpenseOther(arr); renderExpenseSettings(); }
+            closeEditItem(); }); }
+        if (cancelEditItem){ cancelEditItem.addEventListener('click', closeEditItem); }
+        if (btnAddBank){ btnAddBank.addEventListener('click', ()=> openEditBank({kind:'bank', index:-1, item:{}})); }
+        if (confirmEditBank){ confirmEditBank.addEventListener('click', ()=>{ if(!editCtx) return; const item = { bankName: (inputBankName.value||'').trim(), branchName: (inputBankBranch.value||'').trim(), holderName: (inputBankHolder.value||'').trim(), accountNumber: (inputBankAccount.value||'').trim() }; const arr = getBankAccounts(); if (editCtx.index>=0) arr[editCtx.index]=item; else arr.push(item); setBankAccounts(arr); closeEditBank(); renderBankSettings(); }); }
+        if (cancelEditBank){ cancelEditBank.addEventListener('click', closeEditBank); }
+        if (btnAddBuilding){ btnAddBuilding.addEventListener('click', ()=> openEditBuilding({kind:'building', index:-1, value:''})); }
+        if (confirmEditBuilding){ confirmEditBuilding.addEventListener('click', ()=>{ if(!editCtx) return; const name = (inputBuildingName.value||'').trim(); const arr = getBuildings(); if (editCtx.index>=0) arr[editCtx.index]=name; else arr.push(name); setBuildings(arr); closeEditBuilding(); renderResidentsSettings(); }); }
+        if (cancelEditBuilding){ cancelEditBuilding.addEventListener('click', closeEditBuilding); }
 
     </script>
 </body>
