@@ -647,15 +647,11 @@
             setLoginLoading(true);
 
             // 先嘗試本機帳號登入（使用手機號碼作為預設密碼）
-            if (tryLocalLogin(email, password)) {
-                return;
-            }
             if (!navigator.onLine) {
                 isDemoMode = true;
                 loginError.classList.remove('hidden');
                 loginError.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-1"></i> 網路離線，進入預覽模式`;
-                setCurrentCommunityByEmail(email);
-                setTimeout(() => enterApp(), 300);
+                setCurrentCommunityByEmailAsync(email).then(()=> setTimeout(() => enterApp(), 300));
                 updateConnectionStatus();
                 setLoginLoading(false);
                 return;
@@ -663,8 +659,7 @@
 
             if (isDemoMode) {
                 // 演示模式：任何非空輸入都允許登入
-                setCurrentCommunityByEmail(email);
-                enterApp();
+                setCurrentCommunityByEmailAsync(email).then(()=> enterApp());
             } else {
                 // 真實 Firebase 登入
                 try {
@@ -676,11 +671,15 @@
                         isDemoMode = true;
                         loginError.classList.remove('hidden');
                         loginError.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-1"></i> 網路異常，切換為離線預覽模式`;
-                        setTimeout(() => enterApp(), 300);
+                        setCurrentCommunityByEmailAsync(email).then(()=> setTimeout(() => enterApp(), 300));
                         updateConnectionStatus();
                     } else {
-                        loginError.classList.remove('hidden');
-                        loginError.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-1"></i> ${error.message}`;
+                        // 允許本機帳號作為後備登入
+                        const handled = tryLocalLogin(email, password);
+                        if (!handled) {
+                            loginError.classList.remove('hidden');
+                            loginError.innerHTML = `<i class=\"fa-solid fa-circle-exclamation mr-1\"></i> ${error.message}`;
+                        }
                     }
                     setLoginLoading(false);
                 }
@@ -696,8 +695,7 @@
                 if (user) {
                     const email = user.email || '';
                     localStorage.setItem('currentUserEmail', email);
-                    setCurrentCommunityByEmail(email);
-                    enterApp();
+                    setCurrentCommunityByEmailAsync(email).then(()=> enterApp());
                 } else {
                     exitApp();
                 }
@@ -881,6 +879,26 @@
             localStorage.setItem('currentCommunityCode', code);
         }
 
+        async function setCurrentCommunityByEmailAsync(email){
+            let name = '西北保全社區';
+            let code = 'NW001';
+            if (useCloud()){
+                const q = await db.collection('accounts').where('email','==',email).limit(1).get();
+                if (!q.empty){
+                    const acc = q.docs[0].data();
+                    name = acc.community || name;
+                    const c = await db.collection('communities').where('name','==',name).limit(1).get();
+                    if (!c.empty){ code = (c.docs[0].data().code || c.docs[0].id); }
+                }
+            } else {
+                setCurrentCommunityByEmail(email);
+                name = localStorage.getItem('currentCommunityName') || name;
+                code = localStorage.getItem('currentCommunityCode') || code;
+            }
+            localStorage.setItem('currentCommunityName', name);
+            localStorage.setItem('currentCommunityCode', code);
+        }
+
         function applyCommunityToUI(){
             const name = localStorage.getItem('currentCommunityName') || '西北保全社區';
             const span = document.getElementById('sidebar-community-name');
@@ -927,6 +945,68 @@
             try { return JSON.parse(localStorage.getItem('communities')||'[]'); } catch(e){ return []; }
         }
         function setCommunities(arr){ localStorage.setItem('communities', JSON.stringify(arr)); }
+        function useCloud(){ return !!db; }
+        async function fetchCommunities(){
+            if (useCloud()){
+                const snap = await db.collection('communities').get();
+                return snap.docs.map(d=>({code:(d.data().code||d.id), name:d.data().name||''}));
+            }
+            return getCommunities();
+        }
+        async function saveCommunity(code,name){
+            if (useCloud()){
+                await db.collection('communities').doc(code).set({code,name});
+            } else {
+                const arr = getCommunities();
+                arr.push({code,name});
+                setCommunities(arr);
+            }
+        }
+        async function updateCommunity(code,name){
+            if (useCloud()){
+                await db.collection('communities').doc(code).set({code,name},{merge:true});
+            } else {
+                const arr = getCommunities();
+                const idx = arr.findIndex(x=>x.code===code);
+                if (idx>=0){ arr[idx].name = name; setCommunities(arr); }
+            }
+        }
+        async function deleteCommunity(code){
+            if (useCloud()){
+                await db.collection('communities').doc(code).delete();
+            } else {
+                const arr = getCommunities().filter(x=>x.code!==code);
+                setCommunities(arr);
+            }
+        }
+        async function fetchAccounts(){
+            if (useCloud()){
+                const snap = await db.collection('accounts').get();
+                return snap.docs.map(d=>({id:d.data().id||d.id, community:d.data().community||'', name:d.data().name||'', email:d.data().email||'', phone:d.data().phone||''}));
+            }
+            return getAccounts();
+        }
+        async function saveAccount(acc){
+            if (useCloud()){
+                await db.collection('accounts').doc(acc.id).set(acc);
+            } else {
+                const arr = getAccounts(); arr.push(acc); setAccounts(arr);
+            }
+        }
+        async function updateAccount(acc){
+            if (useCloud()){
+                await db.collection('accounts').doc(acc.id).set(acc,{merge:true});
+            } else {
+                const arr = getAccounts(); const idx = arr.findIndex(x=>x.id===acc.id); if (idx>=0){ arr[idx]=acc; setAccounts(arr); }
+            }
+        }
+        async function deleteAccountByIndex(idx){
+            if (useCloud()){
+                const arr = await fetchAccounts(); const acc = arr[idx]; if (acc){ await db.collection('accounts').doc(acc.id).delete(); }
+            } else {
+                const arr = getAccounts(); arr.splice(idx,1); setAccounts(arr);
+            }
+        }
 
         function ensureDefaults(){
             let c = getCommunities();
@@ -941,55 +1021,81 @@
             const next = a.length+1;
             return ymd+String(next).padStart(2,'0');
         }
-        function renderCommunityOptions(){
-            const c = getCommunities();
+        async function renderCommunityOptions(){
+            const c = await fetchCommunities();
             inputAccountCommunity.innerHTML = c.map(x=>'<option value="'+x.name+'">'+x.name+'</option>').join('');
         }
-        function renderAccounts(){
-            const arr = getAccounts();
+        async function renderAccounts(){
+            const arr = await fetchAccounts();
             accountsTbody.innerHTML = arr.map((x,i)=>{
                 return '<tr><td class="px-4 py-2">'+x.id+'</td><td class="px-4 py-2">'+x.community+'</td><td class="px-4 py-2">'+x.name+'</td><td class="px-4 py-2">'+x.email+'</td><td class="px-4 py-2">'+x.phone+'</td><td class="px-4 py-2"><button data-i="'+i+'" class="edit-account text-blue-600 mr-2">編輯</button><button data-i="'+i+'" class="delete-account text-red-600">刪除</button></td></tr>';
             }).join('');
             accountsTbody.querySelectorAll('.delete-account').forEach(btn=>{
                 btn.addEventListener('click', ()=>{
-                    const idx = parseInt(btn.getAttribute('data-i')); const arr2 = getAccounts(); arr2.splice(idx,1); setAccounts(arr2); renderAccounts();
+                    const idx = parseInt(btn.getAttribute('data-i')); deleteAccountByIndex(idx).then(renderAccounts);
                 });
             });
             accountsTbody.querySelectorAll('.edit-account').forEach(btn=>{
                 btn.addEventListener('click', ()=>{
-                    const idx = parseInt(btn.getAttribute('data-i')); const arr2 = getAccounts(); const item = arr2[idx];
-                    inputAccountCommunity.value = item.community; inputAccountName.value = item.name; inputAccountEmail.value = item.email; inputAccountPhone.value = item.phone;
-                    modalAddAccount.classList.remove('hidden');
-                    confirmAddAccount.onclick = () => {
-                        item.community = inputAccountCommunity.value; item.name = inputAccountName.value; item.email = inputAccountEmail.value; item.phone = inputAccountPhone.value; setAccounts(arr2); modalAddAccount.classList.add('hidden'); renderAccounts();
-                    };
-                    cancelAddAccount.onclick = () => { modalAddAccount.classList.add('hidden'); };
+                    const idx = parseInt(btn.getAttribute('data-i'));
+                    fetchAccounts().then(arr2 => {
+                        const item = arr2[idx];
+                        inputAccountCommunity.value = item.community; inputAccountName.value = item.name; inputAccountEmail.value = item.email; inputAccountPhone.value = item.phone;
+                        modalAddAccount.classList.remove('hidden');
+                        confirmAddAccount.onclick = async () => {
+                            item.community = inputAccountCommunity.value; item.name = inputAccountName.value; item.email = inputAccountEmail.value; item.phone = inputAccountPhone.value; await updateAccount(item); modalAddAccount.classList.add('hidden'); renderAccounts();
+                        };
+                        cancelAddAccount.onclick = () => { modalAddAccount.classList.add('hidden'); };
+                    });
                 });
             });
         }
-        function renderCommunities(){
-            const arr = getCommunities();
+        async function renderCommunities(){
+            const arr = await fetchCommunities();
             communitiesTbody.innerHTML = arr.map((x,i)=>{
                 return '<tr><td class="px-4 py-2">'+x.code+'</td><td class="px-4 py-2">'+x.name+'</td><td class="px-4 py-2"><button data-i="'+i+'" class="edit-community text-blue-600 mr-2">編輯</button><button data-i="'+i+'" class="delete-community text-red-600">刪除</button></td></tr>';
             }).join('');
             communitiesTbody.querySelectorAll('.delete-community').forEach(btn=>{
                 btn.addEventListener('click', ()=>{
-                    const idx = parseInt(btn.getAttribute('data-i')); const arr2 = getCommunities(); arr2.splice(idx,1); setCommunities(arr2); renderCommunities(); renderCommunityOptions();
+                    const idx = parseInt(btn.getAttribute('data-i'));
+                    fetchCommunities().then(arr2 => { const code = arr2[idx].code; deleteCommunity(code).then(()=>{ renderCommunities(); renderCommunityOptions(); }); });
                 });
             });
             communitiesTbody.querySelectorAll('.edit-community').forEach(btn=>{
                 btn.addEventListener('click', ()=>{
-                    const idx = parseInt(btn.getAttribute('data-i')); const arr2 = getCommunities(); const item = arr2[idx];
-                    inputCommunityCode.value = item.code; inputCommunityName.value = item.name; modalAddCommunity.classList.remove('hidden');
-                    confirmAddCommunity.onclick = () => {
-                        item.code = inputCommunityCode.value; item.name = inputCommunityName.value; setCommunities(arr2); modalAddCommunity.classList.add('hidden'); renderCommunities(); renderCommunityOptions();
-                    };
-                    cancelAddCommunity.onclick = () => { modalAddCommunity.classList.add('hidden'); };
+                    const idx = parseInt(btn.getAttribute('data-i'));
+                    fetchCommunities().then(arr2 => {
+                        const item = arr2[idx];
+                        inputCommunityCode.value = item.code; inputCommunityName.value = item.name; modalAddCommunity.classList.remove('hidden');
+                        confirmAddCommunity.onclick = () => {
+                            updateCommunity(inputCommunityCode.value, inputCommunityName.value).then(()=>{ modalAddCommunity.classList.add('hidden'); renderCommunities(); renderCommunityOptions(); });
+                        };
+                        cancelAddCommunity.onclick = () => { modalAddCommunity.classList.add('hidden'); };
+                    });
                 });
             });
         }
-        function openSettingsModal(defaultTab){
-            ensureDefaults(); renderCommunityOptions(); renderAccounts(); renderCommunities(); settingsModal.classList.remove('hidden');
+        async function ensureAuthForSettings(){
+            if (useCloud()){
+                try {
+                    if (!auth.currentUser) {
+                        await auth.signInAnonymously();
+                        localStorage.setItem('lastLoginMode','anonymous');
+                    }
+                } catch(e) {
+                    console.warn('Anonymous sign-in failed:', e);
+                }
+            }
+        }
+        async function openSettingsModal(defaultTab){
+            await ensureAuthForSettings();
+            if (useCloud()){
+                const c = await fetchCommunities(); if (c.length===0){ await saveCommunity('NW001','西北保全社區'); }
+                const a = await fetchAccounts(); if (a.length===0){ const seed = {id: genAccountId(), community:'西北保全社區', name:'管理員', email:'admin@example.com', phone:'0912345678'}; await saveAccount(seed); }
+            } else {
+                ensureDefaults();
+            }
+            await renderCommunityOptions(); await renderAccounts(); await renderCommunities(); settingsModal.classList.remove('hidden');
             activateSettingsTab(defaultTab||'accounts');
         }
         function closeSettingsModal(){ settingsModal.classList.add('hidden'); }
@@ -1025,10 +1131,10 @@
             return localStorage.getItem('currentUserEmail') || '';
         }
         function isAdminEmail(email){ return email === 'nwapp.eason@gmail.com'; }
-        function openCommunitySwitcher(){
+        async function openCommunitySwitcher(){
             const email = getCurrentUserEmail();
             if (!isAdminEmail(email)) return;
-            const communities = getCommunities();
+            const communities = await fetchCommunities();
             communitySwitcherList.innerHTML = communities.map(c => {
                 return '<button data-code="'+c.code+'" data-name="'+c.name+'" class="px-4 py-3 bg-gray-100 hover:bg-red-50 hover:text-red-700 rounded text-left">'+c.name+' <span class="text-xs text-gray-400 ml-2">('+c.code+')</span></button>';
             }).join('');
@@ -1051,8 +1157,8 @@
         if (settingsClose){ settingsClose.addEventListener('click', closeSettingsModal); }
         if (tabAccountsBtn){ tabAccountsBtn.addEventListener('click', ()=> activateSettingsTab('accounts')); }
         if (tabCommunitiesBtn){ tabCommunitiesBtn.addEventListener('click', ()=> activateSettingsTab('communities')); }
-        if (btnAddAccount){ btnAddAccount.addEventListener('click', ()=>{ renderCommunityOptions(); inputAccountName.value=''; inputAccountEmail.value=''; inputAccountPhone.value=''; modalAddAccount.classList.remove('hidden'); confirmAddAccount.onclick = ()=>{ const arr = getAccounts(); arr.push({id: genAccountId(), community: inputAccountCommunity.value, name: inputAccountName.value, email: inputAccountEmail.value, phone: inputAccountPhone.value}); setAccounts(arr); modalAddAccount.classList.add('hidden'); renderAccounts(); }; cancelAddAccount.onclick = ()=> modalAddAccount.classList.add('hidden'); }); }
-        if (btnAddCommunity){ btnAddCommunity.addEventListener('click', ()=>{ inputCommunityCode.value=''; inputCommunityName.value=''; modalAddCommunity.classList.remove('hidden'); confirmAddCommunity.onclick = ()=>{ const arr = getCommunities(); arr.push({code: inputCommunityCode.value, name: inputCommunityName.value}); setCommunities(arr); modalAddCommunity.classList.add('hidden'); renderCommunities(); renderCommunityOptions(); }; cancelAddCommunity.onclick = ()=> modalAddCommunity.classList.add('hidden'); }); }
+        if (btnAddAccount){ btnAddAccount.addEventListener('click', async ()=>{ await ensureAuthForSettings(); await renderCommunityOptions(); inputAccountName.value=''; inputAccountEmail.value=''; inputAccountPhone.value=''; modalAddAccount.classList.remove('hidden'); confirmAddAccount.onclick = async ()=>{ const acc = {id: genAccountId(), community: inputAccountCommunity.value, name: inputAccountName.value, email: inputAccountEmail.value, phone: inputAccountPhone.value}; try { if (useCloud()){ const email = getCurrentUserEmail(); if (!isAdminEmail(email)) throw new Error('非系統管理員不可新增帳號'); await auth.createUserWithEmailAndPassword(acc.email, acc.phone); } await saveAccount(acc); modalAddAccount.classList.add('hidden'); renderAccounts(); } catch(e){ alert('新增帳號失敗：'+(e && e.message ? e.message : e)); } }; cancelAddAccount.onclick = ()=> modalAddAccount.classList.add('hidden'); }); }
+        if (btnAddCommunity){ btnAddCommunity.addEventListener('click', async ()=>{ await ensureAuthForSettings(); inputCommunityCode.value=''; inputCommunityName.value=''; modalAddCommunity.classList.remove('hidden'); confirmAddCommunity.onclick = async ()=>{ try { if (useCloud()){ const email = getCurrentUserEmail(); if (!isAdminEmail(email)) throw new Error('非系統管理員不可新增社區'); } await saveCommunity(inputCommunityCode.value, inputCommunityName.value); modalAddCommunity.classList.add('hidden'); renderCommunities(); renderCommunityOptions(); } catch(e){ alert('新增社區失敗：'+(e && e.message ? e.message : e)); } }; cancelAddCommunity.onclick = ()=> modalAddCommunity.classList.add('hidden'); }); }
 
     </script>
 </body>
