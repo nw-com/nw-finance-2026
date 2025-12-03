@@ -55,14 +55,14 @@
 <body class="bg-gray-100 text-gray-800 overflow-hidden h-screen">
 
     <!-- 1. 登入頁面容器 -->
-    <div id="login-view" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-200" style="background-image: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);">
+    <div id="login-view" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-200" style="background-image: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%); visibility:hidden;">
         <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md border-t-4 border-red-700">
             <div class="text-center mb-8">
-                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 text-red-700 mb-4">
+                <div id="login-logo" class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 text-red-700 mb-4 cursor-pointer">
                     <i class="fa-solid fa-building-columns text-3xl"></i>
                 </div>
                 <h1 class="text-2xl font-bold text-gray-800">西北社區財務系統</h1>
-                <p class="text-gray-500 text-sm mt-1">安全 • 透明 • 高效</p>
+                <p class="text-gray-500 text-sm mt-1">西北好用心    住戶更安心</p>
             </div>
 
             <form id="login-form" class="space-y-6">
@@ -122,7 +122,7 @@
                     <i class="fa-solid fa-shield-halved text-[28px] text-red-100"></i>
                 </div>
                 <div class="h-[10%] box-border flex-none flex items-center justify-center">
-                    <span class="text-[20px] font-bold text-red-100">西北保全社區</span>
+                    <span id="sidebar-community-name" class="text-[20px] font-bold text-red-100">西北保全社區</span>
                 </div>
                 <div class="h-[10%] box-border flex-none">
                     <a href="#" onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-item w-full h-full flex flex-row items-center justify-center gap-2 text-red-100 hover:bg-red-800 hover:text-white transition-colors border-l-4 border-transparent bg-red-800 border-white">
@@ -198,14 +198,7 @@
             </header>
 
             <!-- R02 子分頁按鈕列 -->
-            <div class="h-[10%] bg-white border-b border-gray-200 px-6 flex items-center gap-4">
-                <a id="subtab-dashboard" href="#" onclick="switchTab('dashboard')" class="subtab-item h-full flex items-center px-3 text-gray-700 hover:text-red-700 border-b-2 border-transparent">總覽</a>
-                <a id="subtab-income" href="#" onclick="switchTab('income')" class="subtab-item h-full flex items-center px-3 text-gray-700 hover:text-red-700 border-b-2 border-transparent">收入</a>
-                <a id="subtab-expense" href="#" onclick="switchTab('expense')" class="subtab-item h-full flex items-center px-3 text-gray-700 hover:text-red-700 border-b-2 border-transparent">支出</a>
-                <a id="subtab-bank" href="#" onclick="switchTab('bank')" class="subtab-item h-full flex items-center px-3 text-gray-700 hover:text-red-700 border-b-2 border-transparent">銀行</a>
-                <a id="subtab-residents" href="#" onclick="switchTab('residents')" class="subtab-item h-full flex items-center px-3 text-gray-700 hover:text-red-700 border-b-2 border-transparent">住戶</a>
-                <a id="subtab-settings" href="#" onclick="switchTab('settings')" class="subtab-item h-full flex items-center px-3 text-gray-700 hover:text-red-700 border-b-2 border-transparent">設定</a>
-            </div>
+            <div id="subtab-bar" class="h-[10%] bg-white border-b border-gray-200 px-6 flex items-center gap-4"></div>
 
             <!-- R03~R10 10% 列結構，用於與左側對齊 -->
             <div class="h-[10%] border-b border-gray-100"></div>
@@ -380,6 +373,125 @@
         </main>
     </div>
 
+    <div id="settings-modal" class="fixed inset-0 bg-black/50 hidden z-[60]">
+        <div class="absolute inset-0 bg-white flex flex-col">
+            <div class="h-14 flex items-center justify-between px-6 border-b">
+                <div class="flex items-center gap-4">
+                    <button id="settings-tab-accounts" class="px-3 py-1 border-b-2 border-transparent text-gray-700">帳號設定</button>
+                    <button id="settings-tab-communities" class="px-3 py-1 border-b-2 border-transparent text-gray-700">社區設定</button>
+                </div>
+                <button id="settings-close" class="text-gray-600 hover:text-red-700"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <div class="flex-1 overflow-auto p-6">
+                <div id="settings-view-accounts" class="space-y-4 hidden">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-bold text-gray-800">帳號列表</h3>
+                        <button id="btn-add-account" class="px-3 py-2 bg-red-600 text-white rounded">新增</button>
+                    </div>
+                    <div class="border rounded-lg overflow-hidden">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-100 text-gray-700">
+                                <tr>
+                                    <th class="px-4 py-2 text-left">帳號編號</th>
+                                    <th class="px-4 py-2 text-left">社區名稱</th>
+                                    <th class="px-4 py-2 text-left">姓名</th>
+                                    <th class="px-4 py-2 text-left">電子郵件</th>
+                                    <th class="px-4 py-2 text-left">手機號碼</th>
+                                    <th class="px-4 py-2 text-left">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="accounts-tbody" class="divide-y"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="settings-view-communities" class="space-y-4 hidden">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-bold text-gray-800">社區列表</h3>
+                        <button id="btn-add-community" class="px-3 py-2 bg-red-600 text-white rounded">新增</button>
+                    </div>
+                    <div class="border rounded-lg overflow-hidden">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-100 text-gray-700">
+                                <tr>
+                                    <th class="px-4 py-2 text-left">社區編號</th>
+                                    <th class="px-4 py-2 text-left">社區名稱</th>
+                                    <th class="px-4 py-2 text-left">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="communities-tbody" class="divide-y"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="modal-add-account" class="fixed inset-0 hidden z-[70]"> 
+            <div class="absolute inset-0 bg-black/40"></div>
+            <div class="absolute inset-0 flex items-center justify中心 p-6">
+                <div class="bg-white rounded-lg w-full max-w-lg p-6 space-y-4">
+                    <h4 class="text-lg font-bold">新增帳號</h4>
+                    <div>
+                        <label class="block text-sm mb-1">社區名稱</label>
+                        <select id="input-account-community" class="w-full border rounded px-3 py-2"></select>
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-1">姓名</label>
+                        <input id="input-account-name" class="w-full border rounded px-3 py-2" />
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-1">電子郵件 (預設帳號)</label>
+                        <input id="input-account-email" type="email" class="w-full border rounded px-3 py-2" />
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-1">手機號碼 (預設密碼)</label>
+                        <input id="input-account-phone" class="w-full border rounded px-3 py-2" />
+                    </div>
+                    <div class="flex justify-end gap-2">
+                        <button id="cancel-add-account" class="px-3 py-2 border rounded">取消</button>
+                        <button id="confirm-add-account" class="px-3 py-2 bg-red-600 text-white rounded">新增</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="modal-add-community" class="fixed inset-0 hidden z-[70]"> 
+            <div class="absolute inset-0 bg-black/40"></div>
+            <div class="absolute inset-0 flex items-center justify-center p-6">
+                <div class="bg-white rounded-lg w-full max-w-lg p-6 space-y-4">
+                    <h4 class="text-lg font-bold">新增社區</h4>
+                    <div>
+                        <label class="block text-sm mb-1">社區編號</label>
+                        <input id="input-community-code" class="w-full border rounded px-3 py-2" />
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-1">社區名稱</label>
+                        <input id="input-community-name" class="w-full border rounded px-3 py-2" />
+                    </div>
+                    <div class="flex justify-end gap-2">
+                        <button id="cancel-add-community" class="px-3 py-2 border rounded">取消</button>
+                        <button id="confirm-add-community" class="px-3 py-2 bg-red-600 text-white rounded">新增</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-settings-password" class="fixed inset-0 hidden z-[65]">
+        <div class="absolute inset-0 bg-black/40"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-6">
+            <div class="bg-white rounded-lg w-full max-w-sm p-6 space-y-4">
+                <h4 class="text-lg font-bold">輸入設定密碼</h4>
+                <input id="settings-pass-input" type="password" class="w-full border rounded px-3 py-2" placeholder="密碼" />
+                <p id="settings-pass-error" class="text-sm text-red-600 hidden">密碼錯誤</p>
+                <div class="flex justify-end gap-2">
+                    <button id="settings-pass-cancel" class="px-3 py-2 border rounded">取消</button>
+                    <button id="settings-pass-confirm" class="px-3 py-2 bg-red-600 text-white rounded">確認</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ==========================================
         // Firebase 設定與初始化
@@ -470,6 +582,8 @@
         if (persistedLogin) {
             if (lastLoginMode === 'demo') isDemoMode = true;
             enterApp();
+        } else {
+            if (loginView) loginView.style.visibility = 'visible';
         }
 
         function setLoginLoading(loading) {
@@ -508,8 +622,8 @@
         // 1. 處理登入
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = emailInput.value;
-            const password = passwordInput.value;
+            const email = (emailInput.value || '').trim();
+            const password = (passwordInput.value || '').trim();
             if (rememberMe && rememberMe.checked) {
                 localStorage.setItem('rememberMe', 'true');
                 localStorage.setItem('rememberEmail', email);
@@ -518,10 +632,16 @@
                 localStorage.removeItem('rememberEmail');
             }
             setLoginLoading(true);
+
+            // 先嘗試本機帳號登入（使用手機號碼作為預設密碼）
+            if (tryLocalLogin(email, password)) {
+                return;
+            }
             if (!navigator.onLine) {
                 isDemoMode = true;
                 loginError.classList.remove('hidden');
                 loginError.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-1"></i> 網路離線，進入預覽模式`;
+                setCurrentCommunityByEmail(email);
                 setTimeout(() => enterApp(), 300);
                 updateConnectionStatus();
                 setLoginLoading(false);
@@ -530,6 +650,7 @@
 
             if (isDemoMode) {
                 // 演示模式：任何非空輸入都允許登入
+                setCurrentCommunityByEmail(email);
                 enterApp();
             } else {
                 // 真實 Firebase 登入
@@ -560,10 +681,10 @@
         if (!isDemoMode && auth) {
             auth.onAuthStateChanged((user) => {
                 if (user) {
-                    console.log("User logged in:", user.uid);
+                    const email = user.email || '';
+                    setCurrentCommunityByEmail(email);
                     enterApp();
                 } else {
-                    console.log("User logged out");
                     exitApp();
                 }
             });
@@ -578,16 +699,26 @@
             setLoginLoading(false);
             localStorage.setItem('persistLogin','true');
             localStorage.setItem('lastLoginMode', isDemoMode ? 'demo' : 'firebase');
+            applyCommunityToUI();
         }
 
         // 登出/離開主程式
         function exitApp() {
             loginView.classList.remove('hidden');
             mainApp.classList.add('hidden');
+            if (loginView) loginView.style.visibility = 'visible';
             loginForm.reset();
             loginError.classList.add('hidden');
             localStorage.removeItem('persistLogin');
             localStorage.removeItem('lastLoginMode');
+            localStorage.removeItem('currentCommunityCode');
+            localStorage.removeItem('currentCommunityName');
+            const savedRemember = localStorage.getItem('rememberMe') === 'true';
+            if (savedRemember) {
+                const savedEmail = localStorage.getItem('rememberEmail') || '';
+                if (emailInput) emailInput.value = savedEmail;
+                if (rememberMe) rememberMe.checked = true;
+            }
             
             // 重置選單
             switchTab('dashboard');
@@ -595,19 +726,83 @@
 
         // 登出功能
         async function logout() {
-            if (!isDemoMode && auth) {
-                await auth.signOut();
-            } else {
-                exitApp();
+            try {
+                if (!isDemoMode && auth && auth.currentUser) {
+                    await auth.signOut();
+                }
+            } catch (e) {
+                console.warn('Logout error:', e);
             }
+            exitApp();
         }
 
         // ==========================================
         // 頁面切換邏輯
         // ==========================================
         
+        const SUBTAB_CONFIG = {
+            'dashboard': [],
+            'income': ['收入明細','收入設定'],
+            'expense': ['支出明細','支出設定'],
+            'bank': ['銀行明細','零用金明細','定存明細','銀行設定'],
+            'residents': ['住戶明細','住戶設定'],
+            'reports': ['日報表','月報表','年報表','報表設定'],
+            'settings': ['一般設定','社區帳號','備份還原']
+        };
+
+        function renderSubtabs(tabId) {
+            const bar = document.getElementById('subtab-bar');
+            if (!bar) return;
+            const items = SUBTAB_CONFIG[tabId] || [];
+            if (items.length === 0) {
+                bar.innerHTML = '';
+                return;
+            }
+            bar.innerHTML = items.map((label, idx) => {
+                const id = 'subtab-' + tabId + '-' + idx;
+                return '<a id="' + id + '" href="#" class="subtab-item h-full flex items-center px-3 text-gray-700 hover:text-red-700 border-b-2 border-transparent">' + label + '</a>';
+            }).join('');
+            const anchors = Array.from(bar.querySelectorAll('.subtab-item'));
+            anchors.forEach(a => {
+                a.addEventListener('click', e => {
+                    e.preventDefault();
+                    setActiveSubtab(a);
+                });
+            });
+            setActiveSubtab(anchors[0]);
+        }
+
+        function setActiveSubtab(el) {
+            if (!el) return;
+            const bar = document.getElementById('subtab-bar');
+            if (!bar) return;
+            bar.querySelectorAll('.subtab-item').forEach(a => {
+                a.classList.remove('text-red-700','border-red-700');
+                a.classList.add('text-gray-700');
+            });
+            el.classList.add('text-red-700','border-red-700');
+            el.classList.remove('text-gray-700');
+        }
+
+        function tryLocalLogin(email, password) {
+            const accounts = getAccounts();
+            const acc = accounts.find(a => a.email === email);
+            if (!acc) return false;
+            if (String(acc.phone) === String(password)) {
+                setCurrentCommunityByEmail(email);
+                localStorage.setItem('persistLogin','true');
+                localStorage.setItem('lastLoginMode','local');
+                enterApp();
+                return true;
+            } else {
+                loginError.classList.remove('hidden');
+                loginError.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-1"></i> 密碼錯誤`;
+                setLoginLoading(false);
+                return true; // 已處理（顯示錯誤），不再進行 Firebase 嘗試
+            }
+        }
+
         function switchTab(tabId) {
-            // 1. 更新側邊欄樣式
             document.querySelectorAll('.nav-item').forEach(el => {
                 el.classList.remove('bg-red-800', 'border-white');
                 el.classList.add('border-transparent');
@@ -618,23 +813,10 @@
                 activeNav.classList.remove('border-transparent');
             }
 
-            // 1b. 更新右側子分頁按鈕樣式
-            document.querySelectorAll('.subtab-item').forEach(el => {
-                el.classList.remove('text-red-700', 'border-red-700');
-                el.classList.add('text-gray-700');
-            });
-            const activeSub = document.getElementById('subtab-' + tabId);
-            if (activeSub) {
-                activeSub.classList.add('text-red-700', 'border-red-700');
-                activeSub.classList.remove('text-gray-700');
-            }
-
-            // 2. 切換視圖內容
             document.querySelectorAll('.content-view').forEach(el => el.classList.add('hidden'));
             const viewEl = document.getElementById('view-' + tabId);
             if (viewEl) viewEl.classList.remove('hidden');
 
-            // 3. 更新標題
             const titles = {
                 'dashboard': '<i class="fa-solid fa-chart-pie mr-2 text-red-600"></i> 財務總覽',
                 'income': '<i class="fa-solid fa-hand-holding-dollar mr-2 text-red-600"></i> 收入管理',
@@ -645,6 +827,7 @@
                 'settings': '<i class="fa-solid fa-gear mr-2 text-red-600"></i> 系統設定'
             };
             document.getElementById('page-title').innerHTML = titles[tabId] || '系統頁面';
+            renderSubtabs(tabId);
         }
 
         // ==========================================
@@ -664,6 +847,165 @@
                 // Demo 模式不需要做什麼，HTML 已經有假資料了
             }
         }
+
+        function setCurrentCommunityByEmail(email){
+            const accounts = getAccounts();
+            const acc = accounts.find(a => a.email === email);
+            const communities = getCommunities();
+            let name = '西北保全社區';
+            let code = 'NW001';
+            if (acc) {
+                name = acc.community;
+                const found = communities.find(c => c.name === name);
+                if (found) code = found.code;
+            } else {
+                const def = communities[0];
+                if (def) { name = def.name; code = def.code; }
+            }
+            localStorage.setItem('currentCommunityName', name);
+            localStorage.setItem('currentCommunityCode', code);
+        }
+
+        function applyCommunityToUI(){
+            const name = localStorage.getItem('currentCommunityName') || '西北保全社區';
+            const span = document.getElementById('sidebar-community-name');
+            if (span) span.textContent = name;
+        }
+
+        const settingsModal = document.getElementById('settings-modal');
+        const tabAccountsBtn = document.getElementById('settings-tab-accounts');
+        const tabCommunitiesBtn = document.getElementById('settings-tab-communities');
+        const viewAccounts = document.getElementById('settings-view-accounts');
+        const viewCommunities = document.getElementById('settings-view-communities');
+        const settingsClose = document.getElementById('settings-close');
+        const loginLogo = document.getElementById('login-logo');
+        const btnAddAccount = document.getElementById('btn-add-account');
+        const btnAddCommunity = document.getElementById('btn-add-community');
+        const modalAddAccount = document.getElementById('modal-add-account');
+        const modalAddCommunity = document.getElementById('modal-add-community');
+        const inputAccountCommunity = document.getElementById('input-account-community');
+        const inputAccountName = document.getElementById('input-account-name');
+        const inputAccountEmail = document.getElementById('input-account-email');
+        const inputAccountPhone = document.getElementById('input-account-phone');
+        const confirmAddAccount = document.getElementById('confirm-add-account');
+        const cancelAddAccount = document.getElementById('cancel-add-account');
+        const inputCommunityCode = document.getElementById('input-community-code');
+        const inputCommunityName = document.getElementById('input-community-name');
+        const confirmAddCommunity = document.getElementById('confirm-add-community');
+        const cancelAddCommunity = document.getElementById('cancel-add-community');
+        const accountsTbody = document.getElementById('accounts-tbody');
+        const communitiesTbody = document.getElementById('communities-tbody');
+        const modalSettingsPass = document.getElementById('modal-settings-password');
+        const settingsPassInput = document.getElementById('settings-pass-input');
+        const settingsPassError = document.getElementById('settings-pass-error');
+        const settingsPassConfirm = document.getElementById('settings-pass-confirm');
+        const settingsPassCancel = document.getElementById('settings-pass-cancel');
+
+        function getAccounts(){
+            try { return JSON.parse(localStorage.getItem('admin_accounts')||'[]'); } catch(e){ return []; }
+        }
+        function setAccounts(arr){ localStorage.setItem('admin_accounts', JSON.stringify(arr)); }
+        function getCommunities(){
+            try { return JSON.parse(localStorage.getItem('communities')||'[]'); } catch(e){ return []; }
+        }
+        function setCommunities(arr){ localStorage.setItem('communities', JSON.stringify(arr)); }
+
+        function ensureDefaults(){
+            let c = getCommunities();
+            if (c.length === 0) { c = [{code:'NW001', name:'西北保全社區'}]; setCommunities(c); }
+            let a = getAccounts();
+            if (a.length === 0) { a = [{id: genAccountId(), community:'西北保全社區', name:'管理員', email:'admin@example.com', phone:'0912345678'}]; setAccounts(a); }
+        }
+        function genAccountId(){
+            const d = new Date();
+            const ymd = d.getFullYear().toString()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');
+            const a = getAccounts().filter(x=>x.id.startsWith(ymd));
+            const next = a.length+1;
+            return ymd+String(next).padStart(2,'0');
+        }
+        function renderCommunityOptions(){
+            const c = getCommunities();
+            inputAccountCommunity.innerHTML = c.map(x=>'<option value="'+x.name+'">'+x.name+'</option>').join('');
+        }
+        function renderAccounts(){
+            const arr = getAccounts();
+            accountsTbody.innerHTML = arr.map((x,i)=>{
+                return '<tr><td class="px-4 py-2">'+x.id+'</td><td class="px-4 py-2">'+x.community+'</td><td class="px-4 py-2">'+x.name+'</td><td class="px-4 py-2">'+x.email+'</td><td class="px-4 py-2">'+x.phone+'</td><td class="px-4 py-2"><button data-i="'+i+'" class="edit-account text-blue-600 mr-2">編輯</button><button data-i="'+i+'" class="delete-account text-red-600">刪除</button></td></tr>';
+            }).join('');
+            accountsTbody.querySelectorAll('.delete-account').forEach(btn=>{
+                btn.addEventListener('click', ()=>{
+                    const idx = parseInt(btn.getAttribute('data-i')); const arr2 = getAccounts(); arr2.splice(idx,1); setAccounts(arr2); renderAccounts();
+                });
+            });
+            accountsTbody.querySelectorAll('.edit-account').forEach(btn=>{
+                btn.addEventListener('click', ()=>{
+                    const idx = parseInt(btn.getAttribute('data-i')); const arr2 = getAccounts(); const item = arr2[idx];
+                    inputAccountCommunity.value = item.community; inputAccountName.value = item.name; inputAccountEmail.value = item.email; inputAccountPhone.value = item.phone;
+                    modalAddAccount.classList.remove('hidden');
+                    confirmAddAccount.onclick = () => {
+                        item.community = inputAccountCommunity.value; item.name = inputAccountName.value; item.email = inputAccountEmail.value; item.phone = inputAccountPhone.value; setAccounts(arr2); modalAddAccount.classList.add('hidden'); renderAccounts();
+                    };
+                    cancelAddAccount.onclick = () => { modalAddAccount.classList.add('hidden'); };
+                });
+            });
+        }
+        function renderCommunities(){
+            const arr = getCommunities();
+            communitiesTbody.innerHTML = arr.map((x,i)=>{
+                return '<tr><td class="px-4 py-2">'+x.code+'</td><td class="px-4 py-2">'+x.name+'</td><td class="px-4 py-2"><button data-i="'+i+'" class="edit-community text-blue-600 mr-2">編輯</button><button data-i="'+i+'" class="delete-community text-red-600">刪除</button></td></tr>';
+            }).join('');
+            communitiesTbody.querySelectorAll('.delete-community').forEach(btn=>{
+                btn.addEventListener('click', ()=>{
+                    const idx = parseInt(btn.getAttribute('data-i')); const arr2 = getCommunities(); arr2.splice(idx,1); setCommunities(arr2); renderCommunities(); renderCommunityOptions();
+                });
+            });
+            communitiesTbody.querySelectorAll('.edit-community').forEach(btn=>{
+                btn.addEventListener('click', ()=>{
+                    const idx = parseInt(btn.getAttribute('data-i')); const arr2 = getCommunities(); const item = arr2[idx];
+                    inputCommunityCode.value = item.code; inputCommunityName.value = item.name; modalAddCommunity.classList.remove('hidden');
+                    confirmAddCommunity.onclick = () => {
+                        item.code = inputCommunityCode.value; item.name = inputCommunityName.value; setCommunities(arr2); modalAddCommunity.classList.add('hidden'); renderCommunities(); renderCommunityOptions();
+                    };
+                    cancelAddCommunity.onclick = () => { modalAddCommunity.classList.add('hidden'); };
+                });
+            });
+        }
+        function openSettingsModal(defaultTab){
+            ensureDefaults(); renderCommunityOptions(); renderAccounts(); renderCommunities(); settingsModal.classList.remove('hidden');
+            activateSettingsTab(defaultTab||'accounts');
+        }
+        function closeSettingsModal(){ settingsModal.classList.add('hidden'); }
+        function activateSettingsTab(which){
+            if (which==='accounts'){ viewAccounts.classList.remove('hidden'); viewCommunities.classList.add('hidden'); tabAccountsBtn.classList.add('border-red-700','text-red-700'); tabCommunitiesBtn.classList.remove('border-red-700','text-red-700'); }
+            else { viewAccounts.classList.add('hidden'); viewCommunities.classList.remove('hidden'); tabCommunitiesBtn.classList.add('border-red-700','text-red-700'); tabAccountsBtn.classList.remove('border-red-700','text-red-700'); }
+        }
+        function getGuardPass(){
+            const d = new Date();
+            const mm = String(d.getMonth()+1).padStart(2,'0');
+            const dd = String(d.getDate()).padStart(2,'0');
+            return mm+dd+'0217';
+        }
+        function openSettingsGuard(){
+            settingsPassError.classList.add('hidden');
+            settingsPassInput.value = '';
+            modalSettingsPass.classList.remove('hidden');
+        }
+        function closeSettingsGuard(){
+            modalSettingsPass.classList.add('hidden');
+        }
+        if (loginLogo){ loginLogo.addEventListener('click', openSettingsGuard); }
+        if (settingsPassCancel){ settingsPassCancel.addEventListener('click', closeSettingsGuard); }
+        if (settingsPassConfirm){ settingsPassConfirm.addEventListener('click', ()=>{
+            const ok = settingsPassInput.value === getGuardPass();
+            if (ok){ closeSettingsGuard(); openSettingsModal('communities'); }
+            else { settingsPassError.classList.remove('hidden'); }
+        }); }
+        if (settingsPassInput){ settingsPassInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ settingsPassConfirm.click(); } }); }
+        if (settingsClose){ settingsClose.addEventListener('click', closeSettingsModal); }
+        if (tabAccountsBtn){ tabAccountsBtn.addEventListener('click', ()=> activateSettingsTab('accounts')); }
+        if (tabCommunitiesBtn){ tabCommunitiesBtn.addEventListener('click', ()=> activateSettingsTab('communities')); }
+        if (btnAddAccount){ btnAddAccount.addEventListener('click', ()=>{ renderCommunityOptions(); inputAccountName.value=''; inputAccountEmail.value=''; inputAccountPhone.value=''; modalAddAccount.classList.remove('hidden'); confirmAddAccount.onclick = ()=>{ const arr = getAccounts(); arr.push({id: genAccountId(), community: inputAccountCommunity.value, name: inputAccountName.value, email: inputAccountEmail.value, phone: inputAccountPhone.value}); setAccounts(arr); modalAddAccount.classList.add('hidden'); renderAccounts(); }; cancelAddAccount.onclick = ()=> modalAddAccount.classList.add('hidden'); }); }
+        if (btnAddCommunity){ btnAddCommunity.addEventListener('click', ()=>{ inputCommunityCode.value=''; inputCommunityName.value=''; modalAddCommunity.classList.remove('hidden'); confirmAddCommunity.onclick = ()=>{ const arr = getCommunities(); arr.push({code: inputCommunityCode.value, name: inputCommunityName.value}); setCommunities(arr); modalAddCommunity.classList.add('hidden'); renderCommunities(); renderCommunityOptions(); }; cancelAddCommunity.onclick = ()=> modalAddCommunity.classList.add('hidden'); }); }
 
     </script>
 </body>
