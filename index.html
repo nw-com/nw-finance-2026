@@ -58,7 +58,7 @@
     <div id="login-view" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-200" style="background-image: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%); visibility:hidden;">
         <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md border-t-4 border-red-700">
             <div class="text-center mb-8">
-                <div id="login-logo" class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 text-red-700 mb-4 cursor-pointer">
+                <div id="login-logo" class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 text-red-700 mb-4">
                     <i class="fa-solid fa-building-columns text-3xl"></i>
                 </div>
                 <h1 class="text-2xl font-bold text-gray-800">西北社區財務系統</h1>
@@ -118,7 +118,7 @@
         <!-- 左側導覽列 (10% 寬度) -->
         <aside class="w-[15%] bg-red-900 text-white flex flex-col shadow-lg relative z-20 min-w-[100px]">
             <div class="flex flex-col h-full">
-                <div class="h-[10%] box-border flex-none flex items-center justify-center px-6 border-b border-red-800 bg-red-950">
+                <div id="main-logo" class="h-[10%] box-border flex-none flex items-center justify-center px-6 border-b border-red-800 bg-red-950">
                     <i class="fa-solid fa-shield-halved text-[28px] text-red-100"></i>
                 </div>
                 <div class="h-[10%] box-border flex-none flex items-center justify-center">
@@ -719,6 +719,8 @@
             localStorage.setItem('persistLogin','true');
             localStorage.setItem('lastLoginMode', isDemoMode ? 'demo' : 'firebase');
             applyCommunityToUI();
+            updateUserDisplayName();
+            attachMainLogoPermission();
         }
 
         // 登出/離開主程式
@@ -732,6 +734,7 @@
             localStorage.removeItem('lastLoginMode');
             localStorage.removeItem('currentCommunityCode');
             localStorage.removeItem('currentCommunityName');
+            localStorage.removeItem('currentUserEmail');
             const savedRemember = localStorage.getItem('rememberMe') === 'true';
             if (savedRemember) {
                 const savedEmail = localStorage.getItem('rememberEmail') || '';
@@ -741,6 +744,7 @@
             
             // 重置選單
             switchTab('dashboard');
+            updateUserDisplayName();
         }
 
         // 登出功能
@@ -919,6 +923,7 @@
         const viewCommunities = document.getElementById('settings-view-communities');
         const settingsClose = document.getElementById('settings-close');
         const loginLogo = document.getElementById('login-logo');
+        const mainLogo = document.getElementById('main-logo');
         const btnAddAccount = document.getElementById('btn-add-account');
         const btnAddCommunity = document.getElementById('btn-add-community');
         const modalAddAccount = document.getElementById('modal-add-account');
@@ -1140,11 +1145,18 @@
         function closeSettingsGuard(){
             modalSettingsPass.classList.add('hidden');
         }
-        if (loginLogo){ loginLogo.addEventListener('click', openSettingsGuard); }
+
         if (settingsPassCancel){ settingsPassCancel.addEventListener('click', closeSettingsGuard); }
         if (settingsPassConfirm){ settingsPassConfirm.addEventListener('click', ()=>{
             const ok = settingsPassInput.value === getGuardPass();
-            if (ok){ closeSettingsGuard(); openSettingsModal('communities'); }
+            if (ok){
+                closeSettingsGuard();
+                if (loginError){
+                    loginError.classList.remove('hidden');
+                    loginError.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-1"></i> 雲端權限不足或讀取失敗，改用本機設定`;
+                }
+                openSettingsModal('communities');
+            }
             else { settingsPassError.classList.remove('hidden'); }
         }); }
         if (settingsPassInput){ settingsPassInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ settingsPassConfirm.click(); } }); }
@@ -1154,6 +1166,23 @@
             return localStorage.getItem('currentUserEmail') || '';
         }
         function isAdminEmail(email){ return email === 'nwapp.eason@gmail.com'; }
+        function updateUserDisplayName(){
+            const el = document.getElementById('user-display-name');
+            if (!el) return;
+            const email = getCurrentUserEmail();
+            el.textContent = email ? email : '未登入';
+        }
+        function attachMainLogoPermission(){
+            const email = getCurrentUserEmail();
+            const ml = document.getElementById('main-logo');
+            if (!ml) return;
+            ml.classList.remove('cursor-pointer');
+            ml.onclick = null;
+            if (isAdminEmail(email)){
+                ml.classList.add('cursor-pointer');
+                ml.onclick = ()=> openSettingsModal();
+            }
+        }
         async function openCommunitySwitcher(){
             const email = getCurrentUserEmail();
             if (!isAdminEmail(email)) return;
