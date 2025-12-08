@@ -1284,7 +1284,17 @@
                     const idx = parseInt(btn.getAttribute('data-i'));
                     fetchCommunities().then(arr2 => {
                         const item = arr2[idx];
-                        inputCommunityCode.value = item.code; inputCommunityName.value = item.name; modalAddCommunity.classList.remove('hidden');
+                        inputCommunityCode.value = item.code;
+                        inputCommunityName.value = item.name;
+                        
+                        // Switch to Edit Mode
+                        const title = modalAddCommunity.querySelector('h4');
+                        if (title) title.textContent = '編輯社區';
+                        confirmAddCommunity.textContent = '確認';
+                        inputCommunityCode.disabled = true;
+                        inputCommunityCode.classList.add('bg-gray-100');
+
+                        modalAddCommunity.classList.remove('hidden');
                         confirmAddCommunity.onclick = () => {
                             updateCommunity(inputCommunityCode.value, inputCommunityName.value).then(()=>{ modalAddCommunity.classList.add('hidden'); renderCommunities(); renderCommunityOptions(); });
                         };
@@ -1376,7 +1386,11 @@
             const el = document.getElementById('user-display-name');
             if (!el) return;
             const email = getCurrentUserEmail();
-            el.textContent = email ? email : '未登入';
+            if (isAdminEmail(email)) {
+                el.textContent = '系統管理員';
+            } else {
+                el.textContent = email ? email : '未登入';
+            }
         }
         function attachMainLogoPermission(){
             const email = getCurrentUserEmail();
@@ -1417,7 +1431,35 @@
         if (tabAccountsBtn){ tabAccountsBtn.addEventListener('click', ()=> activateSettingsTab('accounts')); }
         if (tabCommunitiesBtn){ tabCommunitiesBtn.addEventListener('click', ()=> activateSettingsTab('communities')); }
         if (btnAddAccount){ btnAddAccount.addEventListener('click', async ()=>{ await ensureAuthForSettings(); await renderCommunityOptions(); inputAccountName.value=''; inputAccountEmail.value=''; inputAccountPhone.value=''; modalAddAccount.classList.remove('hidden'); confirmAddAccount.onclick = async ()=>{ const acc = {id: genAccountId(), community: inputAccountCommunity.value, name: inputAccountName.value, email: inputAccountEmail.value, phone: inputAccountPhone.value}; try { if (useCloud()){ const email = getCurrentUserEmail(); if (!isAdminEmail(email)) throw new Error('非系統管理員不可新增帳號'); await auth.createUserWithEmailAndPassword(acc.email, acc.phone); } await saveAccount(acc); modalAddAccount.classList.add('hidden'); renderAccounts(); } catch(e){ alert('新增帳號失敗：'+(e && e.message ? e.message : e)); } }; cancelAddAccount.onclick = ()=> modalAddAccount.classList.add('hidden'); }); }
-        if (btnAddCommunity){ btnAddCommunity.addEventListener('click', async ()=>{ await ensureAuthForSettings(); inputCommunityCode.value=''; inputCommunityName.value=''; modalAddCommunity.classList.remove('hidden'); confirmAddCommunity.onclick = async ()=>{ try { if (useCloud()){ const email = getCurrentUserEmail(); if (!isAdminEmail(email)) throw new Error('非系統管理員不可新增社區'); } await saveCommunity(inputCommunityCode.value, inputCommunityName.value); modalAddCommunity.classList.add('hidden'); renderCommunities(); renderCommunityOptions(); } catch(e){ alert('新增社區失敗：'+(e && e.message ? e.message : e)); } }; cancelAddCommunity.onclick = ()=> modalAddCommunity.classList.add('hidden'); }); }
+        if (btnAddCommunity){ btnAddCommunity.addEventListener('click', async ()=>{ 
+            await ensureAuthForSettings(); 
+            inputCommunityCode.value=''; 
+            inputCommunityName.value=''; 
+            
+            // Switch to Add Mode
+            const title = modalAddCommunity.querySelector('h4');
+            if (title) title.textContent = '新增社區';
+            confirmAddCommunity.textContent = '新增';
+            inputCommunityCode.disabled = false;
+            inputCommunityCode.classList.remove('bg-gray-100');
+
+            modalAddCommunity.classList.remove('hidden'); 
+            confirmAddCommunity.onclick = async ()=>{ 
+                try { 
+                    if (useCloud()){ 
+                        const email = getCurrentUserEmail(); 
+                        if (!isAdminEmail(email)) throw new Error('非系統管理員不可新增社區'); 
+                    } 
+                    await saveCommunity(inputCommunityCode.value, inputCommunityName.value); 
+                    modalAddCommunity.classList.add('hidden'); 
+                    renderCommunities(); 
+                    renderCommunityOptions(); 
+                } catch(e){ 
+                    alert('新增社區失敗：'+(e && e.message ? e.message : e)); 
+                } 
+            }; 
+            cancelAddCommunity.onclick = ()=> modalAddCommunity.classList.add('hidden'); 
+        }); }
 
         function getCurrentCommunityCode(){ return localStorage.getItem('currentCommunityCode') || 'NW001'; }
         function lsGet(key){ try { return JSON.parse(localStorage.getItem(key)||'[]'); } catch(e){ return []; } }
