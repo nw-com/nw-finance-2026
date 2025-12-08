@@ -1028,7 +1028,7 @@
                 localStorage.setItem('currentUserEmail', email);
                 localStorage.setItem('persistLogin','true');
                 localStorage.setItem('lastLoginMode','local');
-                enterApp();
+                enterApp('local');
                 return true;
             } else {
                 loginError.classList.remove('hidden');
@@ -1169,7 +1169,11 @@
             try { return JSON.parse(localStorage.getItem('communities')||'[]'); } catch(e){ return []; }
         }
         function setCommunities(arr){ localStorage.setItem('communities', JSON.stringify(arr)); }
-        function useCloud(){ return !!db && cloudAvailable; }
+        function useCloud(){ 
+            const mode = localStorage.getItem('lastLoginMode');
+            if (mode === 'local') return false;
+            return !!db && cloudAvailable; 
+        }
         async function fetchCommunities(){
             if (useCloud()){
                 const snap = await db.collection('communities').get();
@@ -1177,8 +1181,8 @@
             }
             return getCommunities();
         }
-        async function saveCommunity(code,name){
-            if (useCloud()){
+        async function saveCommunity(code,name,forceLocal=false){
+            if (useCloud() && !forceLocal){
                 await db.collection('communities').doc(code).set({code,name});
             } else {
                 const arr = getCommunities();
@@ -1186,8 +1190,8 @@
                 setCommunities(arr);
             }
         }
-        async function updateCommunity(code,name){
-            if (useCloud()){
+        async function updateCommunity(code,name,forceLocal=false){
+            if (useCloud() && !forceLocal){
                 await db.collection('communities').doc(code).set({code,name},{merge:true});
             } else {
                 const arr = getCommunities();
@@ -1195,8 +1199,8 @@
                 if (idx>=0){ arr[idx].name = name; setCommunities(arr); }
             }
         }
-        async function deleteCommunity(code){
-            if (useCloud()){
+        async function deleteCommunity(code,forceLocal=false){
+            if (useCloud() && !forceLocal){
                 await db.collection('communities').doc(code).delete();
             } else {
                 const arr = getCommunities().filter(x=>x.code!==code);
@@ -1210,22 +1214,22 @@
             }
             return getAccounts();
         }
-        async function saveAccount(acc){
-            if (useCloud()){
+        async function saveAccount(acc,forceLocal=false){
+            if (useCloud() && !forceLocal){
                 await db.collection('accounts').doc(acc.id).set(acc);
             } else {
                 const arr = getAccounts(); arr.push(acc); setAccounts(arr);
             }
         }
-        async function updateAccount(acc){
-            if (useCloud()){
+        async function updateAccount(acc,forceLocal=false){
+            if (useCloud() && !forceLocal){
                 await db.collection('accounts').doc(acc.id).set(acc,{merge:true});
             } else {
                 const arr = getAccounts(); const idx = arr.findIndex(x=>x.id===acc.id); if (idx>=0){ arr[idx]=acc; setAccounts(arr); }
             }
         }
-        async function deleteAccountByIndex(idx){
-            if (useCloud()){
+        async function deleteAccountByIndex(idx,forceLocal=false){
+            if (useCloud() && !forceLocal){
                 const arr = await fetchAccounts(); const acc = arr[idx]; if (acc){ await db.collection('accounts').doc(acc.id).delete(); }
             } else {
                 const arr = getAccounts(); arr.splice(idx,1); setAccounts(arr);
@@ -1402,7 +1406,10 @@
             if (!isDemoMode && auth && auth.currentUser && auth.currentUser.email) return auth.currentUser.email;
             return localStorage.getItem('currentUserEmail') || '';
         }
-        function isAdminEmail(email){ return email === 'nwapp.eason@gmail.com'; }
+        function isAdminEmail(email){ 
+            if (!email) return false;
+            return String(email).trim().toLowerCase() === 'nwapp.eason@gmail.com'; 
+        }
         function updateUserDisplayName(){
             const el = document.getElementById('user-display-name');
             if (!el) return;
@@ -1473,12 +1480,26 @@
                     phone: inputAccountPhone.value.trim()
                 }; 
                 try { 
+                    let forceLocal = false;
                     if (useCloud()){ 
                         const email = getCurrentUserEmail(); 
-                        if (!isAdminEmail(email)) throw new Error('非系統管理員不可新增帳號'); 
-                        await auth.createUserWithEmailAndPassword(acc.email, acc.phone); 
+                        if (!isAdminEmail(email)) {
+                            if (confirm('新增帳號失敗：非系統管理員不可新增雲端帳號。\n是否要建立「本機僅有」的帳號？(僅供本機測試用，不會同步到雲端)')) {
+                                forceLocal = true;
+                            } else {
+                                return;
+                            }
+                        } else {
+                           // Admin creating cloud account
+                           try {
+                               await auth.createUserWithEmailAndPassword(acc.email, acc.phone); 
+                           } catch(err) {
+                               console.warn("Create cloud user warning:", err);
+                               // Continue to save doc even if auth creation fails (e.g. user exists)
+                           }
+                        }
                     } 
-                    await saveAccount(acc); 
+                    await saveAccount(acc, forceLocal); 
                     modalAddAccount.classList.add('hidden'); 
                     renderAccounts(); 
                 } catch(e){ 
@@ -1502,11 +1523,18 @@
             modalAddCommunity.classList.remove('hidden'); 
             confirmAddCommunity.onclick = async ()=>{ 
                 try { 
+                    let forceLocal = false;
                     if (useCloud()){ 
                         const email = getCurrentUserEmail(); 
-                        if (!isAdminEmail(email)) throw new Error('非系統管理員不可新增社區'); 
+                        if (!isAdminEmail(email)) {
+                             if (confirm('新增社區失敗：非系統管理員不可新增雲端社區。\n是否要建立「本機僅有」的社區？(僅供本機測試用，不會同步到雲端)')) {
+                                forceLocal = true;
+                            } else {
+                                return;
+                            }
+                        } 
                     } 
-                    await saveCommunity(inputCommunityCode.value, inputCommunityName.value); 
+                    await saveCommunity(inputCommunityCode.value, inputCommunityName.value, forceLocal); 
                     modalAddCommunity.classList.add('hidden'); 
                     renderCommunities(); 
                     renderCommunityOptions(); 
