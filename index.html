@@ -1017,7 +1017,7 @@
             const accounts = getAccounts();
             const acc = accounts.find(a => a.email === email);
             if (!acc) return false;
-            if (String(acc.phone) === String(password)) {
+            if (String(acc.phone).trim() === String(password).trim()) {
                 setCurrentCommunityByEmail(email);
                 localStorage.setItem('currentUserEmail', email);
                 localStorage.setItem('persistLogin','true');
@@ -1258,10 +1258,25 @@
                     const idx = parseInt(btn.getAttribute('data-i'));
                     fetchAccounts().then(arr2 => {
                         const item = arr2[idx];
-                        inputAccountCommunity.value = item.community; inputAccountName.value = item.name; inputAccountEmail.value = item.email; inputAccountPhone.value = item.phone;
+                        inputAccountCommunity.value = item.community; 
+                        inputAccountName.value = item.name; 
+                        inputAccountEmail.value = item.email; 
+                        inputAccountPhone.value = item.phone;
+                        
+                        // Switch to Edit Mode
+                        const title = modalAddAccount.querySelector('h4');
+                        if (title) title.textContent = '編輯帳號';
+                        confirmAddAccount.textContent = '確認';
+
                         modalAddAccount.classList.remove('hidden');
                         confirmAddAccount.onclick = async () => {
-                            item.community = inputAccountCommunity.value; item.name = inputAccountName.value; item.email = inputAccountEmail.value; item.phone = inputAccountPhone.value; await updateAccount(item); modalAddAccount.classList.add('hidden'); renderAccounts();
+                            item.community = inputAccountCommunity.value; 
+                            item.name = inputAccountName.value.trim(); 
+                            item.email = inputAccountEmail.value.trim(); 
+                            item.phone = inputAccountPhone.value.trim(); 
+                            await updateAccount(item); 
+                            modalAddAccount.classList.add('hidden'); 
+                            renderAccounts();
                         };
                         cancelAddAccount.onclick = () => { modalAddAccount.classList.add('hidden'); };
                     });
@@ -1430,7 +1445,42 @@
         if (settingsClose){ settingsClose.addEventListener('click', closeSettingsModal); }
         if (tabAccountsBtn){ tabAccountsBtn.addEventListener('click', ()=> activateSettingsTab('accounts')); }
         if (tabCommunitiesBtn){ tabCommunitiesBtn.addEventListener('click', ()=> activateSettingsTab('communities')); }
-        if (btnAddAccount){ btnAddAccount.addEventListener('click', async ()=>{ await ensureAuthForSettings(); await renderCommunityOptions(); inputAccountName.value=''; inputAccountEmail.value=''; inputAccountPhone.value=''; modalAddAccount.classList.remove('hidden'); confirmAddAccount.onclick = async ()=>{ const acc = {id: genAccountId(), community: inputAccountCommunity.value, name: inputAccountName.value, email: inputAccountEmail.value, phone: inputAccountPhone.value}; try { if (useCloud()){ const email = getCurrentUserEmail(); if (!isAdminEmail(email)) throw new Error('非系統管理員不可新增帳號'); await auth.createUserWithEmailAndPassword(acc.email, acc.phone); } await saveAccount(acc); modalAddAccount.classList.add('hidden'); renderAccounts(); } catch(e){ alert('新增帳號失敗：'+(e && e.message ? e.message : e)); } }; cancelAddAccount.onclick = ()=> modalAddAccount.classList.add('hidden'); }); }
+        if (btnAddAccount){ btnAddAccount.addEventListener('click', async ()=>{ 
+            await ensureAuthForSettings(); 
+            await renderCommunityOptions(); 
+            inputAccountName.value=''; 
+            inputAccountEmail.value=''; 
+            inputAccountPhone.value=''; 
+            
+            // Switch to Add Mode
+            const title = modalAddAccount.querySelector('h4');
+            if (title) title.textContent = '新增帳號';
+            confirmAddAccount.textContent = '新增';
+            
+            modalAddAccount.classList.remove('hidden'); 
+            confirmAddAccount.onclick = async ()=>{ 
+                const acc = {
+                    id: genAccountId(), 
+                    community: inputAccountCommunity.value, 
+                    name: inputAccountName.value.trim(), 
+                    email: inputAccountEmail.value.trim(), 
+                    phone: inputAccountPhone.value.trim()
+                }; 
+                try { 
+                    if (useCloud()){ 
+                        const email = getCurrentUserEmail(); 
+                        if (!isAdminEmail(email)) throw new Error('非系統管理員不可新增帳號'); 
+                        await auth.createUserWithEmailAndPassword(acc.email, acc.phone); 
+                    } 
+                    await saveAccount(acc); 
+                    modalAddAccount.classList.add('hidden'); 
+                    renderAccounts(); 
+                } catch(e){ 
+                    alert('新增帳號失敗：'+(e && e.message ? e.message : e)); 
+                } 
+            }; 
+            cancelAddAccount.onclick = ()=> modalAddAccount.classList.add('hidden'); 
+        }); }
         if (btnAddCommunity){ btnAddCommunity.addEventListener('click', async ()=>{ 
             await ensureAuthForSettings(); 
             inputCommunityCode.value=''; 
