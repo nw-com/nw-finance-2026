@@ -870,8 +870,14 @@
                         // 允許本機帳號作為後備登入
                         const handled = tryLocalLogin(email, password);
                         if (!handled) {
-                            loginError.classList.remove('hidden');
-                            loginError.innerHTML = `<i class=\"fa-solid fa-circle-exclamation mr-1\"></i> ${error.message}`;
+                            if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                                // 如果是 Firebase 帳號錯誤，但本機帳號也失敗，就顯示「帳號或密碼錯誤」
+                                loginError.classList.remove('hidden');
+                                loginError.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-1"></i> 帳號或密碼錯誤`;
+                            } else {
+                                loginError.classList.remove('hidden');
+                                loginError.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-1"></i> ${error.message}`;
+                            }
                         }
                     }
                     setLoginLoading(false);
