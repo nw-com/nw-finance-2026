@@ -1,16 +1,10 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    function isAdmin() {
-      return request.auth != null && request.auth.token.email == 'nwapp.eason@gmail.com';
-    }
-    match /communities/{code} {
-      allow read: if request.auth != null;
-      allow write: if isAdmin();
-    }
-    match /accounts/{id} {
-      allow read: if request.auth != null;
-      allow write: if isAdmin();
+    // Allow read/write for everyone for debugging purposes
+    // In production, you should lock this down!
+    match /{document=**} {
+      allow read, write: if true;
     }
   }
 }

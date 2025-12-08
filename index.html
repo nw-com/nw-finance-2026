@@ -556,8 +556,8 @@
 
         <div id="modal-add-account" class="fixed inset-0 hidden z-[70]"> 
             <div class="absolute inset-0 bg-black/40"></div>
-            <div class="absolute inset-0 flex items-center justify中心 p-6">
-                <div class="bg-white rounded-lg w-full max-w-lg p-6 space-y-4">
+            <div class="absolute inset-0 flex items-center justify-center p-6">
+                <div class="bg-white rounded-lg w-full max-w-lg p-6 space-y-4 shadow-xl">
                     <h4 class="text-lg font-bold">新增帳號</h4>
                     <div>
                         <label class="block text-sm mb-1">社區名稱</label>
@@ -736,11 +736,35 @@
                 app = firebase.initializeApp(firebaseConfig);
                 auth = firebase.auth();
                 db = firebase.firestore();
+                // Default to standard settings.
+                // If you experience "Could not reach Firestore backend" errors, you might need to re-enable long polling.
+                // However, long polling often causes "net::ERR_ABORTED" logs in the console which are noisy but usually harmless.
+                // We disable it here to reduce console noise, using WebSockets by default.
+                try {
+                    db.settings({ 
+                        ignoreUndefinedProperties: true,
+                        experimentalForceLongPolling: false
+                    });
+                } catch(err) {
+                    console.warn("Error setting firestore settings:", err);
+                }
                 console.log("Firebase initialized successfully");
                 // 確保有身份以便讀取雲端設定
                 // 若尚未登入，進行匿名登入（需在 Firebase Console 啟用 Anonymous）
                 if (!isDemoMode) {
-                    (async ()=>{ try { if (!auth.currentUser) { await auth.signInAnonymously(); localStorage.setItem('lastLoginMode','anonymous'); } } catch(e){ console.warn('Anonymous sign-in failed:', e); } })();
+                    (async ()=>{ 
+                        try { 
+                            if (!auth.currentUser) { 
+                                // 嘗試匿名登入，若失敗則不報錯，僅記錄警告
+                                await auth.signInAnonymously().catch(e => {
+                                    console.warn('Auto anonymous sign-in failed (likely disabled in console):', e.code);
+                                });
+                                localStorage.setItem('lastLoginMode','anonymous'); 
+                            } 
+                        } catch(e){ 
+                            console.warn('Anonymous sign-in process error:', e); 
+                        } 
+                    })();
                 }
             } else {
                 isDemoMode = true; // 如果沒有金鑰，進入純前端演示模式
@@ -1182,57 +1206,103 @@
             return getCommunities();
         }
         async function saveCommunity(code,name,forceLocal=false){
-            if (useCloud() && !forceLocal){
-                await db.collection('communities').doc(code).set({code,name});
-            } else {
-                const arr = getCommunities();
-                arr.push({code,name});
-                setCommunities(arr);
+            try {
+                if (useCloud() && !forceLocal){
+                    await db.collection('communities').doc(code).set({code,name});
+                } else {
+                    const arr = getCommunities();
+                    arr.push({code,name});
+                    setCommunities(arr);
+                }
+            } catch(e) {
+                console.error("Save community error:", e);
+                alert("儲存失敗，請檢查網路連線");
+                throw e;
             }
         }
         async function updateCommunity(code,name,forceLocal=false){
-            if (useCloud() && !forceLocal){
-                await db.collection('communities').doc(code).set({code,name},{merge:true});
-            } else {
-                const arr = getCommunities();
-                const idx = arr.findIndex(x=>x.code===code);
-                if (idx>=0){ arr[idx].name = name; setCommunities(arr); }
+            try {
+                if (useCloud() && !forceLocal){
+                    await db.collection('communities').doc(code).set({code,name},{merge:true});
+                } else {
+                    const arr = getCommunities();
+                    const idx = arr.findIndex(x=>x.code===code);
+                    if (idx>=0){ arr[idx].name = name; setCommunities(arr); }
+                }
+            } catch(e) {
+                console.error("Update community error:", e);
+                alert("更新失敗，請檢查網路連線");
+                throw e;
             }
         }
         async function deleteCommunity(code,forceLocal=false){
-            if (useCloud() && !forceLocal){
-                await db.collection('communities').doc(code).delete();
-            } else {
-                const arr = getCommunities().filter(x=>x.code!==code);
-                setCommunities(arr);
+            try {
+                if (useCloud() && !forceLocal){
+                    await db.collection('communities').doc(code).delete();
+                } else {
+                    const arr = getCommunities().filter(x=>x.code!==code);
+                    setCommunities(arr);
+                }
+            } catch(e) {
+                console.error("Delete community error:", e);
+                alert("刪除失敗，請檢查網路連線");
+                throw e;
             }
         }
         async function fetchAccounts(){
-            if (useCloud()){
-                const snap = await db.collection('accounts').get();
-                return snap.docs.map(d=>({id:d.data().id||d.id, community:d.data().community||'', name:d.data().name||'', email:d.data().email||'', phone:d.data().phone||''}));
+            try {
+                if (useCloud()){
+                    const snap = await db.collection('accounts').get();
+                    return snap.docs.map(d=>({id:d.data().id||d.id, community:d.data().community||'', name:d.data().name||'', email:d.data().email||'', phone:d.data().phone||''}));
+                }
+                return getAccounts();
+            } catch(e) {
+                console.warn("Fetch accounts failed, falling back to local:", e);
+                return getAccounts();
             }
-            return getAccounts();
         }
         async function saveAccount(acc,forceLocal=false){
-            if (useCloud() && !forceLocal){
-                await db.collection('accounts').doc(acc.id).set(acc);
-            } else {
-                const arr = getAccounts(); arr.push(acc); setAccounts(arr);
+            try {
+                if (useCloud() && !forceLocal){
+                    await db.collection('accounts').doc(acc.id).set(acc);
+                } else {
+                    const arr = getAccounts(); arr.push(acc); setAccounts(arr);
+                }
+            } catch(e) {
+                console.error("Save account error:", e);
+                alert("儲存帳號失敗，請檢查網路連線");
+                throw e;
             }
         }
         async function updateAccount(acc,forceLocal=false){
-            if (useCloud() && !forceLocal){
-                await db.collection('accounts').doc(acc.id).set(acc,{merge:true});
-            } else {
-                const arr = getAccounts(); const idx = arr.findIndex(x=>x.id===acc.id); if (idx>=0){ arr[idx]=acc; setAccounts(arr); }
+            try {
+                if (useCloud() && !forceLocal){
+                    await db.collection('accounts').doc(acc.id).set(acc,{merge:true});
+                } else {
+                    const arr = getAccounts(); const idx = arr.findIndex(x=>x.id===acc.id); if (idx>=0){ arr[idx]=acc; setAccounts(arr); }
+                }
+            } catch(e) {
+                console.error("Update account error:", e);
+                alert("更新帳號失敗，請檢查網路連線");
+                throw e;
             }
         }
-        async function deleteAccountByIndex(idx,forceLocal=false){
-            if (useCloud() && !forceLocal){
-                const arr = await fetchAccounts(); const acc = arr[idx]; if (acc){ await db.collection('accounts').doc(acc.id).delete(); }
-            } else {
-                const arr = getAccounts(); arr.splice(idx,1); setAccounts(arr);
+        async function deleteAccountById(id,forceLocal=false){
+            try {
+                if (useCloud() && !forceLocal){
+                    await db.collection('accounts').doc(id).delete();
+                } else {
+                    const arr = getAccounts().filter(x=>x.id!==id);
+                    setAccounts(arr);
+                    if(!useCloud()) {
+                        const newArr = await fetchAccounts();
+                        renderAccountsTable(newArr);
+                    }
+                }
+            } catch(e) {
+                console.error("Delete account error:", e);
+                alert("刪除帳號失敗，請檢查網路連線");
+                throw e;
             }
         }
 
@@ -1242,94 +1312,230 @@
             let a = getAccounts();
             if (a.length === 0) { a = [{id: genAccountId(), community:'西北保全社區', name:'管理員', email:'admin@example.com', phone:'0912345678'}]; setAccounts(a); }
         }
+        let globalAccountsCache = [];
+
         function genAccountId(){
             const d = new Date();
             const ymd = d.getFullYear().toString()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');
-            const a = getAccounts().filter(x=>x.id.startsWith(ymd));
-            const next = a.length+1;
-            return ymd+String(next).padStart(2,'0');
+            // Use cache if available (for Cloud mode), otherwise fallback to LocalStorage
+            const source = (globalAccountsCache.length > 0) ? globalAccountsCache : getAccounts();
+            const a = source.filter(x => x.id && x.id.startsWith(ymd));
+            
+            // Find the max sequence number to avoid collision
+            let maxSeq = 0;
+            a.forEach(acc => {
+                const seqStr = acc.id.substring(ymd.length);
+                const seq = parseInt(seqStr);
+                if (!isNaN(seq) && seq > maxSeq) maxSeq = seq;
+            });
+            
+            return ymd+String(maxSeq+1).padStart(2,'0');
         }
         async function renderCommunityOptions(){
             const c = await fetchCommunities();
             inputAccountCommunity.innerHTML = c.map(x=>'<option value="'+x.name+'">'+x.name+'</option>').join('');
         }
-        async function renderAccounts(){
-            const arr = await fetchAccounts();
-            accountsTbody.innerHTML = arr.map((x,i)=>{
-                return '<tr><td class="px-4 py-2">'+x.id+'</td><td class="px-4 py-2">'+x.community+'</td><td class="px-4 py-2">'+x.name+'</td><td class="px-4 py-2">'+x.email+'</td><td class="px-4 py-2">'+x.phone+'</td><td class="px-4 py-2"><button data-i="'+i+'" class="edit-account text-blue-600 mr-2">編輯</button><button data-i="'+i+'" class="delete-account text-red-600">刪除</button></td></tr>';
+        
+        // Refactored for real-time updates and ID-based operations
+        let unsubscribeAccounts = null;
+        let unsubscribeCommunities = null;
+
+        function renderAccountsTable(arr){
+            globalAccountsCache = arr; // Update cache for ID generation
+            accountsTbody.innerHTML = arr.map((x)=>{
+                return '<tr><td class="px-4 py-2">'+x.id+'</td><td class="px-4 py-2">'+x.community+'</td><td class="px-4 py-2">'+x.name+'</td><td class="px-4 py-2">'+x.email+'</td><td class="px-4 py-2">'+x.phone+'</td><td class="px-4 py-2"><button data-id="'+x.id+'" class="edit-account text-blue-600 mr-2">編輯</button><button data-id="'+x.id+'" class="delete-account text-red-600">刪除</button></td></tr>';
             }).join('');
+            
             accountsTbody.querySelectorAll('.delete-account').forEach(btn=>{
-                btn.addEventListener('click', ()=>{
-                    const idx = parseInt(btn.getAttribute('data-i')); deleteAccountByIndex(idx).then(renderAccounts);
+                btn.addEventListener('click', async ()=>{
+                    const id = btn.getAttribute('data-id');
+                    if(confirm('確定要刪除此帳號嗎？')) {
+                        try { await deleteAccountById(id); } catch(e){}
+                    }
                 });
             });
+            
             accountsTbody.querySelectorAll('.edit-account').forEach(btn=>{
                 btn.addEventListener('click', ()=>{
-                    const idx = parseInt(btn.getAttribute('data-i'));
-                    fetchAccounts().then(arr2 => {
-                        const item = arr2[idx];
-                        inputAccountCommunity.value = item.community; 
-                        inputAccountName.value = item.name; 
-                        inputAccountEmail.value = item.email; 
-                        inputAccountPhone.value = item.phone;
-                        
-                        // Switch to Edit Mode
-                        const title = modalAddAccount.querySelector('h4');
-                        if (title) title.textContent = '編輯帳號';
-                        confirmAddAccount.textContent = '確認';
+                    const id = btn.getAttribute('data-id');
+                    const item = arr.find(a => a.id === id);
+                    if (!item) return;
 
-                        modalAddAccount.classList.remove('hidden');
-                        confirmAddAccount.onclick = async () => {
+                    inputAccountCommunity.value = item.community; 
+                    inputAccountName.value = item.name; 
+                    inputAccountEmail.value = item.email; 
+                    inputAccountPhone.value = item.phone;
+                    
+                    const title = modalAddAccount.querySelector('h4');
+                    if (title) title.textContent = '編輯帳號';
+                    confirmAddAccount.textContent = '確認';
+
+                    modalAddAccount.classList.remove('hidden');
+                    confirmAddAccount.onclick = async () => {
+                        try {
                             item.community = inputAccountCommunity.value; 
                             item.name = inputAccountName.value.trim(); 
                             item.email = inputAccountEmail.value.trim(); 
                             item.phone = inputAccountPhone.value.trim(); 
                             await updateAccount(item); 
                             modalAddAccount.classList.add('hidden'); 
-                            renderAccounts();
-                        };
-                        cancelAddAccount.onclick = () => { modalAddAccount.classList.add('hidden'); };
-                    });
+                            if(!useCloud()) {
+                                const newArr = await fetchAccounts();
+                                renderAccountsTable(newArr);
+                            }
+                        } catch(e){}
+                    };
+                    cancelAddAccount.onclick = () => { modalAddAccount.classList.add('hidden'); };
                 });
             });
         }
-        async function renderCommunities(){
-            const arr = await fetchCommunities();
-            communitiesTbody.innerHTML = arr.map((x,i)=>{
-                return '<tr><td class="px-4 py-2">'+x.code+'</td><td class="px-4 py-2">'+x.name+'</td><td class="px-4 py-2"><button data-i="'+i+'" class="edit-community text-blue-600 mr-2">編輯</button><button data-i="'+i+'" class="delete-community text-red-600">刪除</button></td></tr>';
+
+        function renderCommunitiesTable(arr){
+            communitiesTbody.innerHTML = arr.map((x)=>{
+                return '<tr><td class="px-4 py-2">'+x.code+'</td><td class="px-4 py-2">'+x.name+'</td><td class="px-4 py-2"><button data-id="'+x.code+'" class="edit-community text-blue-600 mr-2">編輯</button><button data-id="'+x.code+'" class="delete-community text-red-600">刪除</button></td></tr>';
             }).join('');
+            
             communitiesTbody.querySelectorAll('.delete-community').forEach(btn=>{
-                btn.addEventListener('click', ()=>{
-                    const idx = parseInt(btn.getAttribute('data-i'));
-                    fetchCommunities().then(arr2 => { const code = arr2[idx].code; deleteCommunity(code).then(()=>{ renderCommunities(); renderCommunityOptions(); }); });
+                btn.addEventListener('click', async ()=>{
+                    const id = btn.getAttribute('data-id');
+                    if(confirm('確定要刪除此社區嗎？')) {
+                        try {
+                            await deleteCommunity(id);
+                            renderCommunityOptions();
+                            if(!useCloud()){
+                                fetchCommunities().then(renderCommunitiesTable);
+                            }
+                        } catch(e){}
+                    }
                 });
             });
+            
             communitiesTbody.querySelectorAll('.edit-community').forEach(btn=>{
                 btn.addEventListener('click', ()=>{
-                    const idx = parseInt(btn.getAttribute('data-i'));
-                    fetchCommunities().then(arr2 => {
-                        const item = arr2[idx];
-                        inputCommunityCode.value = item.code;
-                        inputCommunityName.value = item.name;
-                        
-                        // Switch to Edit Mode
-                        const title = modalAddCommunity.querySelector('h4');
-                        if (title) title.textContent = '編輯社區';
-                        confirmAddCommunity.textContent = '確認';
-                        inputCommunityCode.disabled = true;
-                        inputCommunityCode.classList.add('bg-gray-100');
+                    const id = btn.getAttribute('data-id');
+                    const item = arr.find(c => c.code === id);
+                    if (!item) return;
 
-                        modalAddCommunity.classList.remove('hidden');
-                        confirmAddCommunity.onclick = () => {
-                            updateCommunity(inputCommunityCode.value, inputCommunityName.value).then(()=>{ modalAddCommunity.classList.add('hidden'); renderCommunities(); renderCommunityOptions(); });
-                        };
-                        cancelAddCommunity.onclick = () => { modalAddCommunity.classList.add('hidden'); };
-                    });
+                    inputCommunityCode.value = item.code;
+                    inputCommunityName.value = item.name;
+                    
+                    const title = modalAddCommunity.querySelector('h4');
+                    if (title) title.textContent = '編輯社區';
+                    confirmAddCommunity.textContent = '確認';
+                    inputCommunityCode.disabled = true;
+                    inputCommunityCode.classList.add('bg-gray-100');
+
+                    modalAddCommunity.classList.remove('hidden');
+                    confirmAddCommunity.onclick = async () => {
+                        try {
+                            await updateCommunity(inputCommunityCode.value, inputCommunityName.value);
+                            modalAddCommunity.classList.add('hidden'); 
+                            renderCommunityOptions();
+                            if(!useCloud()){
+                                fetchCommunities().then(renderCommunitiesTable);
+                            }
+                        } catch(e){}
+                    };
+                    cancelAddCommunity.onclick = () => { modalAddCommunity.classList.add('hidden'); };
                 });
             });
         }
+
+        function safeOnSnapshot(query, onNext, onError) {
+            let unsub = null;
+            let failedCount = 0;
+            const tryListen = () => {
+                try {
+                    unsub = query.onSnapshot(onNext, (err) => {
+                         // Suppress console warning if we are handling it
+                         // console.warn("Snapshot listener failed", err); 
+                         failedCount++;
+                         // Fail fast on ANY error to prevent console spam
+                         if (failedCount >= 1 || (err && err.code === 'permission-denied')) {
+                             // CRITICAL FIX: Stop the failing listener immediately!
+                             if (unsub) { unsub(); unsub = null; }
+                             
+                             // Fallback to one-time get
+                             console.warn("Connection unstable. Switching to manual fetch mode.");
+                             query.get().then(onNext).catch(e => { if (onError) onError(e); });
+                         } else {
+                             if (onError) onError(err);
+                         }
+                    });
+                } catch (e) {
+                    console.error("Setup listener error", e);
+                    if (unsub) { unsub(); unsub = null; }
+                    query.get().then(onNext).catch(e2 => { if (onError) onError(e2); });
+                }
+            };
+            tryListen();
+            return () => { if (unsub) unsub(); };
+        }
+
+        async function startAccountsListener() {
+            if (unsubscribeAccounts) { unsubscribeAccounts(); unsubscribeAccounts = null; }
+            if (useCloud()) {
+                if (!auth.currentUser) {
+                    console.warn("Attempting to listen to Firestore without auth. Trying anonymous login...");
+                    try { await auth.signInAnonymously(); } catch(e) { console.error("Auto-login failed", e); }
+                }
+                
+                if (!auth.currentUser) {
+                    document.getElementById('settings-error').textContent = '無法連線至雲端：未登入且匿名登入失敗';
+                    document.getElementById('settings-error').classList.remove('hidden');
+                    return;
+                }
+
+                unsubscribeAccounts = safeOnSnapshot(db.collection('accounts'), snapshot => {
+                    const arr = snapshot.docs.map(d => ({
+                        id: d.data().id || d.id,
+                        community: d.data().community || '',
+                        name: d.data().name || '',
+                        email: d.data().email || '',
+                        phone: d.data().phone || ''
+                    }));
+                    renderAccountsTable(arr);
+                    document.getElementById('settings-error').classList.add('hidden');
+                }, err => {
+                    console.error("Accounts listener error:", err);
+                    let msg = '雲端連線中斷';
+                    if (err.code === 'permission-denied') msg = '權限不足：請確認您已正確登入';
+                    document.getElementById('settings-error').textContent = msg;
+                    document.getElementById('settings-error').classList.remove('hidden');
+                });
+            } else {
+                const arr = await fetchAccounts();
+                renderAccountsTable(arr);
+            }
+        }
+
+        async function startCommunitiesListener() {
+            if (unsubscribeCommunities) { unsubscribeCommunities(); unsubscribeCommunities = null; }
+            if (useCloud()) {
+                 if (!auth.currentUser) return; 
+
+                unsubscribeCommunities = safeOnSnapshot(db.collection('communities'), snapshot => {
+                    const arr = snapshot.docs.map(d => ({
+                        code: d.data().code || d.id,
+                        name: d.data().name || ''
+                    }));
+                    renderCommunitiesTable(arr);
+                }, err => {
+                     console.error("Communities listener error:", err);
+                });
+            } else {
+                const arr = await fetchCommunities();
+                renderCommunitiesTable(arr);
+            }
+        }
+
         async function ensureAuthForSettings(){
             if (useCloud()){
+                // Check network first
+                if (!navigator.onLine) {
+                    console.warn("Network offline, skipping auth check.");
+                    return;
+                }
                 try {
                     if (!auth.currentUser) {
                         await auth.signInAnonymously();
@@ -1337,6 +1543,7 @@
                     }
                 } catch(e) {
                     console.warn('Anonymous sign-in failed:', e);
+                    // If auth fails, we might want to switch to local mode or just let the user know
                 }
             }
         }
@@ -1355,6 +1562,7 @@
                     }
                 } catch (e) {
                     console.warn('Open settings cloud fetch failed:', e);
+                    // If fetch fails (likely permission or network), show error but allow opening modal
                     cloudAvailable = false;
                     fallback = true;
                 }
@@ -1364,10 +1572,19 @@
             }
             const errBar = document.getElementById('settings-error');
             if (errBar) errBar.classList.toggle('hidden', !fallback);
-            await renderCommunityOptions(); await renderAccounts(); await renderCommunities(); settingsModal.classList.remove('hidden');
+            await renderCommunityOptions(); 
+            // Replace static render with listener start
+            startAccountsListener(); 
+            startCommunitiesListener();
+            
+            settingsModal.classList.remove('hidden');
             activateSettingsTab(defaultTab||'accounts');
         }
-        function closeSettingsModal(){ settingsModal.classList.add('hidden'); }
+        function closeSettingsModal(){ 
+            settingsModal.classList.add('hidden'); 
+            if (unsubscribeAccounts) { unsubscribeAccounts(); unsubscribeAccounts = null; }
+            if (unsubscribeCommunities) { unsubscribeCommunities(); unsubscribeCommunities = null; }
+        }
         function activateSettingsTab(which){
             if (which==='accounts'){ viewAccounts.classList.remove('hidden'); viewCommunities.classList.add('hidden'); tabAccountsBtn.classList.add('border-red-700','text-red-700'); tabCommunitiesBtn.classList.remove('border-red-700','text-red-700'); }
             else { viewAccounts.classList.add('hidden'); viewCommunities.classList.remove('hidden'); tabCommunitiesBtn.classList.add('border-red-700','text-red-700'); tabAccountsBtn.classList.remove('border-red-700','text-red-700'); }
@@ -1484,15 +1701,17 @@
                     if (useCloud()){ 
                         const email = getCurrentUserEmail(); 
                         if (!isAdminEmail(email)) {
-                            if (confirm('新增帳號失敗：非系統管理員不可新增雲端帳號。\n是否要建立「本機僅有」的帳號？(僅供本機測試用，不會同步到雲端)')) {
-                                forceLocal = true;
-                            } else {
-                                return;
-                            }
+                            // If we are not admin, we cannot create auth users.
+                            console.warn("Non-admin user creating account. Skipping Auth creation.");
                         } else {
                            // Admin creating cloud account
+                           // Use a secondary app to avoid logging out the current admin
                            try {
-                               await auth.createUserWithEmailAndPassword(acc.email, acc.phone); 
+                               const secondaryApp = firebase.initializeApp(firebaseConfig, "SecondaryApp");
+                               const secondaryAuth = secondaryApp.auth();
+                               await secondaryAuth.createUserWithEmailAndPassword(acc.email, acc.phone);
+                               await secondaryApp.delete(); // Cleanup
+                               console.log("Cloud user created successfully via secondary app");
                            } catch(err) {
                                console.warn("Create cloud user warning:", err);
                                // Continue to save doc even if auth creation fails (e.g. user exists)
@@ -1501,7 +1720,11 @@
                     } 
                     await saveAccount(acc, forceLocal); 
                     modalAddAccount.classList.add('hidden'); 
-                    renderAccounts(); 
+                    
+                    // Force refresh to ensure UI is up-to-date and ID cache is populated
+                    // This handles both local mode and cloud mode (especially if listener is in fallback)
+                    const newArr = await fetchAccounts();
+                    renderAccountsTable(newArr);
                 } catch(e){ 
                     alert('新增帳號失敗：'+(e && e.message ? e.message : e)); 
                 } 
@@ -1527,7 +1750,7 @@
                     if (useCloud()){ 
                         const email = getCurrentUserEmail(); 
                         if (!isAdminEmail(email)) {
-                             if (confirm('新增社區失敗：非系統管理員不可新增雲端社區。\n是否要建立「本機僅有」的社區？(僅供本機測試用，不會同步到雲端)')) {
+                        if (confirm('新增社區失敗：非系統管理員不可新增雲端社區。\n是否要建立「本機僅有」的社區？(僅供本機測試用，不會同步到雲端)')) {
                                 forceLocal = true;
                             } else {
                                 return;
@@ -1536,8 +1759,11 @@
                     } 
                     await saveCommunity(inputCommunityCode.value, inputCommunityName.value, forceLocal); 
                     modalAddCommunity.classList.add('hidden'); 
-                    renderCommunities(); 
                     renderCommunityOptions(); 
+                    if (!useCloud()) {
+                        const newArr = await fetchCommunities();
+                        renderCommunitiesTable(newArr);
+                    }
                 } catch(e){ 
                     alert('新增社區失敗：'+(e && e.message ? e.message : e)); 
                 } 
