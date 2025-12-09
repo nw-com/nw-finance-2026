@@ -631,7 +631,7 @@
                             <thead class="bg-gray-100 text-gray-700">
                                 <tr>
                                     <th class="px-4 py-2 text-left">帳號編號</th>
-                                    <th class="px-4 py-2 text-left">供應商名稱</th>
+                                    <th class="px-4 py-2 text-left">社區名稱</th>
                                     <th class="px-4 py-2 text-left">姓名</th>
                                     <th class="px-4 py-2 text-left">電子郵件</th>
                                     <th class="px-4 py-2 text-left">手機號碼</th>
@@ -645,26 +645,24 @@
 
                 <div id="settings-view-communities" class="space-y-4 hidden">
                     <div class="flex justify-between items-center">
-                        <h3 class="text-lg font-bold text-gray-800">供應商列表</h3>
+                        <h3 class="text-lg font-bold text-gray-800">社區列表</h3>
                         <button id="btn-add-community" class="px-3 py-2 bg-red-600 text-white rounded">新增</button>
                     </div>
                     <div class="border rounded-lg overflow-hidden">
                         <table class="w-full text-sm">
                             <thead class="bg-gray-100 text-gray-700">
                                 <tr>
-                                    <th class="px-4 py-2 text-left">供應商編號</th>
-                                    <th class="px-4 py-2 text-left">供應商名稱</th>
-                                    <th class="px-4 py-2 text-left">統編</th>
-                                    <th class="px-4 py-2 text-left">服務內容</th>
+                                    <th class="px-4 py-2 text-left">社區編號</th>
+                                    <th class="px-4 py-2 text-left">社區名稱</th>
                                     <th class="px-4 py-2 text-left">操作</th>
                                 </tr>
                             </thead>
                             <tbody id="communities-tbody" class="divide-y"></tbody>
                         </table>
                     </div>
+                </div>
 
 
-    </div>
             </div>
         </div>
 
@@ -674,7 +672,7 @@
                 <div class="bg-white rounded-lg w-full max-w-lg p-6 space-y-4 shadow-xl">
                     <h4 class="text-lg font-bold">新增帳號</h4>
                     <div>
-                        <label class="block text-sm mb-1">供應商名稱</label>
+                        <label class="block text-sm mb-1">社區名稱</label>
                         <select id="input-account-community" class="w-full border rounded px-3 py-2"></select>
                     </div>
                     <div>
@@ -701,22 +699,14 @@
             <div class="absolute inset-0 bg-black/40"></div>
             <div class="absolute inset-0 flex items-center justify-center p-6">
                 <div class="bg-white rounded-lg w-full max-w-lg p-6 space-y-4">
-                    <h4 class="text-lg font-bold">新增供應商</h4>
+                    <h4 class="text-lg font-bold">新增社區</h4>
                     <div>
-                        <label class="block text-sm mb-1">供應商編號</label>
+                        <label class="block text-sm mb-1">社區編號</label>
                         <input id="input-community-code" class="w-full border rounded px-3 py-2" />
                     </div>
                     <div>
-                        <label class="block text-sm mb-1">供應商名稱</label>
+                        <label class="block text-sm mb-1">社區名稱</label>
                         <input id="input-community-name" class="w-full border rounded px-3 py-2" />
-                    </div>
-                    <div>
-                        <label class="block text-sm mb-1">統編</label>
-                        <input id="input-community-taxid" class="w-full border rounded px-3 py-2" />
-                    </div>
-                    <div>
-                        <label class="block text-sm mb-1">服務內容</label>
-                        <input id="input-community-service" class="w-full border rounded px-3 py-2" />
                     </div>
                     <div class="flex justify-end gap-2">
                         <button id="cancel-add-community" class="px-3 py-2 border rounded">取消</button>
@@ -725,6 +715,8 @@
                 </div>
             </div>
         </div>
+
+
     </div>
 
     <div id="modal-settings-password" class="fixed inset-0 hidden z-[65]">
@@ -862,13 +854,7 @@
                             <label class="block text-sm mb-1">棟別</label>
                             <select id="input-res-building" class="w-full border rounded px-3 py-2"></select>
                         </div>
-                        <div>
-                            <label class="block text-sm mb-1">欠繳狀況</label>
-                            <select id="input-res-arrears" class="w-full border rounded px-3 py-2">
-                                <option value="正常">正常</option>
-                                <option value="欠繳">欠繳</option>
-                            </select>
-                        </div>
+
                         <div>
                             <label class="block text-sm mb-1">每月管理費</label>
                             <input id="input-res-fee-mgmt" type="number" class="w-full border rounded px-3 py-2" />
@@ -1250,7 +1236,7 @@
             'bank': [], // Initial empty, will be populated by updateBankSubtabs
             'residents': ['住戶明細','住戶設定'],
             'reports': ['日報表','月報表','年報表','報表設定'],
-            'settings': ['一般設定','供應商名單','備份還原']
+            'settings': ['一般設定','備份還原']
         };
 
         function renderSubtabs(tabId) {
@@ -1561,23 +1547,24 @@
         const loginLogo = document.getElementById('login-logo');
         const mainLogo = document.getElementById('main-logo');
         const btnAddAccount = document.getElementById('btn-add-account');
-        const btnAddCommunity = document.getElementById('btn-add-community');
         const modalAddAccount = document.getElementById('modal-add-account');
-        const modalAddCommunity = document.getElementById('modal-add-community');
+
         const inputAccountCommunity = document.getElementById('input-account-community');
         const inputAccountName = document.getElementById('input-account-name');
         const inputAccountEmail = document.getElementById('input-account-email');
         const inputAccountPhone = document.getElementById('input-account-phone');
         const confirmAddAccount = document.getElementById('confirm-add-account');
         const cancelAddAccount = document.getElementById('cancel-add-account');
+        const btnAddCommunity = document.getElementById('btn-add-community');
+        const modalAddCommunity = document.getElementById('modal-add-community');
         const inputCommunityCode = document.getElementById('input-community-code');
         const inputCommunityName = document.getElementById('input-community-name');
-        const inputCommunityTaxId = document.getElementById('input-community-taxid');
-        const inputCommunityService = document.getElementById('input-community-service');
         const confirmAddCommunity = document.getElementById('confirm-add-community');
         const cancelAddCommunity = document.getElementById('cancel-add-community');
-        const accountsTbody = document.getElementById('accounts-tbody');
         const communitiesTbody = document.getElementById('communities-tbody');
+
+        const accountsTbody = document.getElementById('accounts-tbody');
+
         const communitySwitcherModal = document.getElementById('community-switcher-modal');
         const communitySwitcherList = document.getElementById('community-switcher-list');
         const communitySwitcherClose = document.getElementById('community-switcher-close');
@@ -1628,20 +1615,14 @@
                 throw e;
             }
         }
-        async function updateCommunity(code,name,taxId,service,forceLocal=false){
+        async function updateCommunity(code,name,forceLocal=false){
             try {
-                const data = {code,name,taxId,service};
                 if (useCloud() && !forceLocal){
-                    await db.collection('communities').doc(code).set(data,{merge:true});
+                    await db.collection('communities').doc(code).set({code,name},{merge:true});
                 } else {
                     const arr = getCommunities();
                     const idx = arr.findIndex(x=>x.code===code);
-                    if (idx>=0){ 
-                        arr[idx].name = name; 
-                        arr[idx].taxId = taxId; 
-                        arr[idx].service = service; 
-                        setCommunities(arr); 
-                    }
+                    if (idx>=0){ arr[idx].name = name; setCommunities(arr); }
                 }
             } catch(e) {
                 console.error("Update community error:", e);
@@ -1663,6 +1644,7 @@
                 throw e;
             }
         }
+
         async function fetchAccounts(){
             try {
                 if (useCloud()){
@@ -1761,11 +1743,11 @@
             }).join('');
             
             accountsTbody.querySelectorAll('.delete-account').forEach(btn=>{
-                btn.addEventListener('click', async ()=>{
+                btn.addEventListener('click', ()=>{
                     const id = btn.getAttribute('data-id');
-                    if(confirm('確定要刪除此帳號嗎？')) {
+                    openConfirm('確定要刪除此帳號嗎？', async () => {
                         try { await deleteAccountById(id); } catch(e){}
-                    }
+                    });
                 });
             });
             
@@ -1806,13 +1788,13 @@
 
         function renderCommunitiesTable(arr){
             communitiesTbody.innerHTML = arr.map((x)=>{
-                return '<tr><td class="px-4 py-2">'+x.code+'</td><td class="px-4 py-2">'+x.name+'</td><td class="px-4 py-2">'+(x.taxId||'')+'</td><td class="px-4 py-2">'+(x.service||'')+'</td><td class="px-4 py-2"><button data-id="'+x.code+'" class="edit-community text-blue-600 mr-2">編輯</button><button data-id="'+x.code+'" class="delete-community text-red-600">刪除</button></td></tr>';
+                return '<tr><td class="px-4 py-2">'+x.code+'</td><td class="px-4 py-2">'+x.name+'</td><td class="px-4 py-2"><button data-id="'+x.code+'" class="edit-community text-blue-600 mr-2">編輯</button><button data-id="'+x.code+'" class="delete-community text-red-600">刪除</button></td></tr>';
             }).join('');
             
             communitiesTbody.querySelectorAll('.delete-community').forEach(btn=>{
                 btn.addEventListener('click', async ()=>{
                     const id = btn.getAttribute('data-id');
-                    if(confirm('確定要刪除此供應商嗎？')) {
+                    if(confirm('確定要刪除此社區嗎？')) {
                         try {
                             await deleteCommunity(id);
                             renderCommunityOptions();
@@ -1832,11 +1814,9 @@
 
                     inputCommunityCode.value = item.code;
                     inputCommunityName.value = item.name;
-                    inputCommunityTaxId.value = item.taxId || '';
-                    inputCommunityService.value = item.service || '';
                     
                     const title = modalAddCommunity.querySelector('h4');
-                    if (title) title.textContent = '編輯供應商';
+                    if (title) title.textContent = '編輯社區';
                     confirmAddCommunity.textContent = '確認';
                     inputCommunityCode.disabled = true;
                     inputCommunityCode.classList.add('bg-gray-100');
@@ -1844,7 +1824,7 @@
                     modalAddCommunity.classList.remove('hidden');
                     confirmAddCommunity.onclick = async () => {
                         try {
-                            await updateCommunity(inputCommunityCode.value, inputCommunityName.value, inputCommunityTaxId.value, inputCommunityService.value);
+                            await updateCommunity(inputCommunityCode.value, inputCommunityName.value);
                             modalAddCommunity.classList.add('hidden'); 
                             renderCommunityOptions();
                             if(!useCloud()){
@@ -1856,6 +1836,8 @@
                 });
             });
         }
+
+
 
         function safeOnSnapshot(query, onNext, onError) {
             let unsub = null;
@@ -1945,6 +1927,8 @@
             }
         }
 
+
+
         async function ensureAuthForSettings(){
             if (useCloud()){
                 // Check network first
@@ -1999,7 +1983,6 @@
         function closeSettingsModal(){ 
             settingsModal.classList.add('hidden'); 
             if (unsubscribeAccounts) { unsubscribeAccounts(); unsubscribeAccounts = null; }
-            if (unsubscribeCommunities) { unsubscribeCommunities(); unsubscribeCommunities = null; }
         }
         function activateSettingsTab(which){
             if (which==='accounts'){ viewAccounts.classList.remove('hidden'); viewCommunities.classList.add('hidden'); tabAccountsBtn.classList.add('border-red-700','text-red-700'); tabCommunitiesBtn.classList.remove('border-red-700','text-red-700'); }
@@ -2029,7 +2012,7 @@
                     loginError.classList.remove('hidden');
                     loginError.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-1"></i> 雲端權限不足或讀取失敗，改用本機設定`;
                 }
-                openSettingsModal('communities');
+                openSettingsModal();
             }
             else { settingsPassError.classList.remove('hidden'); }
         }); }
@@ -2091,6 +2074,7 @@
         if (settingsClose){ settingsClose.addEventListener('click', closeSettingsModal); }
         if (tabAccountsBtn){ tabAccountsBtn.addEventListener('click', ()=> activateSettingsTab('accounts')); }
         if (tabCommunitiesBtn){ tabCommunitiesBtn.addEventListener('click', ()=> activateSettingsTab('communities')); }
+
         if (btnAddAccount){ btnAddAccount.addEventListener('click', async ()=>{ 
             await ensureAuthForSettings(); 
             await renderCommunityOptions(); 
@@ -2151,12 +2135,10 @@
             await ensureAuthForSettings(); 
             inputCommunityCode.value=''; 
             inputCommunityName.value=''; 
-            inputCommunityTaxId.value='';
-            inputCommunityService.value='';
             
             // Switch to Add Mode
             const title = modalAddCommunity.querySelector('h4');
-            if (title) title.textContent = '新增供應商';
+            if (title) title.textContent = '新增社區';
             confirmAddCommunity.textContent = '新增';
             inputCommunityCode.disabled = false;
             inputCommunityCode.classList.remove('bg-gray-100');
@@ -2175,7 +2157,7 @@
                             }
                         } 
                     } 
-                    await saveCommunity(inputCommunityCode.value, inputCommunityName.value, inputCommunityTaxId.value, inputCommunityService.value, forceLocal); 
+                    await saveCommunity(inputCommunityCode.value, inputCommunityName.value, '', '', forceLocal); 
                     modalAddCommunity.classList.add('hidden'); 
                     renderCommunityOptions(); 
                     if (!useCloud()) {
@@ -2183,11 +2165,12 @@
                         renderCommunitiesTable(newArr);
                     }
                 } catch(e){ 
-                    alert('新增供應商失敗：'+(e && e.message ? e.message : e)); 
+                    alert('新增社區失敗：'+(e && e.message ? e.message : e)); 
                 } 
             }; 
             cancelAddCommunity.onclick = ()=> modalAddCommunity.classList.add('hidden'); 
         }); }
+
 
         // ==========================================
         // FIREBASE SYNC & DATA LAYER
@@ -2235,9 +2218,10 @@
             const code = getCurrentCommunityCode();
             const docRef = firestoreDB.collection('communities').doc(code);
 
-            if (unsubscribeSnapshot) unsubscribeSnapshot();
+            if (unsubscribeSnapshot) { unsubscribeSnapshot(); unsubscribeSnapshot = null; }
 
-            unsubscribeSnapshot = docRef.onSnapshot((doc) => {
+            // Use safeOnSnapshot for robust error handling and fallback
+            unsubscribeSnapshot = safeOnSnapshot(docRef, (doc) => {
                 const loader = document.getElementById('app-loader');
                 if (doc.exists) {
                     const data = doc.data();
@@ -2262,10 +2246,15 @@
                 if (loader) loader.classList.add('hidden');
             }, (error) => {
                 console.error("Sync Error:", error);
-                alert("同步失敗：" + error.message);
                 if (document.getElementById('app-loader')) document.getElementById('app-loader').classList.add('hidden');
             });
         }
+
+        // Clean up listeners on unload to prevent memory leaks and console errors
+        window.addEventListener('beforeunload', () => {
+            if (unsubscribeSnapshot) { unsubscribeSnapshot(); unsubscribeSnapshot = null; }
+            if (unsubscribeAccounts) { unsubscribeAccounts(); unsubscribeAccounts = null; }
+        });
 
         function saveFullStateToCloud() {
             if (!firestoreDB) return;
@@ -2401,7 +2390,7 @@
         const inputResName = document.getElementById('input-res-name');
         const inputResAddr = document.getElementById('input-res-addr');
         const inputResBuilding = document.getElementById('input-res-building');
-        const inputResArrears = document.getElementById('input-res-arrears');
+
         const inputResFeeMgmt = document.getElementById('input-res-fee-mgmt');
         const inputResFeePark = document.getElementById('input-res-fee-park');
         const inputResFeeOther = document.getElementById('input-res-fee-other');
@@ -2488,7 +2477,6 @@
                     inputResName.value = ctx.item.name || '';
                     inputResAddr.value = ctx.item.addr || '';
                     inputResBuilding.value = ctx.item.building || (buildings[0]||'');
-                    inputResArrears.value = ctx.item.arrears || '正常';
                     inputResFeeMgmt.value = ctx.item.feeMgmt || '';
                     inputResFeePark.value = ctx.item.feePark || '';
                     inputResFeeOther.value = ctx.item.feeOther || '';
@@ -2498,7 +2486,6 @@
                     inputResName.value = '';
                     inputResAddr.value = '';
                     inputResBuilding.value = (buildings[0]||'');
-                    inputResArrears.value = '正常';
                     inputResFeeMgmt.value = '';
                     inputResFeePark.value = '';
                     inputResFeeOther.value = '';
@@ -2533,13 +2520,13 @@
                 
                 Array.from(residentsDetailTbody.querySelectorAll('.del-resident')).forEach(btn=>{ 
                     btn.addEventListener('click', ()=>{ 
-                        if(confirm('確定要刪除此住戶嗎？')) {
+                        openConfirm('確定要刪除此住戶嗎？', () => {
                             const i = parseInt(btn.getAttribute('data-i')); 
                             const arr2 = getResidents(); 
                             arr2.splice(i,1); 
                             setResidents(arr2); 
                             renderResidentsDetail(); 
-                        }
+                        });
                     }); 
                 });
                 Array.from(residentsDetailTbody.querySelectorAll('.edit-resident')).forEach(btn=>{ 
@@ -2554,21 +2541,61 @@
 
         function renderIncomeSettings(){
             if (incomeFixedTbody){ const arr = getIncomeFixed(); incomeFixedTbody.innerHTML = arr.map((x,i)=> '<tr><td class="px-6 py-3">'+x+'</td><td class="px-6 py-3"><button data-i="'+i+'" class="edit-if text-blue-600 mr-2">編輯</button><button data-i="'+i+'" class="del-if text-red-600">刪除</button></td></tr>').join('');
-                Array.from(incomeFixedTbody.querySelectorAll('.del-if')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getIncomeFixed(); arr2.splice(i,1); setIncomeFixed(arr2); renderIncomeSettings(); }); });
+                Array.from(incomeFixedTbody.querySelectorAll('.del-if')).forEach(btn=>{ 
+                    btn.addEventListener('click', ()=>{ 
+                        openConfirm('確定要刪除此收入項目嗎？', () => {
+                            const i = parseInt(btn.getAttribute('data-i')); 
+                            const arr2 = getIncomeFixed(); 
+                            arr2.splice(i,1); 
+                            setIncomeFixed(arr2); 
+                            renderIncomeSettings(); 
+                        });
+                    }); 
+                });
                 Array.from(incomeFixedTbody.querySelectorAll('.edit-if')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getIncomeFixed(); openEditItem({kind:'income_fixed', index:i, value:arr2[i]}); }); });
             }
             if (incomeOtherTbody){ const arr = getIncomeOther(); incomeOtherTbody.innerHTML = arr.map((x,i)=> '<tr><td class="px-6 py-3">'+x+'</td><td class="px-6 py-3"><button data-i="'+i+'" class="edit-io text-blue-600 mr-2">編輯</button><button data-i="'+i+'" class="del-io text-red-600">刪除</button></td></tr>').join('');
-                Array.from(incomeOtherTbody.querySelectorAll('.del-io')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getIncomeOther(); arr2.splice(i,1); setIncomeOther(arr2); renderIncomeSettings(); }); });
+                Array.from(incomeOtherTbody.querySelectorAll('.del-io')).forEach(btn=>{ 
+                    btn.addEventListener('click', ()=>{ 
+                        openConfirm('確定要刪除此收入項目嗎？', () => {
+                            const i = parseInt(btn.getAttribute('data-i')); 
+                            const arr2 = getIncomeOther(); 
+                            arr2.splice(i,1); 
+                            setIncomeOther(arr2); 
+                            renderIncomeSettings(); 
+                        });
+                    }); 
+                });
                 Array.from(incomeOtherTbody.querySelectorAll('.edit-io')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getIncomeOther(); openEditItem({kind:'income_other', index:i, value:arr2[i]}); }); });
             }
         }
         function renderExpenseSettings(){
             if (expenseFixedTbody){ const arr = getExpenseFixed(); expenseFixedTbody.innerHTML = arr.map((x,i)=> '<tr><td class="px-6 py-3">'+x+'</td><td class="px-6 py-3"><button data-i="'+i+'" class="edit-ef text-blue-600 mr-2">編輯</button><button data-i="'+i+'" class="del-ef text-red-600">刪除</button></td></tr>').join('');
-                Array.from(expenseFixedTbody.querySelectorAll('.del-ef')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getExpenseFixed(); arr2.splice(i,1); setExpenseFixed(arr2); renderExpenseSettings(); }); });
+                Array.from(expenseFixedTbody.querySelectorAll('.del-ef')).forEach(btn=>{ 
+                    btn.addEventListener('click', ()=>{ 
+                        openConfirm('確定要刪除此支出項目嗎？', () => {
+                            const i = parseInt(btn.getAttribute('data-i')); 
+                            const arr2 = getExpenseFixed(); 
+                            arr2.splice(i,1); 
+                            setExpenseFixed(arr2); 
+                            renderExpenseSettings(); 
+                        });
+                    }); 
+                });
                 Array.from(expenseFixedTbody.querySelectorAll('.edit-ef')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getExpenseFixed(); openEditItem({kind:'expense_fixed', index:i, value:arr2[i]}); }); });
             }
             if (expenseOtherTbody){ const arr = getExpenseOther(); expenseOtherTbody.innerHTML = arr.map((x,i)=> '<tr><td class="px-6 py-3">'+x+'</td><td class="px-6 py-3"><button data-i="'+i+'" class="edit-eo text-blue-600 mr-2">編輯</button><button data-i="'+i+'" class="del-eo text-red-600">刪除</button></td></tr>').join('');
-                Array.from(expenseOtherTbody.querySelectorAll('.del-eo')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getExpenseOther(); arr2.splice(i,1); setExpenseOther(arr2); renderExpenseSettings(); }); });
+                Array.from(expenseOtherTbody.querySelectorAll('.del-eo')).forEach(btn=>{ 
+                    btn.addEventListener('click', ()=>{ 
+                        openConfirm('確定要刪除此支出項目嗎？', () => {
+                            const i = parseInt(btn.getAttribute('data-i')); 
+                            const arr2 = getExpenseOther(); 
+                            arr2.splice(i,1); 
+                            setExpenseOther(arr2); 
+                            renderExpenseSettings(); 
+                        });
+                    }); 
+                });
                 Array.from(expenseOtherTbody.querySelectorAll('.edit-eo')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getExpenseOther(); openEditItem({kind:'expense_other', index:i, value:arr2[i]}); }); });
             }
         }
@@ -2621,7 +2648,17 @@
         }
         function renderResidentsSettings(){
             if (residentsBuildingsTbody){ const arr = getBuildings(); residentsBuildingsTbody.innerHTML = arr.map((x,i)=> '<tr><td class="px-6 py-3">'+x+'</td><td class="px-6 py-3"><button data-i="'+i+'" class="edit-building text-blue-600 mr-2">編輯</button><button data-i="'+i+'" class="del-building text-red-600">刪除</button></td></tr>').join('');
-                Array.from(residentsBuildingsTbody.querySelectorAll('.del-building')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getBuildings(); arr2.splice(i,1); setBuildings(arr2); renderResidentsSettings(); }); });
+                Array.from(residentsBuildingsTbody.querySelectorAll('.del-building')).forEach(btn=>{ 
+                    btn.addEventListener('click', ()=>{ 
+                        openConfirm('確定要刪除此棟別嗎？', () => {
+                            const i = parseInt(btn.getAttribute('data-i')); 
+                            const arr2 = getBuildings(); 
+                            arr2.splice(i,1); 
+                            setBuildings(arr2); 
+                            renderResidentsSettings(); 
+                        });
+                    }); 
+                });
                 Array.from(residentsBuildingsTbody.querySelectorAll('.edit-building')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getBuildings(); openEditBuilding({kind:'building', index:i, value:arr2[i]}); }); });
             }
         }
@@ -2696,7 +2733,7 @@
                 name: (inputResName.value||'').trim(),
                 addr: (inputResAddr.value||'').trim(),
                 building: (inputResBuilding.value||'').trim(),
-                arrears: (inputResArrears.value||'正常'),
+                arrears: (editCtx.item && editCtx.item.arrears) ? editCtx.item.arrears : '正常',
                 feeMgmt: (inputResFeeMgmt.value||'').trim(),
                 feePark: (inputResFeePark.value||'').trim(),
                 feeOther: (inputResFeeOther.value||'').trim(),
@@ -3036,12 +3073,12 @@
             
             tbody.querySelectorAll('.btn-del-trans').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    if (confirm('確定要刪除此紀錄嗎？')) {
+                    openConfirm('確定要刪除此紀錄嗎？', () => {
                         const id = btn.getAttribute('data-id');
                         const newTrans = getTransactions().filter(t => t.id !== id);
                         setTransactions(newTrans);
                         renderTransactionDetail(mode);
-                    }
+                    });
                 });
             });
         }
