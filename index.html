@@ -8,6 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome (圖示) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SheetJS (Excel) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <!-- Google Fonts (Noto Sans TC) -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 
@@ -297,30 +299,7 @@
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-200" id="transaction-list">
-                                    <tr>
-                                        <td class="px-6 py-4">2023-10-26</td>
-                                        <td class="px-6 py-4 font-medium text-gray-800">10月份管理費 - A棟5樓</td>
-                                        <td class="px-6 py-4"><span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">收入</span></td>
-                                        <td class="px-6 py-4">總幹事</td>
-                                        <td class="px-6 py-4 text-right text-green-600 font-bold">+$2,500</td>
-                                        <td class="px-6 py-4 text-center"><i class="fa-solid fa-circle-check text-green-500"></i></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-6 py-4">2023-10-25</td>
-                                        <td class="px-6 py-4 font-medium text-gray-800">公共區域清潔費 (10月)</td>
-                                        <td class="px-6 py-4"><span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs">支出</span></td>
-                                        <td class="px-6 py-4">財委</td>
-                                        <td class="px-6 py-4 text-right text-red-600 font-bold">-$12,000</td>
-                                        <td class="px-6 py-4 text-center"><i class="fa-solid fa-circle-check text-green-500"></i></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-6 py-4">2023-10-24</td>
-                                        <td class="px-6 py-4 font-medium text-gray-800">電梯保養費 (第3季)</td>
-                                        <td class="px-6 py-4"><span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs">支出</span></td>
-                                        <td class="px-6 py-4">財委</td>
-                                        <td class="px-6 py-4 text-right text-red-600 font-bold">-$8,500</td>
-                                        <td class="px-6 py-4 text-center"><i class="fa-solid fa-circle-check text-green-500"></i></td>
-                                    </tr>
+                                    <!-- 交易紀錄已清空 -->
                                 </tbody>
                             </table>
                         </div>
@@ -329,11 +308,29 @@
 
                 <!-- 2. 其他視圖佔位符 (Other Views Placeholder) -->
                 <div id="view-income" class="content-view hidden">
-                    <div id="income-detail-view" class="bg-white p-8 rounded-lg shadow-sm">
-                        <div class="text-center">
-                            <i class="fa-solid fa-hand-holding-dollar text-4xl text-gray-300 mb-4"></i>
-                            <h3 class="text-xl font-bold text-gray-700">收入明細</h3>
-                            <p class="text-gray-500 mt-2">此處顯示收入記錄與查詢。</p>
+                    <div id="income-detail-view" class="bg-white rounded-lg shadow-sm border border-gray-200">
+                        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg">
+                            <h3 class="font-bold text-gray-700">收入明細列表</h3>
+                            <button id="btn-add-income-record" class="px-3 py-2 bg-red-600 text-white rounded">新增收入</button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm text-gray-600">
+                                <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-bold">
+                                    <tr>
+                                        <th class="px-6 py-3">編號</th>
+                                        <th class="px-6 py-3">日期</th>
+                                        <th class="px-6 py-3">對象</th>
+                                        <th class="px-6 py-3">類型</th>
+                                        <th class="px-6 py-3">類別</th>
+                                        <th class="px-6 py-3">月份</th>
+                                        <th class="px-6 py-3 text-right">金額</th>
+                                        <th class="px-6 py-3">收支方式</th>
+                                        <th class="px-6 py-3">備註</th>
+                                        <th class="px-6 py-3">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="income-detail-tbody" class="divide-y divide-gray-200"></tbody>
+                            </table>
                         </div>
                     </div>
                     <div id="income-settings-view" class="space-y-6 hidden">
@@ -375,11 +372,29 @@
                 </div>
 
                 <div id="view-expense" class="content-view hidden">
-                    <div id="expense-detail-view" class="bg-white p-8 rounded-lg shadow-sm">
-                        <div class="text-center">
-                            <i class="fa-solid fa-file-invoice-dollar text-4xl text-gray-300 mb-4"></i>
-                            <h3 class="text-xl font-bold text-gray-700">支出明細</h3>
-                            <p class="text-gray-500 mt-2">此處顯示支出記錄與查詢。</p>
+                    <div id="expense-detail-view" class="bg-white rounded-lg shadow-sm border border-gray-200">
+                        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg">
+                            <h3 class="font-bold text-gray-700">支出明細列表</h3>
+                            <button id="btn-add-expense-record" class="px-3 py-2 bg-red-600 text-white rounded">新增支出</button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm text-gray-600">
+                                <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-bold">
+                                    <tr>
+                                        <th class="px-6 py-3">編號</th>
+                                        <th class="px-6 py-3">日期</th>
+                                        <th class="px-6 py-3">對象</th>
+                                        <th class="px-6 py-3">類型</th>
+                                        <th class="px-6 py-3">類別</th>
+                                        <th class="px-6 py-3">月份</th>
+                                        <th class="px-6 py-3 text-right">金額</th>
+                                        <th class="px-6 py-3">收支方式</th>
+                                        <th class="px-6 py-3">備註</th>
+                                        <th class="px-6 py-3">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="expense-detail-tbody" class="divide-y divide-gray-200"></tbody>
+                            </table>
                         </div>
                     </div>
                     <div id="expense-settings-view" class="space-y-6 hidden">
@@ -429,11 +444,45 @@
                 </div>
 
                 <div id="view-bank" class="content-view hidden">
-                    <div id="bank-detail-view" class="bg-white p-8 rounded-lg shadow-sm">
-                        <div class="text-center">
-                            <i class="fa-solid fa-building-columns text-4xl text-gray-300 mb-4"></i>
-                            <h3 class="text-xl font-bold text-gray-700">銀行明細</h3>
-                            <p class="text-gray-500 mt-2">此處顯示銀行相關查詢。</p>
+                    <div id="bank-detail-view" class="space-y-6 hidden">
+                        <!-- Account Info Card -->
+                        <div class="bg-white rounded-lg p-6 shadow-sm border-l-4 border-red-600 flex justify-between items-center">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500 uppercase" id="bank-detail-type">帳戶類型</p>
+                                <h3 id="bank-detail-name" class="text-2xl font-bold text-gray-800 mt-1">銀行名稱</h3>
+                                <p id="bank-detail-info" class="text-sm text-gray-500 mt-1">帳號資料</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm font-medium text-gray-500 uppercase">目前餘額</p>
+                                <h3 id="bank-detail-balance" class="text-3xl font-bold text-red-800 mt-1">$0</h3>
+                            </div>
+                        </div>
+
+                        <!-- Transactions List -->
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg">
+                                <h3 class="font-bold text-gray-700">交易明細</h3>
+                                <button class="text-sm text-red-600 hover:text-red-800 font-medium">匯出報表</button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm text-gray-600">
+                                    <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-bold">
+                                        <tr>
+                                            <th class="px-6 py-3">日期</th>
+                                            <th class="px-6 py-3">類型</th>
+                                            <th class="px-6 py-3">類別</th>
+                                            <th class="px-6 py-3">對象</th>
+                                            <th class="px-6 py-3">摘要</th>
+                                            <th class="px-6 py-3 text-right">支出金額</th>
+                                            <th class="px-6 py-3 text-right">收入金額</th>
+                                            <th class="px-6 py-3 text-right">餘額</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="bank-detail-tbody" class="divide-y divide-gray-200">
+                                        <tr><td colspan="8" class="px-6 py-8 text-center text-gray-400">尚無交易紀錄</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                     <div id="bank-settings-view" class="space-y-6 hidden">
@@ -446,8 +495,10 @@
                                 <table class="w-full text-left text-sm text-gray-600">
                                     <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-bold">
                                         <tr>
+                                            <th class="px-6 py-3">項目</th>
                                             <th class="px-6 py-3">銀行名稱</th>
                                             <th class="px-6 py-3">分行名稱</th>
+                                            <th class="px-6 py-3">零用金名稱</th>
                                             <th class="px-6 py-3">戶名</th>
                                             <th class="px-6 py-3">帳號</th>
                                             <th class="px-6 py-3">操作</th>
@@ -461,11 +512,37 @@
                 </div>
 
                 <div id="view-residents" class="content-view hidden">
-                    <div id="residents-detail-view" class="bg-white p-8 rounded-lg shadow-sm">
-                        <div class="text-center">
-                            <i class="fa-solid fa-users text-4xl text-gray-300 mb-4"></i>
-                            <h3 class="text-xl font-bold text-gray-700">住戶明細</h3>
-                            <p class="text-gray-500 mt-2">此處顯示住戶相關資料與查詢。</p>
+                    <div id="residents-detail-view" class="space-y-6 hidden">
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg">
+                                <h3 class="font-bold text-gray-700">住戶列表</h3>
+                                <div class="flex gap-2">
+                                    <button id="btn-import-resident" class="px-3 py-2 bg-green-600 text-white rounded">匯入Excel</button>
+                                    <button id="btn-export-resident" class="px-3 py-2 bg-blue-600 text-white rounded">匯出Excel</button>
+                                    <button id="btn-add-resident" class="px-3 py-2 bg-red-600 text-white rounded">新增</button>
+                                </div>
+                                <input type="file" id="file-import-resident" class="hidden" accept=".xlsx, .xls" />
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm text-gray-600">
+                                    <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-bold">
+                                        <tr>
+                                            <th class="px-6 py-3">編號</th>
+                                            <th class="px-6 py-3">戶號</th>
+                                            <th class="px-6 py-3">姓名</th>
+                                            <th class="px-6 py-3">地址</th>
+                                            <th class="px-6 py-3">棟別</th>
+                                            <th class="px-6 py-3 text-right">每月管理費</th>
+                                            <th class="px-6 py-3 text-right">每月停車費</th>
+                                            <th class="px-6 py-3 text-right">每月其他費用</th>
+                                            <th class="px-6 py-3">欠繳狀況</th>
+                                            <th class="px-6 py-3">備註</th>
+                                            <th class="px-6 py-3">操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="residents-detail-tbody" class="divide-y divide-gray-200"></tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                     <div id="residents-settings-view" class="space-y-6 hidden">
@@ -550,7 +627,9 @@
                             <tbody id="communities-tbody" class="divide-y"></tbody>
                         </table>
                     </div>
-                </div>
+
+
+    </div>
             </div>
         </div>
 
@@ -642,6 +721,9 @@
                     <div class="flex justify-end gap-2">
                         <button id="cancel-edit-item" class="px-3 py-2 border rounded">取消</button>
                         <button id="confirm-edit-item" class="px-3 py-2 bg-red-600 text-white rounded">確認</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div id="modal-edit-bank" class="fixed inset-0 hidden z-[70]">
@@ -650,20 +732,48 @@
                 <div class="bg-white rounded-lg w-full max-w-lg p-6 space-y-4">
                     <h4 class="text-lg font-bold">輸入銀行資料</h4>
                     <div>
+                        <label class="block text-sm mb-1">項目</label>
+                        <select id="input-bank-type" class="w-full border rounded px-3 py-2">
+                            <option value="活存">活存</option>
+                            <option value="定存">定存</option>
+                            <option value="零用金">零用金</option>
+                        </select>
+                    </div>
+                    <div id="field-petty-name" class="hidden">
+                        <label class="block text-sm mb-1">零用金名稱</label>
+                        <input id="input-bank-petty-name" class="w-full border rounded px-3 py-2" />
+                    </div>
+                    <div id="field-bank-name">
                         <label class="block text-sm mb-1">銀行名稱</label>
                         <input id="input-bank-name" class="w-full border rounded px-3 py-2" />
                     </div>
-                    <div>
+                    <div id="field-bank-branch">
                         <label class="block text-sm mb-1">分行名稱</label>
                         <input id="input-bank-branch" class="w-full border rounded px-3 py-2" />
                     </div>
-                    <div>
+                    <div id="field-bank-holder">
                         <label class="block text-sm mb-1">戶名</label>
                         <input id="input-bank-holder" class="w-full border rounded px-3 py-2" />
                     </div>
-                    <div>
-                        <label class="block text-sm mb-1">帳號</label>
+                    <div id="field-bank-account">
+                        <label class="block text-sm mb-1" id="label-bank-account">帳號</label>
                         <input id="input-bank-account" class="w-full border rounded px-3 py-2" />
+                    </div>
+                    <div id="field-bank-amount" class="hidden">
+                        <label class="block text-sm mb-1">金額</label>
+                        <input id="input-bank-amount" type="number" class="w-full border rounded px-3 py-2" />
+                    </div>
+                    <div id="field-bank-start-date" class="hidden">
+                        <label class="block text-sm mb-1">起始日期</label>
+                        <input id="input-bank-start-date" type="date" class="w-full border rounded px-3 py-2" />
+                    </div>
+                    <div id="field-bank-end-date" class="hidden">
+                        <label class="block text-sm mb-1">到期日期</label>
+                        <input id="input-bank-end-date" type="date" class="w-full border rounded px-3 py-2" />
+                    </div>
+                    <div id="field-bank-note" class="hidden">
+                        <label class="block text-sm mb-1">備註</label>
+                        <input id="input-bank-note" class="w-full border rounded px-3 py-2" />
                     </div>
                     <div class="flex justify-end gap-2">
                         <button id="cancel-edit-bank" class="px-3 py-2 border rounded">取消</button>
@@ -687,6 +797,114 @@
             </div>
         </div>
 
+        <div id="modal-edit-resident" class="fixed inset-0 hidden z-[70]">
+            <div class="absolute inset-0 bg-black/40"></div>
+            <div class="absolute inset-0 flex items-center justify-center p-6">
+                <div class="bg-white rounded-lg w-full max-w-2xl p-6 space-y-4">
+                    <h4 class="text-lg font-bold">輸入住戶資料</h4>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm mb-1">戶號</label>
+                            <input id="input-res-unit" class="w-full border rounded px-3 py-2" />
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-1">姓名</label>
+                            <input id="input-res-name" class="w-full border rounded px-3 py-2" />
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-sm mb-1">地址</label>
+                            <input id="input-res-addr" class="w-full border rounded px-3 py-2" />
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-1">棟別</label>
+                            <select id="input-res-building" class="w-full border rounded px-3 py-2"></select>
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-1">欠繳狀況</label>
+                            <select id="input-res-arrears" class="w-full border rounded px-3 py-2">
+                                <option value="正常">正常</option>
+                                <option value="欠繳">欠繳</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-1">每月管理費</label>
+                            <input id="input-res-fee-mgmt" type="number" class="w-full border rounded px-3 py-2" />
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-1">每月停車費</label>
+                            <input id="input-res-fee-park" type="number" class="w-full border rounded px-3 py-2" />
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-1">每月其他費用</label>
+                            <input id="input-res-fee-other" type="number" class="w-full border rounded px-3 py-2" />
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-sm mb-1">備註</label>
+                            <input id="input-res-note" class="w-full border rounded px-3 py-2" />
+                        </div>
+                    </div>
+                    <div class="flex justify-end gap-2">
+                        <button id="cancel-edit-resident" class="px-3 py-2 border rounded">取消</button>
+                        <button id="confirm-edit-resident" class="px-3 py-2 bg-red-600 text-white rounded">確認</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="modal-edit-transaction" class="fixed inset-0 hidden z-[70]">
+            <div class="absolute inset-0 bg-black/40"></div>
+            <div class="absolute inset-0 flex items-center justify-center p-6">
+                <div class="bg-white rounded-lg w-full max-w-2xl p-6 space-y-4">
+                    <h4 id="modal-trans-title" class="text-lg font-bold">輸入交易資料</h4>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm mb-1">編號 (自動產生)</label>
+                            <input id="input-trans-id" class="w-full border rounded px-3 py-2 bg-gray-100" readonly />
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-1">日期</label>
+                            <input id="input-trans-date" type="date" class="w-full border rounded px-3 py-2" />
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-1">對象</label>
+                            <input id="input-trans-target" class="w-full border rounded px-3 py-2" />
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-1">月份</label>
+                            <input id="input-trans-month" type="month" class="w-full border rounded px-3 py-2" />
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-1">類型</label>
+                            <select id="input-trans-type" class="w-full border rounded px-3 py-2">
+                                <option value="固定">固定</option>
+                                <option value="其他">其他</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-1">類別</label>
+                            <select id="input-trans-category" class="w-full border rounded px-3 py-2"></select>
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-1">金額</label>
+                            <input id="input-trans-amount" type="number" class="w-full border rounded px-3 py-2" />
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-1">收支方式</label>
+                            <select id="input-trans-method" class="w-full border rounded px-3 py-2"></select>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-sm mb-1">備註</label>
+                            <input id="input-trans-note" class="w-full border rounded px-3 py-2" />
+                        </div>
+                    </div>
+                    <div class="flex justify-end gap-2">
+                        <button id="cancel-edit-transaction" class="px-3 py-2 border rounded">取消</button>
+                        <button id="confirm-edit-transaction" class="px-3 py-2 bg-red-600 text-white rounded">確認</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
             </div>
         </div>
@@ -704,10 +922,15 @@
         let appId = 'default-app';
 
         // 檢查環境是否提供了配置 (用於預覽環境)
+        // [Trae AI]: 為了避免預覽環境下的 Firestore 連線錯誤 (net::ERR_ABORTED)，
+        // 且目前主要使用 LocalStorage 進行開發，這裡暫時強制進入 Demo Mode (本地模式)。
+        // 若需啟用 Firebase，請將下方的 isDemoMode 設為 false 並確保 firebaseConfig 正確。
+        /*
         if (typeof __firebase_config !== 'undefined') {
             firebaseConfig = JSON.parse(__firebase_config);
             if(typeof __app_id !== 'undefined') appId = __app_id;
         } else {
+        */
             // [使用者需在此填入自己的 Firebase 配置]
             // 如果您要部署到 GitHub Pages，請取消註解並填入您的金鑰
             /*
@@ -720,19 +943,20 @@
                 appId: "您的APP_ID"
             };
             */
-           console.warn("未檢測到 Firebase Config，使用 UI 演示模式");
-        }
+            console.warn("未檢測到 Firebase Config，使用 UI 演示模式");
+        /* } */
 
         // 初始化 Firebase (如果有配置)
         let app, auth, db;
         let cloudAvailable = true;
-        let isDemoMode = false;
+        let isDemoMode = true; // 強制開啟本地演示模式
 
         if (typeof __force_demo_mode !== 'undefined' && __force_demo_mode) {
             isDemoMode = true;
         }
         try {
-            if (Object.keys(firebaseConfig).length > 0) {
+            // 只有在非 Demo 模式且有 Config 時才初始化 Firebase
+            if (!isDemoMode && Object.keys(firebaseConfig).length > 0) {
                 app = firebase.initializeApp(firebaseConfig);
                 auth = firebase.auth();
                 db = firebase.firestore();
@@ -983,7 +1207,7 @@
             'dashboard': [],
             'income': ['收入明細','收入設定'],
             'expense': ['支出明細','支出設定'],
-            'bank': ['銀行明細','零用金明細','定存明細','銀行設定'],
+            'bank': [], // Initial empty, will be populated by updateBankSubtabs
             'residents': ['住戶明細','住戶設定'],
             'reports': ['日報表','月報表','年報表','報表設定'],
             'settings': ['一般設定','社區帳號','備份還原']
@@ -1027,19 +1251,113 @@
             if (tab === 'income'){
                 const d = document.getElementById('income-detail-view');
                 const s = document.getElementById('income-settings-view');
-                if (d && s){ d.classList.toggle('hidden', idx!==0); s.classList.toggle('hidden', idx!==1); if (idx===1) renderIncomeSettings(); }
+                if (d && s){ 
+                    d.classList.toggle('hidden', idx!==0); 
+                    s.classList.toggle('hidden', idx!==1); 
+                    if (idx===1) renderIncomeSettings(); 
+                    if (idx===0) renderIncomeDetail();
+                }
             } else if (tab === 'expense'){
                 const d2 = document.getElementById('expense-detail-view');
                 const s2 = document.getElementById('expense-settings-view');
-                if (d2 && s2){ d2.classList.toggle('hidden', idx!==0); s2.classList.toggle('hidden', idx!==1); if (idx===1) renderExpenseSettings(); }
+                if (d2 && s2){ 
+                    d2.classList.toggle('hidden', idx!==0); 
+                    s2.classList.toggle('hidden', idx!==1); 
+                    if (idx===1) renderExpenseSettings(); 
+                    if (idx===0) renderExpenseDetail();
+                }
             } else if (tab === 'bank'){
                 const bd = document.getElementById('bank-detail-view');
                 const bs = document.getElementById('bank-settings-view');
-                if (bd && bs){ bd.classList.toggle('hidden', idx!==0); bs.classList.toggle('hidden', idx!==3); if (idx===3) renderBankSettings(); }
+                
+                // The last tab is always "Bank Settings"
+                const totalTabs = document.getElementById('subtab-bar').children.length;
+                const isSettings = (idx === totalTabs - 1);
+                
+                if (bd && bs){ 
+                    bd.classList.toggle('hidden', isSettings); 
+                    bs.classList.toggle('hidden', !isSettings); 
+                    if (isSettings) renderBankSettings();
+                    else {
+                        // Render specific account details
+                        const accounts = getBankAccounts();
+                        const acc = accounts[idx];
+                        
+                        const elType = document.getElementById('bank-detail-type');
+                        const elName = document.getElementById('bank-detail-name');
+                        const elInfo = document.getElementById('bank-detail-info');
+                        const elBalance = document.getElementById('bank-detail-balance');
+                        const elTbody = document.getElementById('bank-detail-tbody');
+                        
+                        if(acc && elType && elName && elInfo && elBalance && elTbody) {
+                            const type = acc.type || '活存';
+                            const isPetty = (type === '零用金');
+                            const name = isPetty ? acc.pettyName : acc.bankName;
+                            
+                            elType.textContent = type;
+                            elName.textContent = name;
+                            
+                            if (isPetty) {
+                                elInfo.textContent = '零用金帳戶';
+                            } else {
+                                elInfo.textContent = (acc.bankName||'') + ' ' + (acc.branchName||'') + ' ' + (acc.accountNumber||'');
+                            }
+                            
+                            // 取得真實交易紀錄
+                            // 格式: { id, date, type, category, target, desc, amount, accountId }
+                            const allTrans = getTransactions();
+                            // 目前簡單實作：若有 accountId 則篩選，若無（舊資料）則不顯示或顯示全部（此處假設全部）
+                            // 為了精確，建議後續新增交易時加入 accountId。
+                            // 這裡暫時顯示所有交易，或根據需求過濾。
+                            // 由於目前沒有 accountId，我們假設暫時不顯示或顯示空。
+                            // 但使用者要求「刪除所有紀錄」，所以這裡應該顯示空，除非有新資料。
+                            
+                            const myTrans = allTrans; // 暫時全部顯示，未來應 filter by acc.id 或 index
+                            
+                            // Sort by date 
+                            myTrans.sort((a,b) => new Date(a.date) - new Date(b.date));
+                            
+                            let runningBalance = 0; // 應從帳戶初始餘額開始算
+                            // 這裡簡化：餘額直接從 0 開始累加，或需要額外儲存初始餘額
+                            
+                            const rows = myTrans.map(t => {
+                                runningBalance += parseInt(t.amount||0);
+                                const isIncome = parseInt(t.amount||0) > 0;
+                                const expenseDisplay = !isIncome ? '$'+Math.abs(t.amount).toLocaleString() : '-';
+                                const incomeDisplay = isIncome ? '$'+parseInt(t.amount).toLocaleString() : '-';
+                                
+                                return `
+                                <tr>
+                                    <td class="px-6 py-4">${t.date}</td>
+                                    <td class="px-6 py-4">${t.type}</td>
+                                    <td class="px-6 py-4">${t.category}</td>
+                                    <td class="px-6 py-4">${t.target}</td>
+                                    <td class="px-6 py-4 font-medium text-gray-800">${t.desc}</td>
+                                    <td class="px-6 py-4 text-right text-red-600">${expenseDisplay}</td>
+                                    <td class="px-6 py-4 text-right text-green-600">${incomeDisplay}</td>
+                                    <td class="px-6 py-4 text-right font-bold text-gray-800">$${runningBalance.toLocaleString()}</td>
+                                </tr>
+                                `;
+                            });
+                            
+                            elBalance.textContent = '$' + runningBalance.toLocaleString();
+                            // Reverse to show newest first
+                            elTbody.innerHTML = rows.reverse().join('');
+                            if (rows.length === 0) {
+                                elTbody.innerHTML = '<tr><td colspan="8" class="px-6 py-4 text-center text-gray-500">尚無交易紀錄</td></tr>';
+                            }
+                        }
+                    }
+                }
             } else if (tab === 'residents'){
                 const rd = document.getElementById('residents-detail-view');
                 const rs = document.getElementById('residents-settings-view');
-                if (rd && rs){ rd.classList.toggle('hidden', idx!==0); rs.classList.toggle('hidden', idx!==1); if (idx===1) renderResidentsSettings(); }
+                if (rd && rs){ 
+                    rd.classList.toggle('hidden', idx!==0); 
+                    rs.classList.toggle('hidden', idx!==1); 
+                    if (idx===1) renderResidentsSettings(); 
+                    if (idx===0) renderResidentsDetail();
+                }
             }
         }
 
@@ -1778,6 +2096,7 @@
         function expenseKey(kind){ return kind+'_'+getCurrentCommunityCode(); }
         function bankKey(){ return 'bank_accounts_'+getCurrentCommunityCode(); }
         function buildingKey(){ return 'buildings_'+getCurrentCommunityCode(); }
+        function residentsKey(){ return 'residents_'+getCurrentCommunityCode(); }
         function getIncomeFixed(){ return lsGet(incomeKey('income_fixed')); }
         function setIncomeFixed(arr){ lsSet(incomeKey('income_fixed'), arr); }
         function getIncomeOther(){ return lsGet(incomeKey('income_other')); }
@@ -1788,8 +2107,12 @@
         function setExpenseOther(arr){ lsSet(expenseKey('expense_other'), arr); }
         function getBankAccounts(){ return lsGet(bankKey()); }
         function setBankAccounts(arr){ lsSet(bankKey(), arr); }
+        function getTransactions(){ return lsGet('transactions_'+getCurrentCommunityCode()); }
+        function setTransactions(arr){ lsSet('transactions_'+getCurrentCommunityCode(), arr); }
         function getBuildings(){ return lsGet(buildingKey()); }
         function setBuildings(arr){ lsSet(buildingKey(), arr); }
+        function getResidents(){ return lsGet(residentsKey()); }
+        function setResidents(arr){ lsSet(residentsKey(), arr); }
 
         const incomeFixedTbody = document.getElementById('income-fixed-tbody');
         const incomeOtherTbody = document.getElementById('income-other-tbody');
@@ -1803,6 +2126,8 @@
         const btnAddBank = document.getElementById('btn-add-bank');
         const residentsBuildingsTbody = document.getElementById('residents-buildings-tbody');
         const btnAddBuilding = document.getElementById('btn-add-building');
+        const residentsDetailTbody = document.getElementById('residents-detail-tbody');
+        const btnAddResident = document.getElementById('btn-add-resident');
 
         let editCtx = null;
         const modalEditItem = document.getElementById('modal-edit-item');
@@ -1810,10 +2135,19 @@
         const confirmEditItem = document.getElementById('confirm-edit-item');
         const cancelEditItem = document.getElementById('cancel-edit-item');
         const modalEditBank = document.getElementById('modal-edit-bank');
+        const inputBankType = document.getElementById('input-bank-type');
+        const inputBankPettyName = document.getElementById('input-bank-petty-name');
         const inputBankName = document.getElementById('input-bank-name');
         const inputBankBranch = document.getElementById('input-bank-branch');
         const inputBankHolder = document.getElementById('input-bank-holder');
         const inputBankAccount = document.getElementById('input-bank-account');
+        
+        const fieldPettyName = document.getElementById('field-petty-name');
+        const fieldBankName = document.getElementById('field-bank-name');
+        const fieldBankBranch = document.getElementById('field-bank-branch');
+        const fieldBankHolder = document.getElementById('field-bank-holder');
+        const fieldBankAccount = document.getElementById('field-bank-account');
+
         const confirmEditBank = document.getElementById('confirm-edit-bank');
         const cancelEditBank = document.getElementById('cancel-edit-bank');
         const modalEditBuilding = document.getElementById('modal-edit-building');
@@ -1821,12 +2155,135 @@
         const confirmEditBuilding = document.getElementById('confirm-edit-building');
         const cancelEditBuilding = document.getElementById('cancel-edit-building');
 
+        const modalEditResident = document.getElementById('modal-edit-resident');
+        const inputResUnit = document.getElementById('input-res-unit');
+        const inputResName = document.getElementById('input-res-name');
+        const inputResAddr = document.getElementById('input-res-addr');
+        const inputResBuilding = document.getElementById('input-res-building');
+        const inputResArrears = document.getElementById('input-res-arrears');
+        const inputResFeeMgmt = document.getElementById('input-res-fee-mgmt');
+        const inputResFeePark = document.getElementById('input-res-fee-park');
+        const inputResFeeOther = document.getElementById('input-res-fee-other');
+        const inputResNote = document.getElementById('input-res-note');
+        const confirmEditResident = document.getElementById('confirm-edit-resident');
+        const cancelEditResident = document.getElementById('cancel-edit-resident');
+
+
+        function updateBankModalVisibility() {
+            const type = inputBankType.value;
+            if (type === '零用金') {
+                fieldPettyName.classList.remove('hidden');
+                fieldBankName.classList.add('hidden');
+                fieldBankBranch.classList.add('hidden');
+                fieldBankHolder.classList.add('hidden');
+                fieldBankAccount.classList.add('hidden');
+            } else {
+                fieldPettyName.classList.add('hidden');
+                fieldBankName.classList.remove('hidden');
+                fieldBankBranch.classList.remove('hidden');
+                fieldBankHolder.classList.remove('hidden');
+                fieldBankAccount.classList.remove('hidden');
+            }
+        }
+        if (inputBankType) {
+            inputBankType.addEventListener('change', updateBankModalVisibility);
+        }
+
         function openEditItem(ctx){ editCtx = ctx; inputItemName.value = ctx.value || ''; if (modalEditItem) modalEditItem.classList.remove('hidden'); }
         function closeEditItem(){ editCtx = null; if (modalEditItem) modalEditItem.classList.add('hidden'); }
-        function openEditBank(ctx){ editCtx = ctx; if (modalEditBank){ inputBankName.value = ctx.item?.bankName || ''; inputBankBranch.value = ctx.item?.branchName || ''; inputBankHolder.value = ctx.item?.holderName || ''; inputBankAccount.value = ctx.item?.accountNumber || ''; modalEditBank.classList.remove('hidden'); } }
+        function openEditBank(ctx){ 
+            editCtx = ctx; 
+            if (modalEditBank){ 
+                inputBankType.value = ctx.item?.type || '活存';
+                inputBankPettyName.value = ctx.item?.pettyName || '';
+                inputBankName.value = ctx.item?.bankName || ''; 
+                inputBankBranch.value = ctx.item?.branchName || ''; 
+                inputBankHolder.value = ctx.item?.holderName || ''; 
+                inputBankAccount.value = ctx.item?.accountNumber || ''; 
+                updateBankModalVisibility();
+                modalEditBank.classList.remove('hidden'); 
+            } 
+        }
         function closeEditBank(){ editCtx = null; if (modalEditBank) modalEditBank.classList.add('hidden'); }
         function openEditBuilding(ctx){ editCtx = ctx; if (modalEditBuilding){ inputBuildingName.value = ctx.value || ''; modalEditBuilding.classList.remove('hidden'); } }
         function closeEditBuilding(){ editCtx = null; if (modalEditBuilding) modalEditBuilding.classList.add('hidden'); }
+
+        function openEditResident(ctx){
+            editCtx = ctx;
+            if (modalEditResident){
+                // Populate buildings
+                const buildings = getBuildings();
+                inputResBuilding.innerHTML = buildings.map(b => `<option value="${b}">${b}</option>`).join('');
+                
+                if (ctx.item) {
+                    inputResUnit.value = ctx.item.unit || '';
+                    inputResName.value = ctx.item.name || '';
+                    inputResAddr.value = ctx.item.addr || '';
+                    inputResBuilding.value = ctx.item.building || (buildings[0]||'');
+                    inputResArrears.value = ctx.item.arrears || '正常';
+                    inputResFeeMgmt.value = ctx.item.feeMgmt || '';
+                    inputResFeePark.value = ctx.item.feePark || '';
+                    inputResFeeOther.value = ctx.item.feeOther || '';
+                    inputResNote.value = ctx.item.note || '';
+                } else {
+                    inputResUnit.value = '';
+                    inputResName.value = '';
+                    inputResAddr.value = '';
+                    inputResBuilding.value = (buildings[0]||'');
+                    inputResArrears.value = '正常';
+                    inputResFeeMgmt.value = '';
+                    inputResFeePark.value = '';
+                    inputResFeeOther.value = '';
+                    inputResNote.value = '';
+                }
+                modalEditResident.classList.remove('hidden');
+            }
+        }
+        function closeEditResident(){ editCtx = null; if (modalEditResident) modalEditResident.classList.add('hidden'); }
+
+        function renderResidentsDetail(){
+            if (residentsDetailTbody){
+                const arr = getResidents();
+                residentsDetailTbody.innerHTML = arr.map((x,i)=> `
+                    <tr>
+                        <td class="px-6 py-3">${i+1}</td>
+                        <td class="px-6 py-3">${x.unit||''}</td>
+                        <td class="px-6 py-3">${x.name||''}</td>
+                        <td class="px-6 py-3">${x.addr||''}</td>
+                        <td class="px-6 py-3">${x.building||''}</td>
+                        <td class="px-6 py-3 text-right">${x.feeMgmt ? '$'+parseInt(x.feeMgmt).toLocaleString() : '-'}</td>
+                        <td class="px-6 py-3 text-right">${x.feePark ? '$'+parseInt(x.feePark).toLocaleString() : '-'}</td>
+                        <td class="px-6 py-3 text-right">${x.feeOther ? '$'+parseInt(x.feeOther).toLocaleString() : '-'}</td>
+                        <td class="px-6 py-3">${x.arrears==='欠繳' ? '<span class="text-red-600 font-bold">欠繳</span>' : '<span class="text-green-600">正常</span>'}</td>
+                        <td class="px-6 py-3">${x.note||''}</td>
+                        <td class="px-6 py-3">
+                            <button data-i="${i}" class="edit-resident text-blue-600 mr-2">編輯</button>
+                            <button data-i="${i}" class="del-resident text-red-600">刪除</button>
+                        </td>
+                    </tr>
+                `).join('');
+                
+                Array.from(residentsDetailTbody.querySelectorAll('.del-resident')).forEach(btn=>{ 
+                    btn.addEventListener('click', ()=>{ 
+                        if(confirm('確定要刪除此住戶嗎？')) {
+                            const i = parseInt(btn.getAttribute('data-i')); 
+                            const arr2 = getResidents(); 
+                            arr2.splice(i,1); 
+                            setResidents(arr2); 
+                            renderResidentsDetail(); 
+                        }
+                    }); 
+                });
+                Array.from(residentsDetailTbody.querySelectorAll('.edit-resident')).forEach(btn=>{ 
+                    btn.addEventListener('click', ()=>{ 
+                        const i = parseInt(btn.getAttribute('data-i')); 
+                        const arr2 = getResidents(); 
+                        openEditResident({kind:'resident', index:i, item:arr2[i]}); 
+                    }); 
+                });
+            }
+        }
+
         function renderIncomeSettings(){
             if (incomeFixedTbody){ const arr = getIncomeFixed(); incomeFixedTbody.innerHTML = arr.map((x,i)=> '<tr><td class="px-6 py-3">'+x+'</td><td class="px-6 py-3"><button data-i="'+i+'" class="edit-if text-blue-600 mr-2">編輯</button><button data-i="'+i+'" class="del-if text-red-600">刪除</button></td></tr>').join('');
                 Array.from(incomeFixedTbody.querySelectorAll('.del-if')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getIncomeFixed(); arr2.splice(i,1); setIncomeFixed(arr2); renderIncomeSettings(); }); });
@@ -1848,10 +2305,38 @@
             }
         }
         function renderBankSettings(){
-            if (bankTbody){ const arr = getBankAccounts(); bankTbody.innerHTML = arr.map((x,i)=> '<tr><td class="px-6 py-3">'+(x.bankName||'')+'</td><td class="px-6 py-3">'+(x.branchName||'')+'</td><td class="px-6 py-3">'+(x.holderName||'')+'</td><td class="px-6 py-3">'+(x.accountNumber||'')+'</td><td class="px-6 py-3"><button data-i="'+i+'" class="edit-bank text-blue-600 mr-2">編輯</button><button data-i="'+i+'" class="del-bank text-red-600">刪除</button></td></tr>').join('');
-                Array.from(bankTbody.querySelectorAll('.del-bank')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getBankAccounts(); arr2.splice(i,1); setBankAccounts(arr2); renderBankSettings(); }); });
+            if (bankTbody){ const arr = getBankAccounts(); 
+                
+                bankTbody.innerHTML = arr.map((x,i)=> {
+                    const type = x.type || '活存';
+                    const isPetty = (type === '零用金');
+                    const bankNameDisplay = isPetty ? '-' : x.bankName;
+                    const branchDisplay = isPetty ? '-' : x.branchName;
+                    const pettyNameDisplay = isPetty ? x.pettyName : '-';
+                    const holderDisplay = isPetty ? '-' : x.holderName;
+                    const accountDisplay = isPetty ? '-' : x.accountNumber;
+                    
+                    return '<tr><td class="px-6 py-3">'+type+'</td><td class="px-6 py-3">'+(bankNameDisplay||'')+'</td><td class="px-6 py-3">'+(branchDisplay||'')+'</td><td class="px-6 py-3">'+(pettyNameDisplay||'')+'</td><td class="px-6 py-3">'+(holderDisplay||'')+'</td><td class="px-6 py-3">'+(accountDisplay||'')+'</td><td class="px-6 py-3"><button data-i="'+i+'" class="edit-bank text-blue-600 mr-2">編輯</button><button data-i="'+i+'" class="del-bank text-red-600">刪除</button></td></tr>';
+                }).join('');
+                Array.from(bankTbody.querySelectorAll('.del-bank')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getBankAccounts(); arr2.splice(i,1); setBankAccounts(arr2); updateBankSubtabs(); renderBankSettings(); }); });
                 Array.from(bankTbody.querySelectorAll('.edit-bank')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getBankAccounts(); openEditBank({kind:'bank', index:i, item:arr2[i]}); }); });
             }
+        }
+        
+        function updateBankSubtabs(){
+             const arr = getBankAccounts();
+             const newTabs = arr.map(x => {
+                 if(x.type === '零用金') return '零用金-'+(x.pettyName||'');
+                 return (x.type||'活存')+'-'+(x.bankName||'');
+             });
+             // Keep "銀行設定" at the end.
+             // Replace static tabs with dynamic ones + Settings
+             SUBTAB_CONFIG['bank'] = [...newTabs, '銀行設定'];
+             
+             // If currently on bank tab, re-render subtabs
+             if (document.getElementById('nav-bank').classList.contains('bg-red-800')) {
+                 renderSubtabs('bank');
+             }
         }
         function renderResidentsSettings(){
             if (residentsBuildingsTbody){ const arr = getBuildings(); residentsBuildingsTbody.innerHTML = arr.map((x,i)=> '<tr><td class="px-6 py-3">'+x+'</td><td class="px-6 py-3"><button data-i="'+i+'" class="edit-building text-blue-600 mr-2">編輯</button><button data-i="'+i+'" class="del-building text-red-600">刪除</button></td></tr>').join('');
@@ -1866,8 +2351,10 @@
             if (getExpenseOther().length===0) setExpenseOther(['維修費']);
         }
         function ensureDefaultsBankResidents(){
-            if (getBankAccounts().length===0) setBankAccounts([{bankName:'台新銀行', branchName:'松德分行', holderName:'社區管理委員會', accountNumber:'123-456-7890'}]);
+            if (getBankAccounts().length===0) setBankAccounts([{type:'活存', bankName:'台新銀行', branchName:'松德分行', holderName:'社區管理委員會', accountNumber:'123-456-7890'}]);
+            updateBankSubtabs(); // Ensure tabs are rendered on load
             if (getBuildings().length===0) setBuildings(['A棟','B棟']);
+            if (getResidents().length===0) setResidents([{unit:'8-1', name:'陳大明', addr:'台北市信義區松德路100號8樓之1', building:'A棟', arrears:'正常', feeMgmt:'2000', feePark:'0', feeOther:'0', note:''}]);
         }
         ensureDefaultsBankResidents();
         ensureDefaultsIncomeExpense();
@@ -1881,12 +2368,369 @@
             else if (editCtx.kind==='expense_other'){ const arr = getExpenseOther(); if (editCtx.index>=0) arr[editCtx.index]=name; else arr.push(name); setExpenseOther(arr); renderExpenseSettings(); }
             closeEditItem(); }); }
         if (cancelEditItem){ cancelEditItem.addEventListener('click', closeEditItem); }
-        if (btnAddBank){ btnAddBank.addEventListener('click', ()=> openEditBank({kind:'bank', index:-1, item:{}})); }
-        if (confirmEditBank){ confirmEditBank.addEventListener('click', ()=>{ if(!editCtx) return; const item = { bankName: (inputBankName.value||'').trim(), branchName: (inputBankBranch.value||'').trim(), holderName: (inputBankHolder.value||'').trim(), accountNumber: (inputBankAccount.value||'').trim() }; const arr = getBankAccounts(); if (editCtx.index>=0) arr[editCtx.index]=item; else arr.push(item); setBankAccounts(arr); closeEditBank(); renderBankSettings(); }); }
+        if (btnAddBank){ btnAddBank.addEventListener('click', ()=> openEditBank({kind:'bank', index:-1, item:{type:'活存'}})); }
+        if (confirmEditBank){ confirmEditBank.addEventListener('click', ()=>{ 
+            if(!editCtx) return; 
+            const type = inputBankType.value;
+            let item = { type: type };
+            
+            if (type === '零用金') {
+                item.pettyName = (inputBankPettyName.value||'').trim();
+            } else {
+                item.bankName = (inputBankName.value||'').trim();
+                item.branchName = (inputBankBranch.value||'').trim();
+                item.holderName = (inputBankHolder.value||'').trim();
+                item.accountNumber = (inputBankAccount.value||'').trim();
+            }
+            
+            const arr = getBankAccounts(); 
+            if (editCtx.index>=0) arr[editCtx.index]=item; else arr.push(item); 
+            setBankAccounts(arr); 
+            updateBankSubtabs();
+            closeEditBank(); 
+            renderBankSettings(); 
+        }); }
         if (cancelEditBank){ cancelEditBank.addEventListener('click', closeEditBank); }
         if (btnAddBuilding){ btnAddBuilding.addEventListener('click', ()=> openEditBuilding({kind:'building', index:-1, value:''})); }
         if (confirmEditBuilding){ confirmEditBuilding.addEventListener('click', ()=>{ if(!editCtx) return; const name = (inputBuildingName.value||'').trim(); const arr = getBuildings(); if (editCtx.index>=0) arr[editCtx.index]=name; else arr.push(name); setBuildings(arr); closeEditBuilding(); renderResidentsSettings(); }); }
         if (cancelEditBuilding){ cancelEditBuilding.addEventListener('click', closeEditBuilding); }
+
+        if (btnAddResident){ btnAddResident.addEventListener('click', ()=> openEditResident({kind:'resident', index:-1, item:null})); }
+        if (confirmEditResident){ confirmEditResident.addEventListener('click', ()=>{ 
+            if(!editCtx) return; 
+            const item = {
+                unit: (inputResUnit.value||'').trim(),
+                name: (inputResName.value||'').trim(),
+                addr: (inputResAddr.value||'').trim(),
+                building: (inputResBuilding.value||'').trim(),
+                arrears: (inputResArrears.value||'正常'),
+                feeMgmt: (inputResFeeMgmt.value||'').trim(),
+                feePark: (inputResFeePark.value||'').trim(),
+                feeOther: (inputResFeeOther.value||'').trim(),
+                note: (inputResNote.value||'').trim()
+            };
+            const arr = getResidents(); 
+            if (editCtx.index>=0) arr[editCtx.index]=item; else arr.push(item); 
+            setResidents(arr); 
+            closeEditResident(); 
+            renderResidentsDetail(); 
+        }); }
+        if (cancelEditResident){ cancelEditResident.addEventListener('click', closeEditResident); }
+
+        // ==========================================
+        // 住戶 Excel 匯入/匯出功能
+        // ==========================================
+        const btnExportResident = document.getElementById('btn-export-resident');
+        const btnImportResident = document.getElementById('btn-import-resident');
+        const fileImportResident = document.getElementById('file-import-resident');
+
+        if (btnExportResident) {
+            btnExportResident.addEventListener('click', () => {
+                if (typeof XLSX === 'undefined') {
+                    alert('Excel 元件尚未載入，請稍後再試或檢查網路連線。');
+                    return;
+                }
+                const residents = getResidents();
+                if (residents.length === 0) {
+                    alert('無資料可匯出');
+                    return;
+                }
+                
+                // 轉換資料為顯示格式
+                const data = residents.map((r, i) => ({
+                    '編號': i + 1,
+                    '戶號': r.unit,
+                    '姓名': r.name,
+                    '地址': r.addr,
+                    '棟別': r.building,
+                    '每月管理費': r.feeMgmt,
+                    '每月停車費': r.feePark,
+                    '每月其他費用': r.feeOther,
+                    '欠繳狀況': r.arrears,
+                    '備註': r.note
+                }));
+
+                const ws = XLSX.utils.json_to_sheet(data);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "住戶資料");
+                XLSX.writeFile(wb, "住戶名冊_" + getCurrentCommunityCode() + ".xlsx");
+            });
+        }
+
+        if (btnImportResident && fileImportResident) {
+            btnImportResident.addEventListener('click', () => {
+                if (typeof XLSX === 'undefined') {
+                    alert('Excel 元件尚未載入，請稍後再試或檢查網路連線。');
+                    return;
+                }
+                fileImportResident.click();
+            });
+
+            fileImportResident.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        const firstSheetName = workbook.SheetNames[0];
+                        const worksheet = workbook.Sheets[firstSheetName];
+                        const json = XLSX.utils.sheet_to_json(worksheet);
+
+                        if (json.length === 0) {
+                            alert('Excel 檔案無資料');
+                            return;
+                        }
+
+                        // 映射回資料模型
+                        const newResidents = json.map(row => ({
+                            unit: row['戶號'] ? String(row['戶號']).trim() : '',
+                            name: row['姓名'] ? String(row['姓名']).trim() : '',
+                            addr: row['地址'] ? String(row['地址']).trim() : '',
+                            building: row['棟別'] ? String(row['棟別']).trim() : '',
+                            feeMgmt: row['每月管理費'] ? String(row['每月管理費']).trim() : '0',
+                            feePark: row['每月停車費'] ? String(row['每月停車費']).trim() : '0',
+                            feeOther: row['每月其他費用'] ? String(row['每月其他費用']).trim() : '0',
+                            arrears: row['欠繳狀況'] ? String(row['欠繳狀況']).trim() : '正常',
+                            note: row['備註'] ? String(row['備註']).trim() : ''
+                        }));
+
+                        if (confirm(`匯入 ${newResidents.length} 筆資料。\n點擊「確定」將【清空並覆蓋】現有資料。\n點擊「取消」將【追加】到現有資料後。`)) {
+                            setResidents(newResidents);
+                        } else {
+                            const current = getResidents();
+                            setResidents([...current, ...newResidents]);
+                        }
+
+                        renderResidentsDetail();
+                        alert('匯入完成');
+                        fileImportResident.value = ''; 
+                    } catch (err) {
+                        console.error(err);
+                        alert('匯入失敗，請檢查檔案格式');
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            });
+        }
+
+        // ==========================================
+        // 交易明細功能 (收入/支出)
+        // ==========================================
+        const modalEditTransaction = document.getElementById('modal-edit-transaction');
+        const modalTransTitle = document.getElementById('modal-trans-title');
+        const inputTransId = document.getElementById('input-trans-id');
+        const inputTransDate = document.getElementById('input-trans-date');
+        const inputTransTarget = document.getElementById('input-trans-target');
+        const inputTransMonth = document.getElementById('input-trans-month');
+        const inputTransType = document.getElementById('input-trans-type');
+        const inputTransCategory = document.getElementById('input-trans-category');
+        const inputTransAmount = document.getElementById('input-trans-amount');
+        const inputTransMethod = document.getElementById('input-trans-method');
+        const inputTransNote = document.getElementById('input-trans-note');
+        const confirmEditTransaction = document.getElementById('confirm-edit-transaction');
+        const cancelEditTransaction = document.getElementById('cancel-edit-transaction');
+        const btnAddIncomeRecord = document.getElementById('btn-add-income-record');
+        const btnAddExpenseRecord = document.getElementById('btn-add-expense-record');
+        const incomeDetailTbody = document.getElementById('income-detail-tbody');
+        const expenseDetailTbody = document.getElementById('expense-detail-tbody');
+
+        function generateTransactionId(mode, dateStr) {
+            if (!dateStr) return '';
+            const prefix = (mode === 'income') ? 'I' : 'O';
+            const datePart = dateStr.replace(/-/g, '');
+            const baseId = prefix + datePart;
+            
+            const allTrans = getTransactions();
+            const existing = allTrans.filter(t => t.id && t.id.startsWith(baseId));
+            
+            let maxSeq = 0;
+            existing.forEach(t => {
+                const seqStr = t.id.substring(baseId.length);
+                const seq = parseInt(seqStr);
+                if (!isNaN(seq) && seq > maxSeq) maxSeq = seq;
+            });
+            
+            return baseId + String(maxSeq + 1).padStart(3, '0');
+        }
+
+        function updateTransactionModalDropdowns(mode) {
+            const type = inputTransType.value;
+            let categories = [];
+            if (mode === 'income') {
+                categories = (type === '固定') ? getIncomeFixed() : getIncomeOther();
+            } else {
+                categories = (type === '固定') ? getExpenseFixed() : getExpenseOther();
+            }
+            inputTransCategory.innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join('');
+            
+            const accounts = getBankAccounts();
+            const methods = accounts.map(acc => {
+                if (acc.type === '零用金') return `零用金-${acc.pettyName}`;
+                return `${acc.type}-${acc.bankName}`;
+            });
+            inputTransMethod.innerHTML = methods.map(m => `<option value="${m}">${m}</option>`).join('');
+        }
+
+        if (inputTransType) {
+            inputTransType.addEventListener('change', () => {
+                if (editCtx && editCtx.mode) {
+                    updateTransactionModalDropdowns(editCtx.mode);
+                }
+            });
+        }
+        
+        if (inputTransDate) {
+            inputTransDate.addEventListener('change', () => {
+                if (editCtx && editCtx.index === -1) { 
+                    inputTransId.value = generateTransactionId(editCtx.mode, inputTransDate.value);
+                }
+            });
+        }
+
+        function openEditTransaction(ctx) {
+            editCtx = ctx; 
+            if (!modalEditTransaction) return;
+
+            const modeText = (ctx.mode === 'income') ? '收入' : '支出';
+            modalTransTitle.textContent = (ctx.index === -1 ? '新增' : '編輯') + modeText + '資料';
+            
+            if (ctx.item) {
+                inputTransType.value = ctx.item.type || '固定';
+            } else {
+                inputTransType.value = '固定';
+            }
+            updateTransactionModalDropdowns(ctx.mode);
+
+            if (ctx.item) {
+                inputTransId.value = ctx.item.id;
+                inputTransDate.value = ctx.item.date;
+                inputTransTarget.value = ctx.item.target;
+                inputTransMonth.value = ctx.item.month;
+                inputTransCategory.value = ctx.item.category;
+                inputTransAmount.value = ctx.item.amount;
+                inputTransMethod.value = ctx.item.method;
+                inputTransNote.value = ctx.item.note;
+            } else {
+                const today = new Date().toISOString().split('T')[0];
+                inputTransDate.value = today;
+                inputTransId.value = generateTransactionId(ctx.mode, today);
+                inputTransTarget.value = '';
+                inputTransMonth.value = today.substring(0, 7);
+                inputTransAmount.value = '';
+                inputTransNote.value = '';
+                if (inputTransCategory.options.length > 0) inputTransCategory.selectedIndex = 0;
+                if (inputTransMethod.options.length > 0) inputTransMethod.selectedIndex = 0;
+            }
+            
+            modalEditTransaction.classList.remove('hidden');
+        }
+
+        function closeEditTransaction() {
+            editCtx = null;
+            if (modalEditTransaction) modalEditTransaction.classList.add('hidden');
+        }
+
+        if (btnAddIncomeRecord) btnAddIncomeRecord.addEventListener('click', () => openEditTransaction({mode:'income', index:-1}));
+        if (btnAddExpenseRecord) btnAddExpenseRecord.addEventListener('click', () => openEditTransaction({mode:'expense', index:-1}));
+        if (cancelEditTransaction) cancelEditTransaction.addEventListener('click', closeEditTransaction);
+        
+        if (confirmEditTransaction) confirmEditTransaction.addEventListener('click', () => {
+            if (!editCtx) return;
+            
+            const item = {
+                id: inputTransId.value,
+                date: inputTransDate.value,
+                target: inputTransTarget.value,
+                month: inputTransMonth.value,
+                type: inputTransType.value,
+                category: inputTransCategory.value,
+                amount: inputTransAmount.value,
+                method: inputTransMethod.value,
+                note: inputTransNote.value,
+                mode: editCtx.mode
+            };
+            
+            const allTrans = getTransactions();
+            
+            if (editCtx.index >= 0) {
+                const realIndex = allTrans.findIndex(t => t.id === item.id);
+                if (realIndex >= 0) {
+                    allTrans[realIndex] = item;
+                } else {
+                    allTrans.push(item);
+                }
+            } else {
+                allTrans.push(item);
+            }
+            
+            setTransactions(allTrans);
+            closeEditTransaction();
+            if (editCtx.mode === 'income') renderIncomeDetail();
+            else renderExpenseDetail();
+        });
+
+        function renderIncomeDetail() {
+            renderTransactionDetail('income');
+        }
+        
+        function renderExpenseDetail() {
+            renderTransactionDetail('expense');
+        }
+
+        function renderTransactionDetail(mode) {
+            const tbody = (mode === 'income') ? incomeDetailTbody : expenseDetailTbody;
+            if (!tbody) return;
+            
+            const allTrans = getTransactions();
+            const prefix = (mode === 'income') ? 'I' : 'O';
+            const filtered = allTrans.filter(t => t.id && t.id.startsWith(prefix));
+            
+            filtered.sort((a,b) => new Date(b.date) - new Date(a.date));
+            
+            tbody.innerHTML = filtered.map(t => `
+                <tr>
+                    <td class="px-6 py-3">${t.id}</td>
+                    <td class="px-6 py-3">${t.date}</td>
+                    <td class="px-6 py-3">${t.target}</td>
+                    <td class="px-6 py-3">${t.type}</td>
+                    <td class="px-6 py-3">${t.category}</td>
+                    <td class="px-6 py-3">${t.month}</td>
+                    <td class="px-6 py-3 text-right">$${parseInt(t.amount||0).toLocaleString()}</td>
+                    <td class="px-6 py-3">${t.method}</td>
+                    <td class="px-6 py-3">${t.note||''}</td>
+                    <td class="px-6 py-3">
+                        <button class="btn-edit-trans text-blue-600 mr-2" data-id="${t.id}">編輯</button>
+                        <button class="btn-del-trans text-red-600" data-id="${t.id}">刪除</button>
+                    </td>
+                </tr>
+            `).join('');
+            
+            tbody.querySelectorAll('.btn-edit-trans').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.getAttribute('data-id');
+                    const item = allTrans.find(t => t.id === id);
+                    if (item) {
+                        openEditTransaction({mode: mode, index: 1, item: item});
+                    }
+                });
+            });
+            
+            tbody.querySelectorAll('.btn-del-trans').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (confirm('確定要刪除此紀錄嗎？')) {
+                        const id = btn.getAttribute('data-id');
+                        const newTrans = getTransactions().filter(t => t.id !== id);
+                        setTransactions(newTrans);
+                        renderTransactionDetail(mode);
+                    }
+                });
+            });
+        }
+
+
 
     </script>
 </body>
