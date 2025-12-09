@@ -56,13 +56,6 @@
 </head>
 <body class="bg-gray-100 text-gray-800 overflow-hidden h-screen">
 
-    <!-- Loading Overlay -->
-    <div id="app-loader" class="fixed inset-0 z-[100] bg-white flex flex-col items-center justify-center">
-        <div class="loader mb-4"></div>
-        <h2 class="text-xl font-bold text-gray-700">正在同步雲端資料...</h2>
-        <p class="text-gray-500 text-sm mt-2">請稍候</p>
-    </div>
-
     <!-- 1. 登入頁面容器 -->
     <div id="login-view" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-200" style="background-image: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%); visibility:hidden;">
         <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md border-t-4 border-red-700">
@@ -631,7 +624,7 @@
                             <thead class="bg-gray-100 text-gray-700">
                                 <tr>
                                     <th class="px-4 py-2 text-left">帳號編號</th>
-                                    <th class="px-4 py-2 text-left">供應商名稱</th>
+                                    <th class="px-4 py-2 text-left">社區名稱</th>
                                     <th class="px-4 py-2 text-left">姓名</th>
                                     <th class="px-4 py-2 text-left">電子郵件</th>
                                     <th class="px-4 py-2 text-left">手機號碼</th>
@@ -645,17 +638,15 @@
 
                 <div id="settings-view-communities" class="space-y-4 hidden">
                     <div class="flex justify-between items-center">
-                        <h3 class="text-lg font-bold text-gray-800">供應商列表</h3>
+                        <h3 class="text-lg font-bold text-gray-800">社區列表</h3>
                         <button id="btn-add-community" class="px-3 py-2 bg-red-600 text-white rounded">新增</button>
                     </div>
                     <div class="border rounded-lg overflow-hidden">
                         <table class="w-full text-sm">
                             <thead class="bg-gray-100 text-gray-700">
                                 <tr>
-                                    <th class="px-4 py-2 text-left">供應商編號</th>
-                                    <th class="px-4 py-2 text-left">供應商名稱</th>
-                                    <th class="px-4 py-2 text-left">統編</th>
-                                    <th class="px-4 py-2 text-left">服務內容</th>
+                                    <th class="px-4 py-2 text-left">社區編號</th>
+                                    <th class="px-4 py-2 text-left">社區名稱</th>
                                     <th class="px-4 py-2 text-left">操作</th>
                                 </tr>
                             </thead>
@@ -674,7 +665,7 @@
                 <div class="bg-white rounded-lg w-full max-w-lg p-6 space-y-4 shadow-xl">
                     <h4 class="text-lg font-bold">新增帳號</h4>
                     <div>
-                        <label class="block text-sm mb-1">供應商名稱</label>
+                        <label class="block text-sm mb-1">社區名稱</label>
                         <select id="input-account-community" class="w-full border rounded px-3 py-2"></select>
                     </div>
                     <div>
@@ -701,22 +692,14 @@
             <div class="absolute inset-0 bg-black/40"></div>
             <div class="absolute inset-0 flex items-center justify-center p-6">
                 <div class="bg-white rounded-lg w-full max-w-lg p-6 space-y-4">
-                    <h4 class="text-lg font-bold">新增供應商</h4>
+                    <h4 class="text-lg font-bold">新增社區</h4>
                     <div>
-                        <label class="block text-sm mb-1">供應商編號</label>
+                        <label class="block text-sm mb-1">社區編號</label>
                         <input id="input-community-code" class="w-full border rounded px-3 py-2" />
                     </div>
                     <div>
-                        <label class="block text-sm mb-1">供應商名稱</label>
+                        <label class="block text-sm mb-1">社區名稱</label>
                         <input id="input-community-name" class="w-full border rounded px-3 py-2" />
-                    </div>
-                    <div>
-                        <label class="block text-sm mb-1">統編</label>
-                        <input id="input-community-taxid" class="w-full border rounded px-3 py-2" />
-                    </div>
-                    <div>
-                        <label class="block text-sm mb-1">服務內容</label>
-                        <input id="input-community-service" class="w-full border rounded px-3 py-2" />
                     </div>
                     <div class="flex justify-end gap-2">
                         <button id="cancel-add-community" class="px-3 py-2 border rounded">取消</button>
@@ -952,20 +935,6 @@
             </div>
         </div>
 
-
-        <div id="modal-confirm" class="fixed inset-0 hidden z-[80]">
-            <div class="absolute inset-0 bg-black/40"></div>
-            <div class="absolute inset-0 flex items-center justify-center p-6">
-                <div class="bg-white rounded-lg w-full max-w-sm p-6 space-y-4 shadow-xl">
-                    <h4 class="text-lg font-bold">確認刪除</h4>
-                    <p id="modal-confirm-msg" class="text-gray-600">確定要刪除嗎？</p>
-                    <div class="flex justify-end gap-2">
-                        <button id="btn-confirm-cancel" class="px-3 py-2 border rounded hover:bg-gray-50">取消</button>
-                        <button id="btn-confirm-ok" class="px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700">確認刪除</button>
-                    </div>
-                </div>
-            </div>
-        </div>
 
     <script>
         // ==========================================
@@ -1250,7 +1219,7 @@
             'bank': [], // Initial empty, will be populated by updateBankSubtabs
             'residents': ['住戶明細','住戶設定'],
             'reports': ['日報表','月報表','年報表','報表設定'],
-            'settings': ['一般設定','供應商名單','備份還原']
+            'settings': ['一般設定','社區帳號','備份還原']
         };
 
         function renderSubtabs(tabId) {
@@ -1380,10 +1349,8 @@
                                         openEditBank({kind:'bank', index:idx, item:acc});
                                     });
                                     
-                                    if(btnDel) btnDel.addEventListener('click', (e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        openConfirm('確定要刪除此定存帳戶嗎？', () => {
+                                    if(btnDel) btnDel.addEventListener('click', () => {
+                                        if(confirm('確定要刪除此定存帳戶嗎？')) {
                                             const arr = getBankAccounts();
                                             arr.splice(idx, 1);
                                             setBankAccounts(arr);
@@ -1391,7 +1358,7 @@
                                             // Switch to bank settings
                                             const tabs = document.getElementById('subtab-bar').children;
                                             if(tabs.length > 0) tabs[tabs.length-1].click();
-                                        });
+                                        }
                                     });
                                 }
                                 
@@ -1572,8 +1539,6 @@
         const cancelAddAccount = document.getElementById('cancel-add-account');
         const inputCommunityCode = document.getElementById('input-community-code');
         const inputCommunityName = document.getElementById('input-community-name');
-        const inputCommunityTaxId = document.getElementById('input-community-taxid');
-        const inputCommunityService = document.getElementById('input-community-service');
         const confirmAddCommunity = document.getElementById('confirm-add-community');
         const cancelAddCommunity = document.getElementById('cancel-add-community');
         const accountsTbody = document.getElementById('accounts-tbody');
@@ -1603,23 +1568,17 @@
         async function fetchCommunities(){
             if (useCloud()){
                 const snap = await db.collection('communities').get();
-                return snap.docs.map(d=>({
-                    code:(d.data().code||d.id), 
-                    name:d.data().name||'',
-                    taxId:d.data().taxId||'',
-                    service:d.data().service||''
-                }));
+                return snap.docs.map(d=>({code:(d.data().code||d.id), name:d.data().name||''}));
             }
             return getCommunities();
         }
-        async function saveCommunity(code,name,taxId,service,forceLocal=false){
+        async function saveCommunity(code,name,forceLocal=false){
             try {
-                const data = {code,name,taxId,service};
                 if (useCloud() && !forceLocal){
-                    await db.collection('communities').doc(code).set(data);
+                    await db.collection('communities').doc(code).set({code,name});
                 } else {
                     const arr = getCommunities();
-                    arr.push(data);
+                    arr.push({code,name});
                     setCommunities(arr);
                 }
             } catch(e) {
@@ -1628,20 +1587,14 @@
                 throw e;
             }
         }
-        async function updateCommunity(code,name,taxId,service,forceLocal=false){
+        async function updateCommunity(code,name,forceLocal=false){
             try {
-                const data = {code,name,taxId,service};
                 if (useCloud() && !forceLocal){
-                    await db.collection('communities').doc(code).set(data,{merge:true});
+                    await db.collection('communities').doc(code).set({code,name},{merge:true});
                 } else {
                     const arr = getCommunities();
                     const idx = arr.findIndex(x=>x.code===code);
-                    if (idx>=0){ 
-                        arr[idx].name = name; 
-                        arr[idx].taxId = taxId; 
-                        arr[idx].service = service; 
-                        setCommunities(arr); 
-                    }
+                    if (idx>=0){ arr[idx].name = name; setCommunities(arr); }
                 }
             } catch(e) {
                 console.error("Update community error:", e);
@@ -1806,13 +1759,13 @@
 
         function renderCommunitiesTable(arr){
             communitiesTbody.innerHTML = arr.map((x)=>{
-                return '<tr><td class="px-4 py-2">'+x.code+'</td><td class="px-4 py-2">'+x.name+'</td><td class="px-4 py-2">'+(x.taxId||'')+'</td><td class="px-4 py-2">'+(x.service||'')+'</td><td class="px-4 py-2"><button data-id="'+x.code+'" class="edit-community text-blue-600 mr-2">編輯</button><button data-id="'+x.code+'" class="delete-community text-red-600">刪除</button></td></tr>';
+                return '<tr><td class="px-4 py-2">'+x.code+'</td><td class="px-4 py-2">'+x.name+'</td><td class="px-4 py-2"><button data-id="'+x.code+'" class="edit-community text-blue-600 mr-2">編輯</button><button data-id="'+x.code+'" class="delete-community text-red-600">刪除</button></td></tr>';
             }).join('');
             
             communitiesTbody.querySelectorAll('.delete-community').forEach(btn=>{
                 btn.addEventListener('click', async ()=>{
                     const id = btn.getAttribute('data-id');
-                    if(confirm('確定要刪除此供應商嗎？')) {
+                    if(confirm('確定要刪除此社區嗎？')) {
                         try {
                             await deleteCommunity(id);
                             renderCommunityOptions();
@@ -1832,11 +1785,9 @@
 
                     inputCommunityCode.value = item.code;
                     inputCommunityName.value = item.name;
-                    inputCommunityTaxId.value = item.taxId || '';
-                    inputCommunityService.value = item.service || '';
                     
                     const title = modalAddCommunity.querySelector('h4');
-                    if (title) title.textContent = '編輯供應商';
+                    if (title) title.textContent = '編輯社區';
                     confirmAddCommunity.textContent = '確認';
                     inputCommunityCode.disabled = true;
                     inputCommunityCode.classList.add('bg-gray-100');
@@ -1844,7 +1795,7 @@
                     modalAddCommunity.classList.remove('hidden');
                     confirmAddCommunity.onclick = async () => {
                         try {
-                            await updateCommunity(inputCommunityCode.value, inputCommunityName.value, inputCommunityTaxId.value, inputCommunityService.value);
+                            await updateCommunity(inputCommunityCode.value, inputCommunityName.value);
                             modalAddCommunity.classList.add('hidden'); 
                             renderCommunityOptions();
                             if(!useCloud()){
@@ -2151,12 +2102,10 @@
             await ensureAuthForSettings(); 
             inputCommunityCode.value=''; 
             inputCommunityName.value=''; 
-            inputCommunityTaxId.value='';
-            inputCommunityService.value='';
             
             // Switch to Add Mode
             const title = modalAddCommunity.querySelector('h4');
-            if (title) title.textContent = '新增供應商';
+            if (title) title.textContent = '新增社區';
             confirmAddCommunity.textContent = '新增';
             inputCommunityCode.disabled = false;
             inputCommunityCode.classList.remove('bg-gray-100');
@@ -2175,7 +2124,7 @@
                             }
                         } 
                     } 
-                    await saveCommunity(inputCommunityCode.value, inputCommunityName.value, inputCommunityTaxId.value, inputCommunityService.value, forceLocal); 
+                    await saveCommunity(inputCommunityCode.value, inputCommunityName.value, forceLocal); 
                     modalAddCommunity.classList.add('hidden'); 
                     renderCommunityOptions(); 
                     if (!useCloud()) {
@@ -2183,148 +2132,15 @@
                         renderCommunitiesTable(newArr);
                     }
                 } catch(e){ 
-                    alert('新增供應商失敗：'+(e && e.message ? e.message : e)); 
+                    alert('新增社區失敗：'+(e && e.message ? e.message : e)); 
                 } 
             }; 
             cancelAddCommunity.onclick = ()=> modalAddCommunity.classList.add('hidden'); 
         }); }
 
-        // ==========================================
-        // FIREBASE SYNC & DATA LAYER
-        // ==========================================
-        let firestoreDB = null;
-        let APP_STATE = {
-            income_fixed: [],
-            income_other: [],
-            expense_fixed: [],
-            expense_other: [],
-            bank_accounts: [],
-            buildings: [],
-            residents: [],
-            transactions: []
-        };
-        let unsubscribeSnapshot = null;
-
-        // Initialize Firebase
-        function initFirebase() {
-            try {
-                if (window.__firebase_config) {
-                    const config = JSON.parse(window.__firebase_config);
-                    if (!firebase.apps.length) {
-                        firebase.initializeApp(config);
-                    }
-                    firestoreDB = firebase.firestore();
-                    console.log("Firebase Initialized");
-                    startRealtimeSync();
-                } else {
-                    console.error("No Firebase Config Found");
-                    alert("錯誤：找不到 Firebase 設定檔，無法同步資料。");
-                    document.getElementById('app-loader').classList.add('hidden');
-                }
-            } catch (e) {
-                console.error("Firebase Init Error:", e);
-                alert("連線錯誤：" + e.message);
-                document.getElementById('app-loader').classList.add('hidden');
-            }
-        }
-
         function getCurrentCommunityCode(){ return localStorage.getItem('currentCommunityCode') || 'NW001'; }
-
-        function startRealtimeSync() {
-            if (!firestoreDB) return;
-            const code = getCurrentCommunityCode();
-            const docRef = firestoreDB.collection('communities').doc(code);
-
-            if (unsubscribeSnapshot) unsubscribeSnapshot();
-
-            unsubscribeSnapshot = docRef.onSnapshot((doc) => {
-                const loader = document.getElementById('app-loader');
-                if (doc.exists) {
-                    const data = doc.data();
-                    APP_STATE.income_fixed = data.income_fixed || [];
-                    APP_STATE.income_other = data.income_other || [];
-                    APP_STATE.expense_fixed = data.expense_fixed || [];
-                    APP_STATE.expense_other = data.expense_other || [];
-                    APP_STATE.bank_accounts = data.bank_accounts || [];
-                    APP_STATE.buildings = data.buildings || [];
-                    APP_STATE.residents = data.residents || [];
-                    APP_STATE.transactions = data.transactions || [];
-                    console.log("Data synced from cloud");
-                } else {
-                    console.log("No data found, using defaults");
-                    // Ensure defaults
-                    ensureDefaultsBankResidents();
-                    ensureDefaultsIncomeExpense();
-                    // Save defaults to cloud
-                    saveFullStateToCloud();
-                }
-                refreshAllUI();
-                if (loader) loader.classList.add('hidden');
-            }, (error) => {
-                console.error("Sync Error:", error);
-                alert("同步失敗：" + error.message);
-                if (document.getElementById('app-loader')) document.getElementById('app-loader').classList.add('hidden');
-            });
-        }
-
-        function saveFullStateToCloud() {
-            if (!firestoreDB) return;
-            const code = getCurrentCommunityCode();
-            firestoreDB.collection('communities').doc(code).set(APP_STATE, { merge: true })
-                .catch(err => console.error("Save Error:", err));
-        }
-
-        function saveToCloud(key, val) {
-             if (!firestoreDB) return;
-             const code = getCurrentCommunityCode();
-             const update = {};
-             update[key] = val;
-             firestoreDB.collection('communities').doc(code).update(update)
-                .catch(err => {
-                    if (err.code === 'not-found') {
-                        firestoreDB.collection('communities').doc(code).set(update, { merge: true });
-                    }
-                });
-        }
-        
-        function refreshAllUI() {
-            if(typeof renderBankSettings === 'function') renderBankSettings();
-            if(typeof renderIncomeSettings === 'function') renderIncomeSettings();
-            if(typeof renderExpenseSettings === 'function') renderExpenseSettings();
-            if(typeof renderResidentsSettings === 'function') renderResidentsSettings();
-            if(typeof renderResidentsDetail === 'function') renderResidentsDetail();
-            if(typeof updateBankSubtabs === 'function') updateBankSubtabs();
-        }
-
-        function lsGet(key){ 
-            const code = getCurrentCommunityCode();
-            const suffix = '_' + code;
-            let realKey = key;
-            if (key.endsWith(suffix)) {
-                realKey = key.substring(0, key.length - suffix.length);
-            }
-            if (APP_STATE[realKey] !== undefined) {
-                return JSON.parse(JSON.stringify(APP_STATE[realKey]));
-            }
-            try { return JSON.parse(localStorage.getItem(key)||'[]'); } catch(e){ return []; } 
-        }
-        function lsSet(key, arr){ 
-            const code = getCurrentCommunityCode();
-            const suffix = '_' + code;
-            let realKey = key;
-            if (key.endsWith(suffix)) {
-                realKey = key.substring(0, key.length - suffix.length);
-            }
-            if (APP_STATE[realKey] !== undefined) {
-                APP_STATE[realKey] = arr;
-                saveToCloud(realKey, arr);
-            } else {
-                localStorage.setItem(key, JSON.stringify(arr)); 
-            }
-        }
-        
-        window.addEventListener('load', initFirebase);
-
+        function lsGet(key){ try { return JSON.parse(localStorage.getItem(key)||'[]'); } catch(e){ return []; } }
+        function lsSet(key, arr){ localStorage.setItem(key, JSON.stringify(arr)); }
         function incomeKey(kind){ return kind+'_'+getCurrentCommunityCode(); }
         function expenseKey(kind){ return kind+'_'+getCurrentCommunityCode(); }
         function bankKey(){ return 'bank_accounts_'+getCurrentCommunityCode(); }
@@ -2374,20 +2190,12 @@
         const inputBankBranch = document.getElementById('input-bank-branch');
         const inputBankHolder = document.getElementById('input-bank-holder');
         const inputBankAccount = document.getElementById('input-bank-account');
-        const inputBankAmount = document.getElementById('input-bank-amount');
-        const inputBankStartDate = document.getElementById('input-bank-start-date');
-        const inputBankEndDate = document.getElementById('input-bank-end-date');
-        const inputBankNote = document.getElementById('input-bank-note');
         
         const fieldPettyName = document.getElementById('field-petty-name');
         const fieldBankName = document.getElementById('field-bank-name');
         const fieldBankBranch = document.getElementById('field-bank-branch');
         const fieldBankHolder = document.getElementById('field-bank-holder');
         const fieldBankAccount = document.getElementById('field-bank-account');
-        const fieldBankAmount = document.getElementById('field-bank-amount');
-        const fieldBankStartDate = document.getElementById('field-bank-start-date');
-        const fieldBankEndDate = document.getElementById('field-bank-end-date');
-        const fieldBankNote = document.getElementById('field-bank-note');
 
         const confirmEditBank = document.getElementById('confirm-edit-bank');
         const cancelEditBank = document.getElementById('cancel-edit-bank');
@@ -2586,20 +2394,7 @@
                     
                     return '<tr><td class="px-6 py-3">'+type+'</td><td class="px-6 py-3">'+(bankNameDisplay||'')+'</td><td class="px-6 py-3">'+(branchDisplay||'')+'</td><td class="px-6 py-3">'+(pettyNameDisplay||'')+'</td><td class="px-6 py-3">'+(holderDisplay||'')+'</td><td class="px-6 py-3">'+(accountDisplay||'')+'</td><td class="px-6 py-3"><button data-i="'+i+'" class="edit-bank text-blue-600 mr-2">編輯</button><button data-i="'+i+'" class="del-bank text-red-600">刪除</button></td></tr>';
                 }).join('');
-                Array.from(bankTbody.querySelectorAll('.del-bank')).forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        openConfirm('確定要刪除此銀行帳戶嗎？', () => {
-                            const i = parseInt(btn.getAttribute('data-i'));
-                            const arr2 = getBankAccounts();
-                            arr2.splice(i, 1);
-                            setBankAccounts(arr2);
-                            updateBankSubtabs();
-                            renderBankSettings();
-                        });
-                    });
-                });
+                Array.from(bankTbody.querySelectorAll('.del-bank')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getBankAccounts(); arr2.splice(i,1); setBankAccounts(arr2); updateBankSubtabs(); renderBankSettings(); }); });
                 Array.from(bankTbody.querySelectorAll('.edit-bank')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getBankAccounts(); openEditBank({kind:'bank', index:i, item:arr2[i]}); }); });
             }
         }
@@ -2829,29 +2624,6 @@
         const btnAddExpenseRecord = document.getElementById('btn-add-expense-record');
         const incomeDetailTbody = document.getElementById('income-detail-tbody');
         const expenseDetailTbody = document.getElementById('expense-detail-tbody');
-
-        let confirmCallback = null;
-        const modalConfirm = document.getElementById('modal-confirm');
-        const modalConfirmMsg = document.getElementById('modal-confirm-msg');
-        const btnConfirmCancel = document.getElementById('btn-confirm-cancel');
-        const btnConfirmOk = document.getElementById('btn-confirm-ok');
-
-        function openConfirm(msg, callback) {
-            if(modalConfirmMsg) modalConfirmMsg.textContent = msg;
-            confirmCallback = callback;
-            if(modalConfirm) modalConfirm.classList.remove('hidden');
-        }
-
-        function closeConfirm() {
-            confirmCallback = null;
-            if(modalConfirm) modalConfirm.classList.add('hidden');
-        }
-
-        if(btnConfirmCancel) btnConfirmCancel.addEventListener('click', closeConfirm);
-        if(btnConfirmOk) btnConfirmOk.addEventListener('click', () => {
-            if(confirmCallback) confirmCallback();
-            closeConfirm();
-        });
 
         function generateTransactionId(mode, dateStr) {
             if (!dateStr) return '';
