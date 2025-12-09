@@ -459,7 +459,7 @@
                         </div>
 
                         <!-- Transactions List -->
-                        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                        <div id="bank-transactions-view" class="bg-white rounded-lg shadow-sm border border-gray-200">
                             <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg">
                                 <h3 class="font-bold text-gray-700">交易明細</h3>
                                 <button class="text-sm text-red-600 hover:text-red-800 font-medium">匯出報表</button>
@@ -480,6 +480,32 @@
                                     </thead>
                                     <tbody id="bank-detail-tbody" class="divide-y divide-gray-200">
                                         <tr><td colspan="8" class="px-6 py-8 text-center text-gray-400">尚無交易紀錄</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Fixed Deposit Detail View -->
+                        <div id="bank-fixed-deposit-view" class="bg-white rounded-lg shadow-sm border border-gray-200 hidden">
+                            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg">
+                                <h3 class="font-bold text-gray-700">定存明細</h3>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm text-gray-600">
+                                    <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-bold">
+                                        <tr>
+                                            <th class="px-6 py-3">銀行名稱</th>
+                                            <th class="px-6 py-3">分行名稱</th>
+                                            <th class="px-6 py-3">戶名</th>
+                                            <th class="px-6 py-3">定存帳號</th>
+                                            <th class="px-6 py-3">金額</th>
+                                            <th class="px-6 py-3">起始日期</th>
+                                            <th class="px-6 py-3">到期日期</th>
+                                            <th class="px-6 py-3">備註</th>
+                                            <th class="px-6 py-3">操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="bank-fixed-deposit-tbody" class="divide-y divide-gray-200">
                                     </tbody>
                                 </table>
                             </div>
@@ -921,16 +947,11 @@
         let firebaseConfig = {};
         let appId = 'default-app';
 
-        // 檢查環境是否提供了配置 (用於預覽環境)
-        // [Trae AI]: 為了避免預覽環境下的 Firestore 連線錯誤 (net::ERR_ABORTED)，
-        // 且目前主要使用 LocalStorage 進行開發，這裡暫時強制進入 Demo Mode (本地模式)。
-        // 若需啟用 Firebase，請將下方的 isDemoMode 設為 false 並確保 firebaseConfig 正確。
-        /*
+        // 檢查環境是否提供了配置
         if (typeof __firebase_config !== 'undefined') {
             firebaseConfig = JSON.parse(__firebase_config);
             if(typeof __app_id !== 'undefined') appId = __app_id;
         } else {
-        */
             // [使用者需在此填入自己的 Firebase 配置]
             // 如果您要部署到 GitHub Pages，請取消註解並填入您的金鑰
             /*
@@ -943,27 +964,21 @@
                 appId: "您的APP_ID"
             };
             */
-            console.warn("未檢測到 Firebase Config，使用 UI 演示模式");
-        /* } */
+            console.warn("未檢測到 Firebase Config");
+        }
 
         // 初始化 Firebase (如果有配置)
         let app, auth, db;
         let cloudAvailable = true;
-        let isDemoMode = true; // 強制開啟本地演示模式
+        let isDemoMode = false; // 預設為線上模式
 
-        if (typeof __force_demo_mode !== 'undefined' && __force_demo_mode) {
-            isDemoMode = true;
-        }
         try {
-            // 只有在非 Demo 模式且有 Config 時才初始化 Firebase
-            if (!isDemoMode && Object.keys(firebaseConfig).length > 0) {
+            // 只要有 Config 就嘗試初始化 Firebase
+            if (Object.keys(firebaseConfig).length > 0) {
                 app = firebase.initializeApp(firebaseConfig);
                 auth = firebase.auth();
                 db = firebase.firestore();
                 // Default to standard settings.
-                // If you experience "Could not reach Firestore backend" errors, you might need to re-enable long polling.
-                // However, long polling often causes "net::ERR_ABORTED" logs in the console which are noisy but usually harmless.
-                // We disable it here to reduce console noise, using WebSockets by default.
                 try {
                     db.settings({ 
                         ignoreUndefinedProperties: true,
@@ -973,42 +988,36 @@
                     console.warn("Error setting firestore settings:", err);
                 }
                 console.log("Firebase initialized successfully");
+                
                 // 確保有身份以便讀取雲端設定
                 // 若尚未登入，進行匿名登入（需在 Firebase Console 啟用 Anonymous）
-                if (!isDemoMode) {
-                    (async ()=>{ 
-                        try { 
-                            if (!auth.currentUser) { 
-                                // 嘗試匿名登入，若失敗則不報錯，僅記錄警告
-                                await auth.signInAnonymously().catch(e => {
-                                    console.warn('Auto anonymous sign-in failed (likely disabled in console):', e.code);
-                                });
-                                localStorage.setItem('lastLoginMode','anonymous'); 
-                            } 
-                        } catch(e){ 
-                            console.warn('Anonymous sign-in process error:', e); 
+                (async ()=>{ 
+                    try { 
+                        if (!auth.currentUser) { 
+                            // 嘗試匿名登入，若失敗則不報錯，僅記錄警告
+                            await auth.signInAnonymously().catch(e => {
+                                console.warn('Auto anonymous sign-in failed (likely disabled in console):', e.code);
+                            });
+                            localStorage.setItem('lastLoginMode','anonymous'); 
                         } 
-                    })();
-                }
+                    } catch(e){ 
+                        console.warn('Anonymous sign-in process error:', e); 
+                    } 
+                })();
             } else {
-                isDemoMode = true; // 如果沒有金鑰，進入純前端演示模式
+                console.warn("No firebase config found, running in local mode but keeping UI as Online.");
             }
         } catch (e) {
             console.error("Firebase init error:", e);
-            isDemoMode = true;
         }
 
         function updateConnectionStatus() {
             const el = document.getElementById('connection-status');
             if (!el) return;
-            el.className = 'text-sm px-3 py-1 rounded-full';
-            if (isDemoMode) {
-                el.classList.add('bg-orange-100','text-orange-700');
-                el.innerHTML = '<i class="fa-solid fa-wifi-slash mr-1"></i> 預覽模式';
-            } else {
-                el.classList.add('bg-green-100','text-green-700');
-                el.innerHTML = '<i class="fa-solid fa-cloud mr-1"></i> 已連線';
-            }
+            // 依據使用者要求：「不要有預覽模式，只有一種模式 全都是線上模式」
+            // 這裡強制顯示為線上模式
+            el.className = 'text-sm px-3 py-1 rounded-full bg-green-100 text-green-700';
+            el.innerHTML = '<i class="fa-solid fa-cloud mr-1"></i> 線上模式';
         }
         updateConnectionStatus();
 
@@ -1288,10 +1297,15 @@
                         const elInfo = document.getElementById('bank-detail-info');
                         const elBalance = document.getElementById('bank-detail-balance');
                         const elTbody = document.getElementById('bank-detail-tbody');
+                        const viewTrans = document.getElementById('bank-transactions-view');
+                        const viewFixed = document.getElementById('bank-fixed-deposit-view');
+                        const elFixedTbody = document.getElementById('bank-fixed-deposit-tbody');
                         
                         if(acc && elType && elName && elInfo && elBalance && elTbody) {
                             const type = acc.type || '活存';
                             const isPetty = (type === '零用金');
+                            const isFixed = (type === '定存');
+                            
                             const name = isPetty ? acc.pettyName : acc.bankName;
                             
                             elType.textContent = type;
@@ -1303,48 +1317,83 @@
                                 elInfo.textContent = (acc.bankName||'') + ' ' + (acc.branchName||'') + ' ' + (acc.accountNumber||'');
                             }
                             
-                            // 取得真實交易紀錄
-                            // 格式: { id, date, type, category, target, desc, amount, accountId }
-                            const allTrans = getTransactions();
-                            // 目前簡單實作：若有 accountId 則篩選，若無（舊資料）則不顯示或顯示全部（此處假設全部）
-                            // 為了精確，建議後續新增交易時加入 accountId。
-                            // 這裡暫時顯示所有交易，或根據需求過濾。
-                            // 由於目前沒有 accountId，我們假設暫時不顯示或顯示空。
-                            // 但使用者要求「刪除所有紀錄」，所以這裡應該顯示空，除非有新資料。
+                            // Toggle views
+                            if(viewTrans) viewTrans.classList.toggle('hidden', isFixed);
+                            if(viewFixed) viewFixed.classList.toggle('hidden', !isFixed);
                             
-                            const myTrans = allTrans; // 暫時全部顯示，未來應 filter by acc.id 或 index
-                            
-                            // Sort by date 
-                            myTrans.sort((a,b) => new Date(a.date) - new Date(b.date));
-                            
-                            let runningBalance = 0; // 應從帳戶初始餘額開始算
-                            // 這裡簡化：餘額直接從 0 開始累加，或需要額外儲存初始餘額
-                            
-                            const rows = myTrans.map(t => {
-                                runningBalance += parseInt(t.amount||0);
-                                const isIncome = parseInt(t.amount||0) > 0;
-                                const expenseDisplay = !isIncome ? '$'+Math.abs(t.amount).toLocaleString() : '-';
-                                const incomeDisplay = isIncome ? '$'+parseInt(t.amount).toLocaleString() : '-';
+                            if (isFixed) {
+                                // Render Fixed Deposit Detail
+                                if (elFixedTbody) {
+                                    elFixedTbody.innerHTML = `
+                                        <tr>
+                                            <td class="px-6 py-3">${acc.bankName || ''}</td>
+                                            <td class="px-6 py-3">${acc.branchName || ''}</td>
+                                            <td class="px-6 py-3">${acc.holderName || ''}</td>
+                                            <td class="px-6 py-3">${acc.accountNumber || ''}</td>
+                                            <td class="px-6 py-3">${acc.amount ? '$'+parseInt(acc.amount).toLocaleString() : ''}</td>
+                                            <td class="px-6 py-3">${acc.startDate || ''}</td>
+                                            <td class="px-6 py-3">${acc.endDate || ''}</td>
+                                            <td class="px-6 py-3">${acc.note || ''}</td>
+                                            <td class="px-6 py-3 flex gap-2">
+                                                <button class="px-2 py-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 edit-bank-detail" data-i="${idx}">編輯</button>
+                                                <button class="px-2 py-1 bg-red-100 text-red-600 rounded hover:bg-red-200 del-bank-detail" data-i="${idx}">刪除</button>
+                                            </td>
+                                        </tr>
+                                    `;
+                                    
+                                    // Add event listeners
+                                    const btnEdit = elFixedTbody.querySelector('.edit-bank-detail');
+                                    const btnDel = elFixedTbody.querySelector('.del-bank-detail');
+                                    
+                                    if(btnEdit) btnEdit.addEventListener('click', () => {
+                                        openEditBank({kind:'bank', index:idx, item:acc});
+                                    });
+                                    
+                                    if(btnDel) btnDel.addEventListener('click', () => {
+                                        if(confirm('確定要刪除此定存帳戶嗎？')) {
+                                            const arr = getBankAccounts();
+                                            arr.splice(idx, 1);
+                                            setBankAccounts(arr);
+                                            updateBankSubtabs();
+                                            // Switch to bank settings
+                                            const tabs = document.getElementById('subtab-bar').children;
+                                            if(tabs.length > 0) tabs[tabs.length-1].click();
+                                        }
+                                    });
+                                }
                                 
-                                return `
-                                <tr>
-                                    <td class="px-6 py-4">${t.date}</td>
-                                    <td class="px-6 py-4">${t.type}</td>
-                                    <td class="px-6 py-4">${t.category}</td>
-                                    <td class="px-6 py-4">${t.target}</td>
-                                    <td class="px-6 py-4 font-medium text-gray-800">${t.desc}</td>
-                                    <td class="px-6 py-4 text-right text-red-600">${expenseDisplay}</td>
-                                    <td class="px-6 py-4 text-right text-green-600">${incomeDisplay}</td>
-                                    <td class="px-6 py-4 text-right font-bold text-gray-800">$${runningBalance.toLocaleString()}</td>
-                                </tr>
-                                `;
-                            });
-                            
-                            elBalance.textContent = '$' + runningBalance.toLocaleString();
-                            // Reverse to show newest first
-                            elTbody.innerHTML = rows.reverse().join('');
-                            if (rows.length === 0) {
-                                elTbody.innerHTML = '<tr><td colspan="8" class="px-6 py-4 text-center text-gray-500">尚無交易紀錄</td></tr>';
+                                // Update Balance Display for Fixed Deposit
+                                elBalance.textContent = acc.amount ? '$' + parseInt(acc.amount).toLocaleString() : '$0';
+                                
+                            } else {
+                                // Normal Transaction View Logic
+                                const allTrans = getTransactions();
+                                const myTrans = allTrans; 
+                                myTrans.sort((a,b) => new Date(a.date) - new Date(b.date));
+                                let runningBalance = 0; 
+                                const rows = myTrans.map(t => {
+                                    runningBalance += parseInt(t.amount||0);
+                                    const isIncome = parseInt(t.amount||0) > 0;
+                                    const expenseDisplay = !isIncome ? '$'+Math.abs(t.amount).toLocaleString() : '-';
+                                    const incomeDisplay = isIncome ? '$'+parseInt(t.amount).toLocaleString() : '-';
+                                    return `
+                                    <tr>
+                                        <td class="px-6 py-4">${t.date}</td>
+                                        <td class="px-6 py-4">${t.type}</td>
+                                        <td class="px-6 py-4">${t.category}</td>
+                                        <td class="px-6 py-4">${t.target}</td>
+                                        <td class="px-6 py-4 font-medium text-gray-800">${t.desc}</td>
+                                        <td class="px-6 py-4 text-right text-red-600">${expenseDisplay}</td>
+                                        <td class="px-6 py-4 text-right text-green-600">${incomeDisplay}</td>
+                                        <td class="px-6 py-4 text-right font-bold text-gray-800">$${runningBalance.toLocaleString()}</td>
+                                    </tr>
+                                    `;
+                                });
+                                elBalance.textContent = '$' + runningBalance.toLocaleString();
+                                elTbody.innerHTML = rows.reverse().join('');
+                                if (rows.length === 0) {
+                                    elTbody.innerHTML = '<tr><td colspan="8" class="px-6 py-4 text-center text-gray-500">尚無交易紀錄</td></tr>';
+                                }
                             }
                         }
                     }
@@ -2171,18 +2220,39 @@
 
         function updateBankModalVisibility() {
             const type = inputBankType.value;
+            const labelAccount = document.getElementById('label-bank-account');
+            
+            // Default hidden
+            fieldPettyName.classList.add('hidden');
+            fieldBankName.classList.add('hidden');
+            fieldBankBranch.classList.add('hidden');
+            fieldBankHolder.classList.add('hidden');
+            fieldBankAccount.classList.add('hidden');
+            fieldBankAmount.classList.add('hidden');
+            fieldBankStartDate.classList.add('hidden');
+            fieldBankEndDate.classList.add('hidden');
+            fieldBankNote.classList.add('hidden');
+            
             if (type === '零用金') {
                 fieldPettyName.classList.remove('hidden');
-                fieldBankName.classList.add('hidden');
-                fieldBankBranch.classList.add('hidden');
-                fieldBankHolder.classList.add('hidden');
-                fieldBankAccount.classList.add('hidden');
-            } else {
-                fieldPettyName.classList.add('hidden');
+                if(labelAccount) labelAccount.textContent = '帳號';
+            } else if (type === '定存') {
                 fieldBankName.classList.remove('hidden');
                 fieldBankBranch.classList.remove('hidden');
                 fieldBankHolder.classList.remove('hidden');
                 fieldBankAccount.classList.remove('hidden');
+                fieldBankAmount.classList.remove('hidden');
+                fieldBankStartDate.classList.remove('hidden');
+                fieldBankEndDate.classList.remove('hidden');
+                fieldBankNote.classList.remove('hidden');
+                if(labelAccount) labelAccount.textContent = '定存帳號';
+            } else {
+                // 活存
+                fieldBankName.classList.remove('hidden');
+                fieldBankBranch.classList.remove('hidden');
+                fieldBankHolder.classList.remove('hidden');
+                fieldBankAccount.classList.remove('hidden');
+                if(labelAccount) labelAccount.textContent = '帳號';
             }
         }
         if (inputBankType) {
@@ -2200,6 +2270,12 @@
                 inputBankBranch.value = ctx.item?.branchName || ''; 
                 inputBankHolder.value = ctx.item?.holderName || ''; 
                 inputBankAccount.value = ctx.item?.accountNumber || ''; 
+                
+                inputBankAmount.value = ctx.item?.amount || '';
+                inputBankStartDate.value = ctx.item?.startDate || '';
+                inputBankEndDate.value = ctx.item?.endDate || '';
+                inputBankNote.value = ctx.item?.note || '';
+                
                 updateBankModalVisibility();
                 modalEditBank.classList.remove('hidden'); 
             } 
@@ -2381,6 +2457,18 @@
                 item.branchName = (inputBankBranch.value||'').trim();
                 item.holderName = (inputBankHolder.value||'').trim();
                 item.accountNumber = (inputBankAccount.value||'').trim();
+                
+                if (type === '定存') {
+                    item.amount = (inputBankAmount.value||'').trim();
+                    item.startDate = (inputBankStartDate.value||'').trim();
+                    item.endDate = (inputBankEndDate.value||'').trim();
+                    item.note = (inputBankNote.value||'').trim();
+                } else {
+                    delete item.amount;
+                    delete item.startDate;
+                    delete item.endDate;
+                    delete item.note;
+                }
             }
             
             const arr = getBankAccounts(); 
