@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>西北社區財務系統</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome (圖示) -->
@@ -68,7 +69,7 @@
         <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md border-t-4 border-red-700">
             <div class="text-center mb-8">
                 <div id="login-logo" class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 text-red-700 mb-4">
-                    <i class="fa-solid fa-building-columns text-3xl"></i>
+                    <i class="fa-solid fa-shield-halved text-3xl"></i>
                 </div>
                 <h1 class="text-2xl font-bold text-gray-800">西北社區財務系統</h1>
                 <p class="text-gray-500 text-sm mt-1">西北好用心    住戶更安心</p>
@@ -230,54 +231,81 @@
                 <div id="view-dashboard" class="content-view space-y-6">
                     <!-- 數據卡片 -->
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                        <div class="bg-white rounded-lg p-5 shadow-sm border-l-4 border-red-600">
-                            <div class="flex justify-between items-start">
+                        <div class="bg-white rounded-lg p-5 shadow-sm border-l-4 border-green-600">
+                            <div class="flex justify-between items-start mb-2">
                                 <div>
-                                    <p class="text-xs font-medium text-gray-500 uppercase">本月總收入</p>
+                                    <p class="text-base font-medium text-gray-500 uppercase">總收入</p>
                                     <h3 id="dashboard-income" class="text-2xl font-bold text-gray-800 mt-1">$0</h3>
                                 </div>
-                                <div class="p-2 bg-red-50 rounded-lg text-red-600">
-                                    <i class="fa-solid fa-arrow-trend-up"></i>
+                                <div class="p-2 bg-green-50 rounded-lg text-green-600">
+                                    <i class="fa-solid fa-plus"></i>
                                 </div>
                             </div>
-                            <p id="dashboard-income-compare" class="text-xs text-green-600 mt-2 flex items-center">
-                                <i class="fa-solid fa-caret-up mr-1"></i> 較上月 +0%
-                            </p>
+                            <div class="flex flex-col gap-1 text-xs text-gray-600 border-t border-gray-100 pt-2 mt-1">
+                                <div class="flex justify-between">
+                                    <span>固定:</span>
+                                    <span id="dashboard-income-fixed" class="font-bold text-gray-800">$0</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>其他:</span>
+                                    <span id="dashboard-income-other" class="font-bold text-gray-800">$0</span>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="bg-white rounded-lg p-5 shadow-sm border-l-4 border-gray-500">
-                            <div class="flex justify-between items-start">
+                        <div class="bg-white rounded-lg p-5 shadow-sm border-l-4 border-red-600">
+                            <div class="flex justify-between items-start mb-2">
                                 <div>
-                                    <p class="text-xs font-medium text-gray-500 uppercase">本月總支出</p>
+                                    <p class="text-base font-medium text-gray-500 uppercase">總支出</p>
                                     <h3 id="dashboard-expense" class="text-2xl font-bold text-gray-800 mt-1">$0</h3>
                                 </div>
-                                <div class="p-2 bg-gray-100 rounded-lg text-gray-600">
-                                    <i class="fa-solid fa-arrow-trend-down"></i>
+                                <div class="p-2 bg-red-50 rounded-lg text-red-600">
+                                    <i class="fa-solid fa-minus"></i>
                                 </div>
                             </div>
-                            <p id="dashboard-expense-compare" class="text-xs text-red-500 mt-2 flex items-center">
-                                <i class="fa-solid fa-caret-up mr-1"></i> 較上月 +0%
-                            </p>
+                            <div class="flex flex-col gap-1 text-xs text-gray-600 border-t border-gray-100 pt-2 mt-1">
+                                <div class="flex justify-between">
+                                    <span>固定:</span>
+                                    <span id="dashboard-expense-fixed" class="font-bold text-gray-800">$0</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>其他:</span>
+                                    <span id="dashboard-expense-other" class="font-bold text-gray-800">$0</span>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="bg-white rounded-lg p-5 shadow-sm border-l-4 border-red-800">
-                            <div class="flex justify-between items-start">
+                        <div class="bg-white rounded-lg p-5 shadow-sm border-l-4 border-purple-600">
+                            <div class="flex justify-between items-start mb-2">
                                 <div>
-                                    <p class="text-xs font-medium text-gray-500 uppercase">目前結餘</p>
-                                    <h3 id="dashboard-balance" class="text-2xl font-bold text-red-800 mt-1">$0</h3>
+                                    <p class="text-base font-medium text-gray-500 uppercase">目前結餘</p>
+                                    <h3 id="dashboard-balance" class="text-2xl font-bold text-purple-800 mt-1">$0</h3>
                                 </div>
-                                <div class="p-2 bg-red-50 rounded-lg text-red-800">
+                                <div class="p-2 bg-purple-50 rounded-lg text-purple-600">
                                     <i class="fa-solid fa-piggy-bank"></i>
                                 </div>
                             </div>
-                            <p class="text-xs text-gray-400 mt-2">包含定存與活儲</p>
+                            <div class="flex flex-col gap-1 text-xs text-gray-600 border-t border-gray-100 pt-2 mt-1">
+                                <div class="flex justify-between">
+                                    <span>活存:</span>
+                                    <span id="dashboard-balance-savings" class="font-bold text-gray-800">$0</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>定存:</span>
+                                    <span id="dashboard-balance-fixed" class="font-bold text-gray-800">$0</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>零用金:</span>
+                                    <span id="dashboard-balance-petty" class="font-bold text-gray-800">$0</span>
+                                </div>
+                            </div>
                         </div>
                         
                         <div class="bg-white rounded-lg p-5 shadow-sm border-l-4 border-orange-400">
                             <div class="flex justify-between items-start">
                                 <div>
-                                    <p class="text-xs font-medium text-gray-500 uppercase">未繳管理費</p>
-                                    <h3 id="dashboard-unpaid" class="text-2xl font-bold text-gray-800 mt-1">0 戶</h3>
+                                    <p class="text-base font-medium text-gray-500 uppercase">未繳管理費</p>
+                                    <h3 id="dashboard-unpaid" class="text-2xl font-bold text-orange-600 mt-1">0 戶</h3>
                                 </div>
                                 <div class="p-2 bg-orange-50 rounded-lg text-orange-400">
                                     <i class="fa-solid fa-circle-exclamation"></i>
@@ -287,26 +315,29 @@
                         </div>
                     </div>
 
-                    <!-- 最近交易表格 -->
+                    <!-- 今日收支紀錄表格 -->
                     <div class="bg-white rounded-lg shadow-sm border border-gray-200">
                         <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg">
-                            <h3 class="font-bold text-gray-700">最近收支紀錄</h3>
-                            <button class="text-sm text-red-600 hover:text-red-800 font-medium">查看全部</button>
+                            <h3 class="font-bold text-gray-700">今日收支紀錄</h3>
                         </div>
                         <div class="overflow-x-auto">
                             <table class="w-full text-left text-sm text-gray-600">
                                 <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-bold">
                                     <tr>
+                                        <th class="px-6 py-3">編號</th>
                                         <th class="px-6 py-3">日期</th>
-                                        <th class="px-6 py-3">項目/摘要</th>
+                                        <th class="px-6 py-3">對象</th>
+                                        <th class="px-6 py-3">收支</th>
                                         <th class="px-6 py-3">類型</th>
-                                        <th class="px-6 py-3">經手人</th>
+                                        <th class="px-6 py-3">類別</th>
+                                        <th class="px-6 py-3">月份</th>
                                         <th class="px-6 py-3 text-right">金額</th>
-                                        <th class="px-6 py-3 text-center">狀態</th>
+                                        <th class="px-6 py-3">收支方式</th>
+                                        <th class="px-6 py-3">備註</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-200" id="transaction-list">
-                                    <!-- 交易紀錄已清空 -->
+                                    <!-- 交易紀錄 -->
                                 </tbody>
                             </table>
                         </div>
@@ -375,6 +406,23 @@
                                 </table>
                             </div>
                         </div>
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg">
+                                <h3 class="font-bold text-gray-700">收入對象列表</h3>
+                                <button id="btn-add-income-target" class="px-3 py-2 bg-red-600 text-white rounded">新增</button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm text-gray-600">
+                                    <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-bold">
+                                        <tr>
+                                            <th class="px-6 py-3">對象名稱</th>
+                                            <th class="px-6 py-3">操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="income-targets-tbody" class="divide-y divide-gray-200"></tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -439,6 +487,23 @@
                                 </table>
                             </div>
                         </div>
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg">
+                                <h3 class="font-bold text-gray-700">支出對象列表</h3>
+                                <button id="btn-add-expense-target" class="px-3 py-2 bg-red-600 text-white rounded">新增</button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm text-gray-600">
+                                    <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-bold">
+                                        <tr>
+                                            <th class="px-6 py-3">對象名稱</th>
+                                            <th class="px-6 py-3">操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="expense-targets-tbody" class="divide-y divide-gray-200"></tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -476,17 +541,16 @@
                                     <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-bold">
                                         <tr>
                                             <th class="px-6 py-3">日期</th>
+                                            <th class="px-6 py-3">收支</th>
                                             <th class="px-6 py-3">類型</th>
-                                            <th class="px-6 py-3">類別</th>
                                             <th class="px-6 py-3">對象</th>
-                                            <th class="px-6 py-3">摘要</th>
                                             <th class="px-6 py-3 text-right">支出金額</th>
                                             <th class="px-6 py-3 text-right">收入金額</th>
                                             <th class="px-6 py-3 text-right">餘額</th>
                                         </tr>
                                     </thead>
                                     <tbody id="bank-detail-tbody" class="divide-y divide-gray-200">
-                                        <tr><td colspan="8" class="px-6 py-8 text-center text-gray-400">尚無交易紀錄</td></tr>
+                                        <tr><td colspan="7" class="px-6 py-8 text-center text-gray-400">尚無交易紀錄</td></tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -977,6 +1041,46 @@
             </div>
         </div>
 
+        <!-- Unpaid List Modal -->
+        <div id="modal-unpaid-list" class="fixed inset-0 hidden z-[80]">
+            <div class="absolute inset-0 bg-black/40"></div>
+            <div class="absolute inset-0 flex items-center justify-center p-6">
+                <div class="bg-white rounded-lg w-full max-w-lg p-6 space-y-4 shadow-xl flex flex-col max-h-[80vh]">
+                    <h4 class="text-lg font-bold text-center">未繳管理費名單</h4>
+                    <div id="unpaid-count-display" class="text-center font-bold text-red-600"></div>
+                    <div class="overflow-y-auto flex-1 border rounded">
+                        <table class="w-full text-left text-sm text-gray-600">
+                            <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-bold sticky top-0">
+                                <tr>
+                                    <th class="px-4 py-2 bg-gray-100">戶號</th>
+                                    <th class="px-4 py-2 bg-gray-100">姓名</th>
+                                    <th class="px-4 py-2 bg-gray-100 text-center">
+                                        <div class="flex items-center justify-center gap-2">
+                                            <button id="unpaid-prev-month" class="text-gray-500 hover:text-red-600 focus:outline-none">
+                                                <i class="fa-solid fa-chevron-left"></i>
+                                            </button>
+                                            <span id="unpaid-current-month-label">YYYY-MM</span>
+                                            <button id="unpaid-next-month" class="text-gray-500 hover:text-red-600 focus:outline-none">
+                                                <i class="fa-solid fa-chevron-right"></i>
+                                            </button>
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="unpaid-list-tbody" class="divide-y divide-gray-200">
+                                <!-- Content -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="flex justify-center">
+                        <button id="close-unpaid-list" class="px-6 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 w-full">
+                            關閉
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     <script>
         // ==========================================
         // Firebase 設定與初始化
@@ -1438,13 +1542,14 @@
                                     const isIncome = parseInt(t.amount||0) > 0;
                                     const expenseDisplay = !isIncome ? '$'+Math.abs(t.amount).toLocaleString() : '-';
                                     const incomeDisplay = isIncome ? '$'+parseInt(t.amount).toLocaleString() : '-';
+                                    const revExp = isIncome ? '收入' : '支出';
+                                    const revExpClass = isIncome ? 'text-green-600' : 'text-red-600';
                                     return `
                                     <tr>
                                         <td class="px-6 py-4">${t.date}</td>
+                                        <td class="px-6 py-4 ${revExpClass}">${revExp}</td>
                                         <td class="px-6 py-4">${t.type}</td>
-                                        <td class="px-6 py-4">${t.category}</td>
                                         <td class="px-6 py-4">${t.target}</td>
-                                        <td class="px-6 py-4 font-medium text-gray-800">${t.desc}</td>
                                         <td class="px-6 py-4 text-right text-red-600">${expenseDisplay}</td>
                                         <td class="px-6 py-4 text-right text-green-600">${incomeDisplay}</td>
                                         <td class="px-6 py-4 text-right font-bold text-gray-800">$${runningBalance.toLocaleString()}</td>
@@ -1454,7 +1559,7 @@
                                 elBalance.textContent = '$' + runningBalance.toLocaleString();
                                 elTbody.innerHTML = rows.reverse().join('');
                                 if (rows.length === 0) {
-                                    elTbody.innerHTML = '<tr><td colspan="8" class="px-6 py-4 text-center text-gray-500">尚無交易紀錄</td></tr>';
+                                    elTbody.innerHTML = '<tr><td colspan="7" class="px-6 py-4 text-center text-gray-500">尚無交易紀錄</td></tr>';
                                 }
                             }
                         }
@@ -2327,13 +2432,18 @@
             const residents = getResidents();
             const bankAccounts = getBankAccounts();
             
+            // Get categories for classification
+            const incomeFixedCats = getIncomeFixed();
+            const expenseFixedCats = getExpenseFixed();
+            
             // 1. Calculate Total Income and Total Expense (Sum of all list items)
             let totalIncome = 0;
             let totalExpense = 0;
             
-            // Also track Paid Map for Residents (still need logic for Unpaid Management Fees?)
-            // The user didn't ask to change "Unpaid" logic, but "Unpaid" usually depends on "This Month".
-            // So I will keep the "Unpaid" logic based on "Current Month".
+            let totalIncomeFixed = 0;
+            let totalIncomeOther = 0;
+            let totalExpenseFixed = 0;
+            let totalExpenseOther = 0;
             
             // Current Year-Month (GMT+8) for Unpaid calculation
             const now = new Date();
@@ -2352,6 +2462,12 @@
                 if (isIncome) {
                     totalIncome += amt;
                     
+                    if (incomeFixedCats.includes(t.category)) {
+                        totalIncomeFixed += amt;
+                    } else {
+                        totalIncomeOther += amt;
+                    }
+                    
                     // Unpaid Logic (Collect paid for current month)
                     let tm = t.month;
                     if (!tm && t.date && t.date.length >= 7) tm = t.date.substring(0, 7);
@@ -2362,15 +2478,27 @@
                     }
                 } else {
                     totalExpense += amt;
+                    
+                    if (expenseFixedCats.includes(t.category)) {
+                        totalExpenseFixed += amt;
+                    } else {
+                        totalExpenseOther += amt;
+                    }
                 }
             });
             
-            // 2. Calculate Balance (Sum of all Bank Accounts)
+            // 2. Calculate Balance Breakdown
             let totalAssets = 0;
+            let totalSavings = 0;
+            let totalFixed = 0;
+            let totalPetty = 0;
+
             bankAccounts.forEach(acc => {
+                let accBalance = 0;
                 if (acc.type === '定存') {
                     // Fixed Deposit: use stored amount
-                    totalAssets += parseInt(acc.amount || 0);
+                    accBalance = parseInt(acc.amount || 0);
+                    totalFixed += accBalance;
                 } else {
                     // Savings / Petty Cash: calculate from transactions
                     const key = (acc.type === '零用金') 
@@ -2378,17 +2506,21 @@
                         : `${acc.type}-${acc.bankName}`;
                         
                     // Filter transactions for this account
-                    // Note: This relies on the method string matching exactly
                     const accTrans = transactions.filter(t => t.method === key);
-                    let accBalance = 0;
                     accTrans.forEach(t => {
                         const amt = parseInt(t.amount || 0);
                         const isInc = (t.mode === 'income') || (t.id && t.id.startsWith('I'));
                         if (isInc) accBalance += amt;
                         else accBalance -= amt;
                     });
-                    totalAssets += accBalance;
+                    
+                    if (acc.type === '零用金') {
+                        totalPetty += accBalance;
+                    } else {
+                        totalSavings += accBalance;
+                    }
                 }
+                totalAssets += accBalance;
             });
             
             // Update UI
@@ -2396,24 +2528,33 @@
             const elExpense = document.getElementById('dashboard-expense');
             const elBalance = document.getElementById('dashboard-balance');
             const elUnpaid = document.getElementById('dashboard-unpaid');
+            const elBalSavings = document.getElementById('dashboard-balance-savings');
+            const elBalFixed = document.getElementById('dashboard-balance-fixed');
+            const elBalPetty = document.getElementById('dashboard-balance-petty');
             
-            // Update labels to "Total" instead of "Monthly"
-            // We can do this by updating the DOM text node if we can find it, or just rely on the user understanding.
-            // But better to be explicit.
+            const elIncFixed = document.getElementById('dashboard-income-fixed');
+            const elIncOther = document.getElementById('dashboard-income-other');
+            const elExpFixed = document.getElementById('dashboard-expense-fixed');
+            const elExpOther = document.getElementById('dashboard-expense-other');
+            
+            // Update labels to include current month
             const labelIncome = elIncome ? elIncome.parentElement.querySelector('p') : null;
             const labelExpense = elExpense ? elExpense.parentElement.querySelector('p') : null;
-            if (labelIncome) labelIncome.textContent = '總收入';
-            if (labelExpense) labelExpense.textContent = '總支出';
-            
-            // Hide comparison text as it's not applicable for "All Time Total" vs "Last Month"
-            const elIncomeComp = document.getElementById('dashboard-income-compare');
-            const elExpenseComp = document.getElementById('dashboard-expense-compare');
-            if (elIncomeComp) elIncomeComp.innerHTML = '';
-            if (elExpenseComp) elExpenseComp.innerHTML = '';
+            if (labelIncome) labelIncome.textContent = currentYM + ' 總收入';
+            if (labelExpense) labelExpense.textContent = currentYM + ' 總支出';
             
             if (elIncome) elIncome.textContent = '$' + totalIncome.toLocaleString();
             if (elExpense) elExpense.textContent = '$' + totalExpense.toLocaleString();
             if (elBalance) elBalance.textContent = '$' + totalAssets.toLocaleString();
+            
+            if (elBalSavings) elBalSavings.textContent = '$' + totalSavings.toLocaleString();
+            if (elBalFixed) elBalFixed.textContent = '$' + totalFixed.toLocaleString();
+            if (elBalPetty) elBalPetty.textContent = '$' + totalPetty.toLocaleString();
+            
+            if (elIncFixed) elIncFixed.textContent = '$' + totalIncomeFixed.toLocaleString();
+            if (elIncOther) elIncOther.textContent = '$' + totalIncomeOther.toLocaleString();
+            if (elExpFixed) elExpFixed.textContent = '$' + totalExpenseFixed.toLocaleString();
+            if (elExpOther) elExpOther.textContent = '$' + totalExpenseOther.toLocaleString();
             
             // Unpaid Count Logic
             let unpaidCount = 0;
@@ -2426,6 +2567,46 @@
                 }
             });
             if (elUnpaid) elUnpaid.textContent = unpaidCount + ' 戶';
+            
+            // 3. Render Today's Transactions
+            const tbody = document.getElementById('transaction-list');
+            if (tbody) {
+                const now = new Date();
+                const fmt = new Intl.DateTimeFormat('zh-TW', { timeZone: 'Asia/Taipei', year: 'numeric', month: '2-digit', day: '2-digit' });
+                const parts = fmt.formatToParts(now);
+                const y = parts.find(p=>p.type==='year').value;
+                const m = parts.find(p=>p.type==='month').value;
+                const d = parts.find(p=>p.type==='day').value;
+                const todayStr = `${y}-${m}-${d}`;
+                
+                const todayTrans = transactions.filter(t => (t.date||'').split('T')[0] === todayStr);
+                todayTrans.sort((a,b) => (b.id||'').localeCompare(a.id||''));
+                
+                if (todayTrans.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="10" class="px-6 py-4 text-center text-gray-500">今日尚無收支紀錄</td></tr>';
+                } else {
+                    tbody.innerHTML = todayTrans.map(t => {
+                        const isIncome = (t.mode === 'income') || (t.id && t.id.startsWith('I'));
+                        const revExp = isIncome ? '收入' : '支出';
+                        const revExpClass = isIncome ? 'text-green-600 font-bold' : 'text-red-600 font-bold';
+                        const amtClass = isIncome ? 'text-green-600' : 'text-red-600';
+                        return `
+                        <tr>
+                            <td class="px-6 py-3">${t.id || ''}</td>
+                            <td class="px-6 py-3">${t.date ? (t.date.includes('T') ? t.date.replace('T', ' ').substring(0, 19) : t.date) : ''}</td>
+                            <td class="px-6 py-3">${t.target || ''}</td>
+                            <td class="px-6 py-3 ${revExpClass}">${revExp}</td>
+                            <td class="px-6 py-3">${t.type || ''}</td>
+                            <td class="px-6 py-3">${t.category || ''}</td>
+                            <td class="px-6 py-3">${t.month || ''}</td>
+                            <td class="px-6 py-3 text-right ${amtClass}">$${parseInt(t.amount||0).toLocaleString()}</td>
+                            <td class="px-6 py-3">${t.method || ''}</td>
+                            <td class="px-6 py-3 text-gray-500 text-xs">${t.note || ''}</td>
+                        </tr>
+                        `;
+                    }).join('');
+                }
+            }
         }
 
         function refreshAllUI() {
@@ -2480,6 +2661,10 @@
         function setExpenseFixed(arr){ lsSet(expenseKey('expense_fixed'), arr); }
         function getExpenseOther(){ return lsGet(expenseKey('expense_other')); }
         function setExpenseOther(arr){ lsSet(expenseKey('expense_other'), arr); }
+        function getIncomeTargets(){ return lsGet(incomeKey('income_targets')); }
+        function setIncomeTargets(arr){ lsSet(incomeKey('income_targets'), arr); }
+        function getExpenseTargets(){ return lsGet(expenseKey('expense_targets')); }
+        function setExpenseTargets(arr){ lsSet(expenseKey('expense_targets'), arr); }
         function getBankAccounts(){ return lsGet(bankKey()); }
         function setBankAccounts(arr){ lsSet(bankKey(), arr); }
         function getTransactions(){ return lsGet('transactions_'+getCurrentCommunityCode()); }
@@ -2491,12 +2676,16 @@
 
         const incomeFixedTbody = document.getElementById('income-fixed-tbody');
         const incomeOtherTbody = document.getElementById('income-other-tbody');
+        const incomeTargetsTbody = document.getElementById('income-targets-tbody');
         const expenseFixedTbody = document.getElementById('expense-fixed-tbody');
         const expenseOtherTbody = document.getElementById('expense-other-tbody');
+        const expenseTargetsTbody = document.getElementById('expense-targets-tbody');
         const btnAddIncomeFixed = document.getElementById('btn-add-income-fixed');
         const btnAddIncomeOther = document.getElementById('btn-add-income-other');
+        const btnAddIncomeTarget = document.getElementById('btn-add-income-target');
         const btnAddExpenseFixed = document.getElementById('btn-add-expense-fixed');
         const btnAddExpenseOther = document.getElementById('btn-add-expense-other');
+        const btnAddExpenseTarget = document.getElementById('btn-add-expense-target');
         const bankTbody = document.getElementById('bank-tbody');
         const btnAddBank = document.getElementById('btn-add-bank');
         const residentsBuildingsTbody = document.getElementById('residents-buildings-tbody');
@@ -2828,6 +3017,20 @@
                 });
                 Array.from(incomeOtherTbody.querySelectorAll('.edit-io')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getIncomeOther(); openEditItem({kind:'income_other', index:i, value:arr2[i]}); }); });
             }
+            if (incomeTargetsTbody){ const arr = getIncomeTargets() || []; incomeTargetsTbody.innerHTML = arr.map((x,i)=> '<tr><td class="px-6 py-3">'+x+'</td><td class="px-6 py-3"><button data-i="'+i+'" class="edit-it text-blue-600 mr-2">編輯</button><button data-i="'+i+'" class="del-it text-red-600">刪除</button></td></tr>').join('');
+                Array.from(incomeTargetsTbody.querySelectorAll('.del-it')).forEach(btn=>{ 
+                    btn.addEventListener('click', ()=>{ 
+                        openConfirm('確定要刪除此收入對象嗎？', () => {
+                            const i = parseInt(btn.getAttribute('data-i')); 
+                            const arr2 = getIncomeTargets(); 
+                            arr2.splice(i,1); 
+                            setIncomeTargets(arr2); 
+                            renderIncomeSettings(); 
+                        });
+                    }); 
+                });
+                Array.from(incomeTargetsTbody.querySelectorAll('.edit-it')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getIncomeTargets(); openEditItem({kind:'income_targets', index:i, value:arr2[i]}); }); });
+            }
         }
         function renderExpenseSettings(){
             if (expenseFixedTbody){ const arr = getExpenseFixed(); expenseFixedTbody.innerHTML = arr.map((x,i)=> '<tr><td class="px-6 py-3">'+x+'</td><td class="px-6 py-3"><button data-i="'+i+'" class="edit-ef text-blue-600 mr-2">編輯</button><button data-i="'+i+'" class="del-ef text-red-600">刪除</button></td></tr>').join('');
@@ -2857,6 +3060,20 @@
                     }); 
                 });
                 Array.from(expenseOtherTbody.querySelectorAll('.edit-eo')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getExpenseOther(); openEditItem({kind:'expense_other', index:i, value:arr2[i]}); }); });
+            }
+            if (expenseTargetsTbody){ const arr = getExpenseTargets() || []; expenseTargetsTbody.innerHTML = arr.map((x,i)=> '<tr><td class="px-6 py-3">'+x+'</td><td class="px-6 py-3"><button data-i="'+i+'" class="edit-et text-blue-600 mr-2">編輯</button><button data-i="'+i+'" class="del-et text-red-600">刪除</button></td></tr>').join('');
+                Array.from(expenseTargetsTbody.querySelectorAll('.del-et')).forEach(btn=>{ 
+                    btn.addEventListener('click', ()=>{ 
+                        openConfirm('確定要刪除此支出對象嗎？', () => {
+                            const i = parseInt(btn.getAttribute('data-i')); 
+                            const arr2 = getExpenseTargets(); 
+                            arr2.splice(i,1); 
+                            setExpenseTargets(arr2); 
+                            renderExpenseSettings(); 
+                        });
+                    }); 
+                });
+                Array.from(expenseTargetsTbody.querySelectorAll('.edit-et')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getExpenseTargets(); openEditItem({kind:'expense_targets', index:i, value:arr2[i]}); }); });
             }
         }
         function renderBankSettings(){
@@ -2926,8 +3143,10 @@
         function ensureDefaultsIncomeExpense(){
             if (getIncomeFixed().length===0) setIncomeFixed(['管理費']);
             if (getIncomeOther().length===0) setIncomeOther(['停車費']);
+            if (!getIncomeTargets()) setIncomeTargets([]);
             if (getExpenseFixed().length===0) setExpenseFixed(['清潔費']);
             if (getExpenseOther().length===0) setExpenseOther(['維修費']);
+            if (!getExpenseTargets()) setExpenseTargets([]);
         }
         function ensureDefaultsBankResidents(){
             if (getBankAccounts().length===0) setBankAccounts([{type:'活存', bankName:'台新銀行', branchName:'松德分行', holderName:'社區管理委員會', accountNumber:'123-456-7890'}]);
@@ -2939,12 +3158,16 @@
         ensureDefaultsIncomeExpense();
         if (btnAddIncomeFixed){ btnAddIncomeFixed.addEventListener('click', ()=> openEditItem({kind:'income_fixed', index:-1, value:''})); }
         if (btnAddIncomeOther){ btnAddIncomeOther.addEventListener('click', ()=> openEditItem({kind:'income_other', index:-1, value:''})); }
+        if (btnAddIncomeTarget){ btnAddIncomeTarget.addEventListener('click', ()=> openEditItem({kind:'income_targets', index:-1, value:''})); }
         if (btnAddExpenseFixed){ btnAddExpenseFixed.addEventListener('click', ()=> openEditItem({kind:'expense_fixed', index:-1, value:''})); }
         if (btnAddExpenseOther){ btnAddExpenseOther.addEventListener('click', ()=> openEditItem({kind:'expense_other', index:-1, value:''})); }
+        if (btnAddExpenseTarget){ btnAddExpenseTarget.addEventListener('click', ()=> openEditItem({kind:'expense_targets', index:-1, value:''})); }
         if (confirmEditItem){ confirmEditItem.addEventListener('click', ()=>{ if(!editCtx) return; const name = (inputItemName.value||'').trim(); if(!name){ closeEditItem(); return; } if (editCtx.kind==='income_fixed'){ const arr = getIncomeFixed(); if (editCtx.index>=0) arr[editCtx.index]=name; else arr.push(name); setIncomeFixed(arr); renderIncomeSettings(); }
             else if (editCtx.kind==='income_other'){ const arr = getIncomeOther(); if (editCtx.index>=0) arr[editCtx.index]=name; else arr.push(name); setIncomeOther(arr); renderIncomeSettings(); }
+            else if (editCtx.kind==='income_targets'){ const arr = getIncomeTargets() || []; if (editCtx.index>=0) arr[editCtx.index]=name; else arr.push(name); setIncomeTargets(arr); renderIncomeSettings(); }
             else if (editCtx.kind==='expense_fixed'){ const arr = getExpenseFixed(); if (editCtx.index>=0) arr[editCtx.index]=name; else arr.push(name); setExpenseFixed(arr); renderExpenseSettings(); }
             else if (editCtx.kind==='expense_other'){ const arr = getExpenseOther(); if (editCtx.index>=0) arr[editCtx.index]=name; else arr.push(name); setExpenseOther(arr); renderExpenseSettings(); }
+            else if (editCtx.kind==='expense_targets'){ const arr = getExpenseTargets() || []; if (editCtx.index>=0) arr[editCtx.index]=name; else arr.push(name); setExpenseTargets(arr); renderExpenseSettings(); }
             closeEditItem(); }); }
         if (cancelEditItem){ cancelEditItem.addEventListener('click', closeEditItem); }
         if (btnAddBank){ btnAddBank.addEventListener('click', ()=> openEditBank({kind:'bank', index:-1, item:{type:'活存'}})); }
@@ -3210,6 +3433,18 @@
                     const label = r.unit + (r.name ? ` (${r.name})` : '');
                     return `<option value="${r.unit}">${label}</option>`;
                 }).join('');
+
+                // Add Custom Targets from Settings
+                let customTargets = [];
+                if (mode === 'income') {
+                    customTargets = getIncomeTargets() || [];
+                } else {
+                    customTargets = getExpenseTargets() || [];
+                }
+                if (customTargets.length > 0) {
+                    targetHtml += customTargets.map(t => `<option value="${t}">${t}</option>`).join('');
+                }
+
                 selectTransTarget.innerHTML = targetHtml;
             }
         }
@@ -3398,6 +3633,26 @@
             let target = inputTransTarget.value;
             if (selectTransTarget.value !== '自定義') {
                 target = selectTransTarget.value;
+            } else {
+                // If custom target, save to settings
+                target = (inputTransTarget.value || '').trim();
+                if (target) {
+                    if (editCtx.mode === 'income') {
+                        const arr = getIncomeTargets() || [];
+                        if (!arr.includes(target)) {
+                            arr.push(target);
+                            setIncomeTargets(arr);
+                            renderIncomeSettings(); // Update settings view if open
+                        }
+                    } else {
+                        const arr = getExpenseTargets() || [];
+                        if (!arr.includes(target)) {
+                            arr.push(target);
+                            setExpenseTargets(arr);
+                            renderExpenseSettings(); // Update settings view if open
+                        }
+                    }
+                }
             }
 
             const item = {
@@ -3494,6 +3749,177 @@
         }
 
 
+
+        // Unpaid List Modal Logic
+        const modalUnpaidList = document.getElementById('modal-unpaid-list');
+        const tbodyUnpaidList = document.getElementById('unpaid-list-tbody');
+        const btnCloseUnpaidList = document.getElementById('close-unpaid-list');
+        const btnViewUnpaid = document.getElementById('btn-view-unpaid');
+        
+        // Month Navigation Elements
+        const btnUnpaidPrev = document.getElementById('unpaid-prev-month');
+        const btnUnpaidNext = document.getElementById('unpaid-next-month');
+        const labelUnpaidMonth = document.getElementById('unpaid-current-month-label');
+        const displayUnpaidCount = document.getElementById('unpaid-count-display');
+        
+        let currentUnpaidViewMonth = '';
+
+        // Initialize current month on load or first open
+        function initUnpaidMonth() {
+            const now = new Date();
+            const fmt = new Intl.DateTimeFormat('zh-TW', { timeZone: 'Asia/Taipei', year: 'numeric', month: '2-digit' });
+            const parts = fmt.formatToParts(now);
+            const y = parts.find(p=>p.type==='year').value;
+            const m = parts.find(p=>p.type==='month').value;
+            currentUnpaidViewMonth = `${y}-${m}`;
+        }
+        initUnpaidMonth();
+
+        if (btnViewUnpaid) {
+            btnViewUnpaid.addEventListener('click', () => {
+                if (modalUnpaidList) {
+                    // Reset to current month every time opened? Or keep last state? 
+                    // User prompt implies specific "2025-12" focus initially, which matches current date.
+                    // We'll reset to ensure fresh data context.
+                    initUnpaidMonth();
+                    renderUnpaidList();
+                    modalUnpaidList.classList.remove('hidden');
+                }
+            });
+        }
+
+        if (btnCloseUnpaidList) {
+            btnCloseUnpaidList.addEventListener('click', () => {
+                if (modalUnpaidList) modalUnpaidList.classList.add('hidden');
+            });
+        }
+        
+        if (btnUnpaidPrev) {
+            btnUnpaidPrev.addEventListener('click', () => {
+                changeUnpaidMonth(-1);
+            });
+        }
+        
+        if (btnUnpaidNext) {
+            btnUnpaidNext.addEventListener('click', () => {
+                changeUnpaidMonth(1);
+            });
+        }
+        
+        function changeUnpaidMonth(offset) {
+            if (!currentUnpaidViewMonth) initUnpaidMonth();
+            
+            // Parse current month
+            const parts = currentUnpaidViewMonth.split('-');
+            let y = parseInt(parts[0]);
+            let m = parseInt(parts[1]);
+            
+            // Adjust
+            m += offset;
+            if (m > 12) {
+                m = 1;
+                y++;
+            } else if (m < 1) {
+                m = 12;
+                y--;
+            }
+            
+            // Format back to YYYY-MM
+            const mm = m.toString().padStart(2, '0');
+            currentUnpaidViewMonth = `${y}-${mm}`;
+            
+            renderUnpaidList();
+        }
+
+        function renderUnpaidList() {
+            if (!tbodyUnpaidList) return;
+            
+            // Update Label
+            if (labelUnpaidMonth) labelUnpaidMonth.textContent = currentUnpaidViewMonth;
+            
+            // Date Constraints Logic
+            // 1. Start from 2025-12
+            // 2. Future months -> No data (or different status)
+            
+            const targetYM = currentUnpaidViewMonth;
+            const now = new Date();
+            const fmt = new Intl.DateTimeFormat('zh-TW', { timeZone: 'Asia/Taipei', year: 'numeric', month: '2-digit' });
+            const parts = fmt.formatToParts(now);
+            const y = parts.find(p=>p.type==='year').value;
+            const m = parts.find(p=>p.type==='month').value;
+            const currentRealYM = `${y}-${m}`;
+            
+            let showData = true;
+            let msg = '';
+            
+            if (targetYM < '2025-12') {
+                showData = false;
+                msg = '2025-12 前無資料';
+            } else if (targetYM > currentRealYM) {
+                showData = false;
+                msg = '尚未開始收款';
+            }
+            
+            if (!showData) {
+                tbodyUnpaidList.innerHTML = `<tr><td colspan="3" class="px-4 py-4 text-center text-gray-500">${msg}</td></tr>`;
+                if (displayUnpaidCount) displayUnpaidCount.textContent = '';
+                return;
+            }
+            
+            const transactions = getTransactions();
+            const residents = getResidents();
+            
+            const paidMap = new Set();
+            
+            transactions.forEach(t => {
+                const isIncome = (t.mode === 'income') || (t.id && t.id.startsWith('I'));
+                if (isIncome) {
+                    let tm = t.month;
+                    if (!tm && t.date && t.date.length >= 7) tm = t.date.substring(0, 7);
+                    
+                    if (t.category === '管理費' && t.target) {
+                        const unit = t.target.trim(); 
+                        if (tm) paidMap.add(`${unit}-${tm}`);
+                    }
+                }
+            });
+            
+            const unpaidResidents = [];
+            residents.forEach(r => {
+                if (r.feeMgmt && parseInt(r.feeMgmt) > 0) {
+                    const key = `${r.unit}-${targetYM}`;
+                    // Only show if NOT paid for the target month
+                    if (!paidMap.has(key)) {
+                        unpaidResidents.push({
+                            unit: r.unit,
+                            name: r.name,
+                            // Content should now be "未繳"
+                            status: '未繳'
+                        });
+                    }
+                }
+            });
+            
+            // Sort by Unit
+            unpaidResidents.sort((a,b) => (a.unit||'').localeCompare(b.unit||'', undefined, {numeric: true}));
+            
+            // Update Count Display
+            if (displayUnpaidCount) {
+                displayUnpaidCount.textContent = `未繳人數: ${unpaidResidents.length} 人`;
+            }
+            
+            tbodyUnpaidList.innerHTML = unpaidResidents.map(item => `
+                <tr>
+                    <td class="px-4 py-2 border-b">${item.unit || ''}</td>
+                    <td class="px-4 py-2 border-b">${item.name || ''}</td>
+                    <td class="px-4 py-2 border-b text-red-600 font-bold text-center">${item.status}</td>
+                </tr>
+            `).join('');
+            
+            if (unpaidResidents.length === 0) {
+                tbodyUnpaidList.innerHTML = '<tr><td colspan="3" class="px-4 py-4 text-center text-gray-500">本月無未繳住戶</td></tr>';
+            }
+        }
 
     </script>
 </body>
