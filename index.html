@@ -235,7 +235,7 @@
                             <div class="flex justify-between items-start mb-2">
                                 <div>
                                     <p class="text-base font-medium text-gray-500 uppercase">總收入</p>
-                                    <h3 id="dashboard-income" class="text-2xl font-bold text-gray-800 mt-1">$0</h3>
+                                    <h3 id="dashboard-income" class="text-2xl font-bold text-green-600 mt-1">$0</h3>
                                 </div>
                                 <div class="p-2 bg-green-50 rounded-lg text-green-600">
                                     <i class="fa-solid fa-plus"></i>
@@ -250,6 +250,14 @@
                                     <span>其他:</span>
                                     <span id="dashboard-income-other" class="font-bold text-gray-800">$0</span>
                                 </div>
+                                <div class="flex justify-between border-t border-gray-100 pt-1 mt-1">
+                                    <span>預收:</span>
+                                    <span id="dashboard-income-prepaid" class="font-bold text-blue-600">$0</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>應收:</span>
+                                    <span id="dashboard-income-receivable" class="font-bold text-red-600">$0</span>
+                                </div>
                             </div>
                         </div>
 
@@ -257,7 +265,7 @@
                             <div class="flex justify-between items-start mb-2">
                                 <div>
                                     <p class="text-base font-medium text-gray-500 uppercase">總支出</p>
-                                    <h3 id="dashboard-expense" class="text-2xl font-bold text-gray-800 mt-1">$0</h3>
+                                    <h3 id="dashboard-expense" class="text-2xl font-bold text-red-600 mt-1">$0</h3>
                                 </div>
                                 <div class="p-2 bg-red-50 rounded-lg text-red-600">
                                     <i class="fa-solid fa-minus"></i>
@@ -271,6 +279,14 @@
                                 <div class="flex justify-between">
                                     <span>其他:</span>
                                     <span id="dashboard-expense-other" class="font-bold text-gray-800">$0</span>
+                                </div>
+                                <div class="flex justify-between border-t border-gray-100 pt-1 mt-1">
+                                    <span>預付:</span>
+                                    <span id="dashboard-expense-prepaid" class="font-bold text-blue-600">$0</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>應付:</span>
+                                    <span id="dashboard-expense-payable" class="font-bold text-red-600">$0</span>
                                 </div>
                             </div>
                         </div>
@@ -304,28 +320,49 @@
                         <div class="bg-white rounded-lg p-5 shadow-sm border-l-4 border-orange-400">
                             <div class="flex justify-between items-start">
                                 <div>
-                                    <p class="text-base font-medium text-gray-500 uppercase">未繳管理費</p>
-                                    <h3 id="dashboard-unpaid" class="text-2xl font-bold text-orange-600 mt-1">0 戶</h3>
+                                    <p class="text-base font-medium text-gray-500 uppercase">住戶未繳狀況</p>
+                                    <h3 id="dashboard-unpaid-amount" class="text-2xl font-bold text-orange-600 mt-1">$0</h3>
                                 </div>
                                 <div class="p-2 bg-orange-50 rounded-lg text-orange-400">
                                     <i class="fa-solid fa-circle-exclamation"></i>
                                 </div>
                             </div>
-                            <p id="btn-view-unpaid" class="text-xs text-orange-500 mt-2 cursor-pointer hover:underline">查看名單</p>
+                            <div class="flex flex-col gap-2 text-xs text-gray-600 border-t border-gray-100 pt-2 mt-2">
+                                <div class="flex justify-between items-center">
+                                    <span>管理費: <span id="dashboard-unpaid-mgmt-count" class="font-bold text-orange-600">0</span> 戶</span>
+                                    <button id="btn-view-unpaid-mgmt" class="text-blue-600 hover:text-blue-800 underline">查看明細</button>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span>停車費: <span id="dashboard-unpaid-park-count" class="font-bold text-orange-600">0</span> 戶</span>
+                                    <button id="btn-view-unpaid-park" class="text-blue-600 hover:text-blue-800 underline">查看明細</button>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span>其他費用: <span id="dashboard-unpaid-other-count" class="font-bold text-orange-600">0</span> 戶</span>
+                                    <button id="btn-view-unpaid-other" class="text-blue-600 hover:text-blue-800 underline">查看明細</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- 今日收支紀錄表格 -->
-                    <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-                        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg">
-                            <h3 class="font-bold text-gray-700">今日收支紀錄</h3>
+
+                    <!-- 收支紀錄表格 -->
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col h-[300px]">
+                        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg flex-none">
+                            <h3 class="font-bold text-gray-700">收支紀錄</h3>
+                            <div class="flex items-center gap-2">
+                                <select id="dashboard-trans-filter" class="border rounded px-2 py-1 text-sm bg-white text-gray-700">
+                                    <option value="all">全部</option>
+                                    <option value="income">只顯示收入</option>
+                                    <option value="expense">只顯示支出</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="overflow-x-auto">
+                        <div class="overflow-y-auto flex-1">
                             <table class="w-full text-left text-sm text-gray-600">
-                                <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-bold">
+                                <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-bold sticky top-0 z-10">
                                     <tr>
                                         <th class="px-6 py-3">編號</th>
-                                        <th class="px-6 py-3">日期</th>
+                                        <th class="px-6 py-3">日期時間</th>
                                         <th class="px-6 py-3">對象</th>
                                         <th class="px-6 py-3">收支</th>
                                         <th class="px-6 py-3">類型</th>
@@ -347,16 +384,25 @@
                 <!-- 2. 其他視圖佔位符 (Other Views Placeholder) -->
                 <div id="view-income" class="content-view hidden">
                     <div id="income-detail-view" class="bg-white rounded-lg shadow-sm border border-gray-200">
-                        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg">
-                            <h3 class="font-bold text-gray-700">收入明細列表</h3>
-                            <button id="btn-add-income-record" class="px-3 py-2 bg-red-600 text-white rounded">新增收入</button>
+                        <div class="px-6 py-4 border-b border-gray-200 flex flex-wrap gap-4 justify-between items-center bg-gray-50 rounded-t-lg">
+                            <h3 class="font-bold text-gray-700"><span class="text-green-600">收入</span>明細列表</h3>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <select id="income-filter-sort" class="border rounded px-2 py-1 text-sm">
+                                    <option value="desc">新至舊</option>
+                                    <option value="asc">舊至新</option>
+                                </select>
+                                <input type="month" id="income-filter-month" class="border rounded px-2 py-1 text-sm" placeholder="月份">
+                                <input type="date" id="income-filter-date" class="border rounded px-2 py-1 text-sm" placeholder="日期">
+                                <button id="btn-export-income" class="px-3 py-1 bg-green-600 text-white rounded text-sm">匯出Excel</button>
+                                <button id="btn-add-income-record" class="px-3 py-1 bg-red-600 text-white rounded text-sm">新增收入</button>
+                            </div>
                         </div>
                         <div class="overflow-x-auto">
                             <table class="w-full text-left text-sm text-gray-600">
                                 <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-bold">
                                     <tr>
                                         <th class="px-6 py-3">編號</th>
-                                        <th class="px-6 py-3">日期</th>
+                                        <th class="px-6 py-3">日期時間</th>
                                         <th class="px-6 py-3">對象</th>
                                         <th class="px-6 py-3">類型</th>
                                         <th class="px-6 py-3">類別</th>
@@ -374,7 +420,7 @@
                     <div id="income-settings-view" class="space-y-6 hidden">
                         <div class="bg-white rounded-lg shadow-sm border border-gray-200">
                             <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg">
-                                <h3 class="font-bold text-gray-700">固定收入列表</h3>
+                                <h3 class="font-bold text-gray-700">固定<span class="text-green-600">收入</span>列表</h3>
                                 <button id="btn-add-income-fixed" class="px-3 py-2 bg-red-600 text-white rounded">新增</button>
                             </div>
                             <div class="overflow-x-auto">
@@ -391,7 +437,7 @@
                         </div>
                         <div class="bg-white rounded-lg shadow-sm border border-gray-200">
                             <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg">
-                                <h3 class="font-bold text-gray-700">其他收入列表</h3>
+                                <h3 class="font-bold text-gray-700">其他<span class="text-green-600">收入</span>列表</h3>
                                 <button id="btn-add-income-other" class="px-3 py-2 bg-red-600 text-white rounded">新增</button>
                             </div>
                             <div class="overflow-x-auto">
@@ -408,7 +454,7 @@
                         </div>
                         <div class="bg-white rounded-lg shadow-sm border border-gray-200">
                             <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg">
-                                <h3 class="font-bold text-gray-700">收入對象列表</h3>
+                                <h3 class="font-bold text-gray-700"><span class="text-green-600">收入</span>對象列表</h3>
                                 <button id="btn-add-income-target" class="px-3 py-2 bg-red-600 text-white rounded">新增</button>
                             </div>
                             <div class="overflow-x-auto">
@@ -428,16 +474,25 @@
 
                 <div id="view-expense" class="content-view hidden">
                     <div id="expense-detail-view" class="bg-white rounded-lg shadow-sm border border-gray-200">
-                        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg">
-                            <h3 class="font-bold text-gray-700">支出明細列表</h3>
-                            <button id="btn-add-expense-record" class="px-3 py-2 bg-red-600 text-white rounded">新增支出</button>
+                        <div class="px-6 py-4 border-b border-gray-200 flex flex-wrap gap-4 justify-between items-center bg-gray-50 rounded-t-lg">
+                            <h3 class="font-bold text-gray-700"><span class="text-red-600">支出</span>明細列表</h3>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <select id="expense-filter-sort" class="border rounded px-2 py-1 text-sm">
+                                    <option value="desc">新至舊</option>
+                                    <option value="asc">舊至新</option>
+                                </select>
+                                <input type="month" id="expense-filter-month" class="border rounded px-2 py-1 text-sm" placeholder="月份">
+                                <input type="date" id="expense-filter-date" class="border rounded px-2 py-1 text-sm" placeholder="日期">
+                                <button id="btn-export-expense" class="px-3 py-1 bg-green-600 text-white rounded text-sm">匯出Excel</button>
+                                <button id="btn-add-expense-record" class="px-3 py-1 bg-red-600 text-white rounded text-sm">新增支出</button>
+                            </div>
                         </div>
                         <div class="overflow-x-auto">
                             <table class="w-full text-left text-sm text-gray-600">
                                 <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-bold">
                                     <tr>
                                         <th class="px-6 py-3">編號</th>
-                                        <th class="px-6 py-3">日期</th>
+                                        <th class="px-6 py-3">日期時間</th>
                                         <th class="px-6 py-3">對象</th>
                                         <th class="px-6 py-3">類型</th>
                                         <th class="px-6 py-3">類別</th>
@@ -455,7 +510,7 @@
                     <div id="expense-settings-view" class="space-y-6 hidden">
                         <div class="bg-white rounded-lg shadow-sm border border-gray-200">
                             <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg">
-                                <h3 class="font-bold text-gray-700">固定支出列表</h3>
+                                <h3 class="font-bold text-gray-700">固定<span class="text-red-600">支出</span>列表</h3>
                                 <button id="btn-add-expense-fixed" class="px-3 py-2 bg-red-600 text-white rounded">新增</button>
                             </div>
                             <div class="overflow-x-auto">
@@ -472,7 +527,7 @@
                         </div>
                         <div class="bg-white rounded-lg shadow-sm border border-gray-200">
                             <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg">
-                                <h3 class="font-bold text-gray-700">其他支出列表</h3>
+                                <h3 class="font-bold text-gray-700">其他<span class="text-red-600">支出</span>列表</h3>
                                 <button id="btn-add-expense-other" class="px-3 py-2 bg-red-600 text-white rounded">新增</button>
                             </div>
                             <div class="overflow-x-auto">
@@ -489,7 +544,7 @@
                         </div>
                         <div class="bg-white rounded-lg shadow-sm border border-gray-200">
                             <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg">
-                                <h3 class="font-bold text-gray-700">支出對象列表</h3>
+                                <h3 class="font-bold text-gray-700"><span class="text-red-600">支出</span>對象列表</h3>
                                 <button id="btn-add-expense-target" class="px-3 py-2 bg-red-600 text-white rounded">新增</button>
                             </div>
                             <div class="overflow-x-auto">
@@ -540,7 +595,7 @@
                                 <table class="w-full text-left text-sm text-gray-600">
                                     <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-bold">
                                         <tr>
-                                            <th class="px-6 py-3">日期</th>
+                                            <th class="px-6 py-3">日期時間</th>
                                             <th class="px-6 py-3">收支</th>
                                             <th class="px-6 py-3">類型</th>
                                             <th class="px-6 py-3">對象</th>
@@ -614,9 +669,9 @@
                             <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg">
                                 <h3 class="font-bold text-gray-700">住戶列表</h3>
                                 <div class="flex gap-2">
-                                    <button id="btn-import-resident" class="px-3 py-2 bg-green-600 text-white rounded">匯入Excel</button>
-                                    <button id="btn-export-resident" class="px-3 py-2 bg-blue-600 text-white rounded">匯出Excel</button>
-                                    <button id="btn-add-resident" class="px-3 py-2 bg-red-600 text-white rounded">新增</button>
+                                    <button id="btn-import-resident" class="px-3 py-1 bg-green-600 text-white rounded text-sm">匯入Excel</button>
+                                    <button id="btn-export-resident" class="px-3 py-1 bg-blue-600 text-white rounded text-sm">匯出Excel</button>
+                                    <button id="btn-add-resident" class="px-3 py-1 bg-red-600 text-white rounded text-sm">新增</button>
                                 </div>
                                 <input type="file" id="file-import-resident" class="hidden" accept=".xlsx, .xls" />
                             </div>
@@ -684,6 +739,51 @@
                         </div>
                     </div>
                 </div>
+
+                    <div id="residents-parking-fee-view" class="space-y-6 hidden">
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg">
+                                <h3 class="font-bold text-gray-700">停車費繳費明細</h3>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm text-gray-600">
+                                    <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-bold">
+                                        <tr>
+                                            <th class="px-6 py-3">編號</th>
+                                            <th class="px-6 py-3">戶號</th>
+                                            <th class="px-6 py-3">姓名</th>
+                                            <th class="px-6 py-3 text-right">每月停車費</th>
+                                            <th class="px-6 py-3">月份</th>
+                                            <th class="px-6 py-3">繳費狀況</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="residents-parking-fee-tbody" class="divide-y divide-gray-200"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="residents-other-fee-view" class="space-y-6 hidden">
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg">
+                                <h3 class="font-bold text-gray-700">其他費用繳費明細</h3>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm text-gray-600">
+                                    <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-bold">
+                                        <tr>
+                                            <th class="px-6 py-3">編號</th>
+                                            <th class="px-6 py-3">戶號</th>
+                                            <th class="px-6 py-3">姓名</th>
+                                            <th class="px-6 py-3 text-right">每月其他費用</th>
+                                            <th class="px-6 py-3">月份</th>
+                                            <th class="px-6 py-3">繳費狀況</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="residents-other-fee-tbody" class="divide-y divide-gray-200"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
 
                 <div id="view-settings" class="content-view hidden">
                     <div class="bg-white p-8 rounded-lg shadow-sm text-center">
@@ -961,6 +1061,68 @@
                     <div class="flex justify-end gap-2">
                         <button id="cancel-edit-resident" class="px-3 py-2 border rounded">取消</button>
                         <button id="confirm-edit-resident" class="px-3 py-2 bg-red-600 text-white rounded">確認</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="modal-unpaid-detail" class="fixed inset-0 hidden z-[80]">
+            <div class="absolute inset-0 bg-black/40"></div>
+            <div class="absolute inset-0 flex items-center justify-center p-6">
+                <div class="bg-white rounded-lg w-full max-w-3xl p-6 shadow-xl flex flex-col max-h-[80vh]">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-exclamation text-red-600"></i>
+                        <span id="modal-unpaid-title">欠繳月份明細</span>
+                    </h3>
+                    <div class="flex-1 overflow-y-auto mb-4">
+                        <div class="grid grid-cols-3 gap-4 h-full">
+                            <!-- Management Fee -->
+                            <div class="border rounded p-2 bg-gray-50 flex flex-col">
+                                <h4 class="text-center font-bold text-gray-700 border-b pb-2 mb-2">管理費</h4>
+                                <ul id="list-unpaid-mgmt" class="space-y-1 text-gray-700 text-center overflow-y-auto flex-1"></ul>
+                            </div>
+                            <!-- Parking Fee -->
+                            <div class="border rounded p-2 bg-gray-50 flex flex-col">
+                                <h4 class="text-center font-bold text-gray-700 border-b pb-2 mb-2">停車費</h4>
+                                <ul id="list-unpaid-park" class="space-y-1 text-gray-700 text-center overflow-y-auto flex-1"></ul>
+                            </div>
+                            <!-- Other Fee -->
+                            <div class="border rounded p-2 bg-gray-50 flex flex-col">
+                                <h4 class="text-center font-bold text-gray-700 border-b pb-2 mb-2">其他費用</h4>
+                                <ul id="list-unpaid-other" class="space-y-1 text-gray-700 text-center overflow-y-auto flex-1"></ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex justify-end">
+                        <button id="btn-close-unpaid-detail" class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors">關閉</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="modal-dashboard-unpaid-list" class="fixed inset-0 hidden z-[80]">
+            <div class="absolute inset-0 bg-black/40"></div>
+            <div class="absolute inset-0 flex items-center justify-center p-6">
+                <div class="bg-white rounded-lg w-full max-w-lg p-6 shadow-xl flex flex-col max-h-[80vh]">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-list-ul text-orange-600"></i>
+                        <span id="modal-dashboard-unpaid-title">未繳名單</span>
+                        <span id="modal-dashboard-unpaid-total-amount" class="text-red-600 ml-auto text-base"></span>
+                    </h3>
+                    <div class="flex-1 overflow-y-auto mb-4 border rounded bg-gray-50 p-2">
+                         <table class="w-full text-left text-sm text-gray-700">
+                             <thead class="border-b font-bold text-gray-900">
+                                 <tr>
+                                     <th class="py-2 px-2">戶號</th>
+                                     <th class="py-2 px-2">姓名</th>
+                                     <th class="py-2 px-2 text-right">未繳月數</th>
+                                 </tr>
+                             </thead>
+                             <tbody id="list-dashboard-unpaid" class="divide-y divide-gray-200"></tbody>
+                         </table>
+                    </div>
+                    <div class="flex justify-end">
+                        <button id="btn-close-dashboard-unpaid" class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors">關閉</button>
                     </div>
                 </div>
             </div>
@@ -1380,19 +1542,33 @@
             'income': ['收入明細','收入設定'],
             'expense': ['支出明細','支出設定'],
             'bank': [], // Initial empty, will be populated by updateBankSubtabs
-            'residents': ['住戶明細','管理費明細','住戶設定'],
+            'residents': ['住戶明細','管理費明細','停車費明細','其他明細','住戶設定'],
             'reports': ['日報表','月報表','年報表','報表設定'],
             'settings': ['一般設定','備份還原']
         };
 
         function renderSubtabs(tabId) {
             const bar = document.getElementById('subtab-bar');
+            const content = document.getElementById('right-content');
             if (!bar) return;
             const items = SUBTAB_CONFIG[tabId] || [];
+            
             if (items.length === 0) {
                 bar.innerHTML = '';
+                bar.classList.add('hidden');
+                if(content) {
+                    content.classList.remove('top-[20%]');
+                    content.classList.add('top-[10%]');
+                }
                 return;
             }
+            
+            bar.classList.remove('hidden');
+            if(content) {
+                content.classList.remove('top-[10%]');
+                content.classList.add('top-[20%]');
+            }
+
             bar.innerHTML = items.map((label, idx) => {
                 const id = 'subtab-' + tabId + '-' + idx;
                 return '<a id="' + id + '" href="#" class="subtab-item h-full flex items-center px-3 text-gray-700 hover:text-red-700 border-b-2 border-transparent">' + label + '</a>';
@@ -1534,19 +1710,28 @@
                             } else {
                                 // Normal Transaction View Logic
                                 const allTrans = getTransactions();
-                                const myTrans = allTrans; 
+                                
+                                // Filter transactions by account method
+                                const methodMatch = (acc.type === '零用金') 
+                                    ? `零用金-${acc.pettyName}` 
+                                    : `${acc.type}-${acc.bankName}`;
+                                    
+                                const myTrans = allTrans.filter(t => t.method === methodMatch); 
                                 myTrans.sort((a,b) => new Date(a.date) - new Date(b.date));
                                 let runningBalance = 0; 
                                 const rows = myTrans.map(t => {
-                                    runningBalance += parseInt(t.amount||0);
-                                    const isIncome = parseInt(t.amount||0) > 0;
-                                    const expenseDisplay = !isIncome ? '$'+Math.abs(t.amount).toLocaleString() : '-';
-                                    const incomeDisplay = isIncome ? '$'+parseInt(t.amount).toLocaleString() : '-';
+                                    const isIncome = (t.mode === 'income') || (t.id && t.id.startsWith('I'));
+                                    const amt = parseInt(t.amount||0);
+                                    const realAmt = isIncome ? Math.abs(amt) : -Math.abs(amt);
+                                    runningBalance += realAmt;
+                                    
+                                    const expenseDisplay = !isIncome ? '$'+Math.abs(amt).toLocaleString() : '-';
+                                    const incomeDisplay = isIncome ? '$'+Math.abs(amt).toLocaleString() : '-';
                                     const revExp = isIncome ? '收入' : '支出';
                                     const revExpClass = isIncome ? 'text-green-600' : 'text-red-600';
                                     return `
                                     <tr>
-                                        <td class="px-6 py-4">${t.date}</td>
+                                        <td class="px-6 py-4">${t.date ? (t.date.includes('T') ? t.date.replace('T', ' ').substring(0, 16) : t.date) : ''}</td>
                                         <td class="px-6 py-4 ${revExpClass}">${revExp}</td>
                                         <td class="px-6 py-4">${t.type}</td>
                                         <td class="px-6 py-4">${t.target}</td>
@@ -1567,15 +1752,23 @@
                 }
             } else if (tab === 'residents'){
                 const rd = document.getElementById('residents-detail-view');
-                const rs = document.getElementById('residents-settings-view');
                 const rmf = document.getElementById('residents-mgmt-fee-view');
-                if (rd && rs && rmf){ 
+                const rpf = document.getElementById('residents-parking-fee-view');
+                const rof = document.getElementById('residents-other-fee-view');
+                const rs = document.getElementById('residents-settings-view');
+                
+                if (rd && rmf && rpf && rof && rs){ 
                     rd.classList.toggle('hidden', idx!==0); 
-                    rs.classList.toggle('hidden', idx!==2); 
                     rmf.classList.toggle('hidden', idx!==1);
+                    rpf.classList.toggle('hidden', idx!==2);
+                    rof.classList.toggle('hidden', idx!==3);
+                    rs.classList.toggle('hidden', idx!==4);
+                    
                     if (idx===0) renderResidentsDetail();
                     if (idx===1) renderResidentsMgmtFee();
-                    if (idx===2) renderResidentsSettings(); 
+                    if (idx===2) renderResidentsParkingFee();
+                    if (idx===3) renderResidentsOtherFee();
+                    if (idx===4) renderResidentsSettings(); 
                 }
             }
         }
@@ -2427,6 +2620,8 @@
                 });
         }
         
+        let dashboardUnpaidData = { mgmt: [], park: [], other: [] };
+
         function updateDashboardStats() {
             const transactions = getTransactions();
             const residents = getResidents();
@@ -2444,6 +2639,12 @@
             let totalIncomeOther = 0;
             let totalExpenseFixed = 0;
             let totalExpenseOther = 0;
+
+            // New Stats for Current Month Context
+            let prepaidIncome = 0;
+            let prepaidExpense = 0;
+            let receivableIncome = 0;
+            let payableExpense = 0;
             
             // Current Year-Month (GMT+8) for Unpaid calculation
             const now = new Date();
@@ -2452,13 +2653,32 @@
             const y = parts.find(p=>p.type==='year').value;
             const m = parts.find(p=>p.type==='month').value;
             const currentYM = `${y}-${m}`;
-            
+
+            // Unpaid Calculation Preparation: Generate Months Range (Same as renderResidentsDetail)
+            const startMonth = '2025-12';
+            const monthsToCheck = [];
+            const d = new Date(startMonth + '-01');
+            for(let i=0; i<12; i++){
+                const y = d.getFullYear();
+                const m = String(d.getMonth()+1).padStart(2,'0');
+                monthsToCheck.push(`${y}-${m}`);
+                d.setMonth(d.getMonth()+1);
+            }
+
+            // Build Comprehensive Paid Map
             const paidMap = new Set();
             
             transactions.forEach(t => {
                 const amt = parseInt(t.amount || 0);
                 const isIncome = (t.mode === 'income') || (t.id && t.id.startsWith('I'));
                 
+                // Extract Month and Date for logic
+                let tm = t.month; // Target Month (YYYY-MM)
+                if (!tm && t.date && t.date.length >= 7) tm = t.date.substring(0, 7);
+                
+                // Transaction Date Month (YYYY-MM)
+                let tDateYM = (t.date && t.date.length >= 7) ? t.date.substring(0, 7) : '';
+
                 if (isIncome) {
                     totalIncome += amt;
                     
@@ -2468,13 +2688,15 @@
                         totalIncomeOther += amt;
                     }
                     
-                    // Unpaid Logic (Collect paid for current month)
-                    let tm = t.month;
-                    if (!tm && t.date && t.date.length >= 7) tm = t.date.substring(0, 7);
+                    // Prepaid Income: Received in Current Month for Future Month
+                    if (tDateYM === currentYM && tm > currentYM) {
+                        prepaidIncome += amt;
+                    }
                     
-                    if (t.category === '管理費' && t.target) {
-                        const unit = t.target.trim(); 
-                        if (tm) paidMap.add(`${unit}-${tm}`);
+                    // Paid Map Construction
+                    if (t.target && tm) {
+                        // Key format: Unit-Category-Month
+                        paidMap.add(`${t.target.trim()}-${t.category}-${tm}`);
                     }
                 } else {
                     totalExpense += amt;
@@ -2484,9 +2706,83 @@
                     } else {
                         totalExpenseOther += amt;
                     }
+
+                    // Prepaid Expense: Paid in Current Month for Future Month
+                    if (tDateYM === currentYM && tm > currentYM) {
+                        prepaidExpense += amt;
+                    }
                 }
             });
             
+            // Calculate Unpaid Details & Accrued Receivables
+            let totalUnpaidAmount = 0;
+            const unpaidMgmtList = [];
+            const unpaidParkList = [];
+            const unpaidOtherList = [];
+
+            residents.forEach(r => {
+                // Check for Receivable (Current Month Only)
+                // Note: Original logic was checking if paid for current month.
+                // We'll keep it simple: Sum of fees for current month if not paid.
+                if (r.feeMgmt && parseInt(r.feeMgmt) > 0) {
+                    if (!paidMap.has(`${r.unit}-管理費-${currentYM}`)) receivableIncome += parseInt(r.feeMgmt);
+                }
+                if (r.feePark && parseInt(r.feePark) > 0) {
+                    if (!paidMap.has(`${r.unit}-停車費-${currentYM}`)) receivableIncome += parseInt(r.feePark);
+                }
+                if (r.feeOther && parseInt(r.feeOther) > 0) {
+                    if (!paidMap.has(`${r.unit}-其他費用-${currentYM}`)) receivableIncome += parseInt(r.feeOther);
+                }
+
+                // Calculate Unpaid for Dashboard (Multi-month check)
+                let uMgmtCount = 0;
+                let uMgmtAmount = 0;
+                let uParkCount = 0;
+                let uParkAmount = 0;
+                let uOtherCount = 0;
+                let uOtherAmount = 0;
+
+                monthsToCheck.forEach(month => {
+                    if (month <= currentYM) {
+                        // Mgmt
+                        if (r.feeMgmt && parseInt(r.feeMgmt) > 0) {
+                            if (!paidMap.has(`${r.unit}-管理費-${month}`)) {
+                                uMgmtCount++;
+                                uMgmtAmount += parseInt(r.feeMgmt);
+                                totalUnpaidAmount += parseInt(r.feeMgmt);
+                            }
+                        }
+                        // Park
+                        if (r.feePark && parseInt(r.feePark) > 0) {
+                            if (!paidMap.has(`${r.unit}-停車費-${month}`)) {
+                                uParkCount++;
+                                uParkAmount += parseInt(r.feePark);
+                                totalUnpaidAmount += parseInt(r.feePark);
+                            }
+                        }
+                        // Other
+                        if (r.feeOther && parseInt(r.feeOther) > 0) {
+                            if (!paidMap.has(`${r.unit}-其他費用-${month}`)) {
+                                uOtherCount++;
+                                uOtherAmount += parseInt(r.feeOther);
+                                totalUnpaidAmount += parseInt(r.feeOther);
+                            }
+                        }
+                    }
+                });
+
+                if (uMgmtCount > 0) unpaidMgmtList.push({ unit: r.unit, name: r.name, count: uMgmtCount, amount: uMgmtAmount });
+                if (uParkCount > 0) unpaidParkList.push({ unit: r.unit, name: r.name, count: uParkCount, amount: uParkAmount });
+                if (uOtherCount > 0) unpaidOtherList.push({ unit: r.unit, name: r.name, count: uOtherCount, amount: uOtherAmount });
+            });
+            
+            // Update Global Data
+            dashboardUnpaidData = {
+                mgmt: unpaidMgmtList,
+                park: unpaidParkList,
+                other: unpaidOtherList
+            };
+
             // 2. Calculate Balance Breakdown
             let totalAssets = 0;
             let totalSavings = 0;
@@ -2527,7 +2823,7 @@
             const elIncome = document.getElementById('dashboard-income');
             const elExpense = document.getElementById('dashboard-expense');
             const elBalance = document.getElementById('dashboard-balance');
-            const elUnpaid = document.getElementById('dashboard-unpaid');
+            // const elUnpaid = document.getElementById('dashboard-unpaid'); // Removed
             const elBalSavings = document.getElementById('dashboard-balance-savings');
             const elBalFixed = document.getElementById('dashboard-balance-fixed');
             const elBalPetty = document.getElementById('dashboard-balance-petty');
@@ -2537,6 +2833,17 @@
             const elExpFixed = document.getElementById('dashboard-expense-fixed');
             const elExpOther = document.getElementById('dashboard-expense-other');
             
+            // New Elements for Prepaid/Accrued
+            const elIncPrepaid = document.getElementById('dashboard-income-prepaid');
+            const elIncReceivable = document.getElementById('dashboard-income-receivable');
+            const elExpPrepaid = document.getElementById('dashboard-expense-prepaid');
+            const elExpPayable = document.getElementById('dashboard-expense-payable');
+
+            const elUnpaidAmount = document.getElementById('dashboard-unpaid-amount');
+            const elUnpaidMgmtCount = document.getElementById('dashboard-unpaid-mgmt-count');
+            const elUnpaidParkCount = document.getElementById('dashboard-unpaid-park-count');
+            const elUnpaidOtherCount = document.getElementById('dashboard-unpaid-other-count');
+
             // Update labels to include current month
             const labelIncome = elIncome ? elIncome.parentElement.querySelector('p') : null;
             const labelExpense = elExpense ? elExpense.parentElement.querySelector('p') : null;
@@ -2556,36 +2863,46 @@
             if (elExpFixed) elExpFixed.textContent = '$' + totalExpenseFixed.toLocaleString();
             if (elExpOther) elExpOther.textContent = '$' + totalExpenseOther.toLocaleString();
             
-            // Unpaid Count Logic
-            let unpaidCount = 0;
-            residents.forEach(r => {
-                if (r.feeMgmt && parseInt(r.feeMgmt) > 0) {
-                    const key = `${r.unit}-${currentYM}`;
-                    if (!paidMap.has(key)) {
-                        unpaidCount++;
-                    }
-                }
-            });
-            if (elUnpaid) elUnpaid.textContent = unpaidCount + ' 戶';
+            // Update New Stats
+            if (elIncPrepaid) elIncPrepaid.textContent = '$' + prepaidIncome.toLocaleString();
+            if (elIncReceivable) elIncReceivable.textContent = '$' + receivableIncome.toLocaleString();
+            if (elExpPrepaid) elExpPrepaid.textContent = '$' + prepaidExpense.toLocaleString();
+            if (elExpPayable) elExpPayable.textContent = '$' + payableExpense.toLocaleString();
+
+            if (elUnpaidAmount) elUnpaidAmount.textContent = '$' + totalUnpaidAmount.toLocaleString();
+            if (elUnpaidMgmtCount) elUnpaidMgmtCount.textContent = unpaidMgmtList.length;
+            if (elUnpaidParkCount) elUnpaidParkCount.textContent = unpaidParkList.length;
+            if (elUnpaidOtherCount) elUnpaidOtherCount.textContent = unpaidOtherList.length;
             
-            // 3. Render Today's Transactions
+            // 3. Render Transactions (All, Filtered, Sorted)
             const tbody = document.getElementById('transaction-list');
+            const filterEl = document.getElementById('dashboard-trans-filter');
+            const filterVal = filterEl ? filterEl.value : 'all';
+
             if (tbody) {
-                const now = new Date();
-                const fmt = new Intl.DateTimeFormat('zh-TW', { timeZone: 'Asia/Taipei', year: 'numeric', month: '2-digit', day: '2-digit' });
-                const parts = fmt.formatToParts(now);
-                const y = parts.find(p=>p.type==='year').value;
-                const m = parts.find(p=>p.type==='month').value;
-                const d = parts.find(p=>p.type==='day').value;
-                const todayStr = `${y}-${m}-${d}`;
+                // Get all transactions instead of just today's
+                let displayTrans = [...transactions];
                 
-                const todayTrans = transactions.filter(t => (t.date||'').split('T')[0] === todayStr);
-                todayTrans.sort((a,b) => (b.id||'').localeCompare(a.id||''));
+                // Filter by mode
+                if (filterVal === 'income') {
+                    displayTrans = displayTrans.filter(t => (t.mode === 'income') || (t.id && t.id.startsWith('I')));
+                } else if (filterVal === 'expense') {
+                    displayTrans = displayTrans.filter(t => (t.mode !== 'income') && (!t.id || !t.id.startsWith('I')));
+                }
                 
-                if (todayTrans.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="10" class="px-6 py-4 text-center text-gray-500">今日尚無收支紀錄</td></tr>';
+                // Sort by Date Descending (Newest first)
+                displayTrans.sort((a,b) => {
+                    const dateA = new Date(a.date);
+                    const dateB = new Date(b.date);
+                    if (dateB - dateA !== 0) return dateB - dateA;
+                    // Secondary sort by ID desc
+                    return (b.id||'').localeCompare(a.id||'');
+                });
+                
+                if (displayTrans.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="10" class="px-6 py-4 text-center text-gray-500">尚無收支紀錄</td></tr>';
                 } else {
-                    tbody.innerHTML = todayTrans.map(t => {
+                    tbody.innerHTML = displayTrans.map(t => {
                         const isIncome = (t.mode === 'income') || (t.id && t.id.startsWith('I'));
                         const revExp = isIncome ? '收入' : '支出';
                         const revExpClass = isIncome ? 'text-green-600 font-bold' : 'text-red-600 font-bold';
@@ -2593,7 +2910,7 @@
                         return `
                         <tr>
                             <td class="px-6 py-3">${t.id || ''}</td>
-                            <td class="px-6 py-3">${t.date ? (t.date.includes('T') ? t.date.replace('T', ' ').substring(0, 19) : t.date) : ''}</td>
+                            <td class="px-6 py-3">${t.date ? (t.date.includes('T') ? t.date.replace('T', ' ').substring(0, 16) : t.date) : ''}</td>
                             <td class="px-6 py-3">${t.target || ''}</td>
                             <td class="px-6 py-3 ${revExpClass}">${revExp}</td>
                             <td class="px-6 py-3">${t.type || ''}</td>
@@ -2607,6 +2924,12 @@
                     }).join('');
                 }
             }
+        }
+        
+        // Add event listener for dashboard filter
+        const dbFilter = document.getElementById('dashboard-trans-filter');
+        if (dbFilter) {
+            dbFilter.addEventListener('change', updateDashboardStats);
         }
 
         function refreshAllUI() {
@@ -2739,6 +3062,16 @@
         const inputResNote = document.getElementById('input-res-note');
         const confirmEditResident = document.getElementById('confirm-edit-resident');
         const cancelEditResident = document.getElementById('cancel-edit-resident');
+
+        const modalUnpaidDetail = document.getElementById('modal-unpaid-detail');
+        const modalUnpaidTitle = document.getElementById('modal-unpaid-title');
+        const listUnpaidMonths = document.getElementById('list-unpaid-months');
+        const btnCloseUnpaidDetail = document.getElementById('btn-close-unpaid-detail');
+        if (btnCloseUnpaidDetail) {
+            btnCloseUnpaidDetail.addEventListener('click', () => {
+                if (modalUnpaidDetail) modalUnpaidDetail.classList.add('hidden');
+            });
+        }
 
 
         function updateBankModalVisibility() {
@@ -2928,13 +3261,218 @@
                 
                 months.forEach(month => {
                     let cellContent = '';
-                    // Only show status if month <= currentYM
+                    const key = `${r.unit}-${month}`;
+                    const isPaid = paidMap.has(key);
+
                     if (month <= currentYM) {
-                        const key = `${r.unit}-${month}`;
-                        const isPaid = paidMap.has(key);
-                        cellContent = isPaid 
-                            ? '<span class="text-green-600 font-bold">已繳</span>' 
-                            : '<span class="text-red-600 font-bold">未繳</span>';
+                        // Business Rule: 當月份成為當前或過去月份時，顯示標準狀態
+                        // 即便是之前預繳的月份，到了當月也會自動轉為「已繳」綠字，不保留「預繳」標籤
+                        if (isPaid) {
+                            cellContent = '<span class="text-green-600 font-bold">已繳</span>';
+                        } else {
+                            if (r.feeMgmt && parseInt(r.feeMgmt) > 0) {
+                                cellContent = '<span class="text-red-600 font-bold">未繳</span>';
+                            } else {
+                                cellContent = '<span class="text-gray-400">-</span>';
+                            }
+                        }
+                    } else {
+                        // Future months: Show Prepaid if paid
+                        if (isPaid) {
+                            cellContent = '<span class="text-blue-600 font-bold">預繳</span>';
+                        }
+                    }
+                    rowHtml += `<td class="px-6 py-3">${cellContent}</td>`;
+                });
+                
+                html += `<tr>${rowHtml}</tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function renderResidentsParkingFee(){
+            const view = document.getElementById('residents-parking-fee-view');
+            const tbody = document.getElementById('residents-parking-fee-tbody');
+            if (!view || !tbody) return;
+            
+            const residents = getResidents();
+            const transactions = getTransactions();
+            const startMonth = '2025-12';
+            
+            // Generate fixed 12 months from startMonth
+            const months = [];
+            const d = new Date(startMonth + '-01');
+            for(let i=0; i<12; i++){
+                const y = d.getFullYear();
+                const m = String(d.getMonth()+1).padStart(2,'0');
+                months.push(`${y}-${m}`);
+                d.setMonth(d.getMonth()+1);
+            }
+            
+            // Update Table Header
+            const thead = view.querySelector('thead tr');
+            if(thead){
+                thead.innerHTML = `
+                    <th class="px-6 py-3">編號</th>
+                    <th class="px-6 py-3">戶號</th>
+                    <th class="px-6 py-3">姓名</th>
+                    <th class="px-6 py-3 text-right">每月停車費</th>
+                    ${months.map(m => `<th class="px-6 py-3">${m}</th>`).join('')}
+                `;
+            }
+
+            // Pre-process transactions
+            const paidMap = new Set();
+            transactions.forEach(t => {
+                const isIncome = (t.mode === 'income') || (t.id && t.id.startsWith('I'));
+                
+                if (isIncome && t.category === '停車費' && t.target) {
+                    let m = '';
+                    if (t.month) {
+                        m = t.month;
+                    } else if (t.date && t.date.length >= 7) {
+                        m = t.date.substring(0, 7); 
+                    }
+                    
+                    if (m) {
+                        const unit = t.target.trim();
+                        paidMap.add(`${unit}-${m}`);
+                    }
+                }
+            });
+            
+            const now = new Date();
+            const parts = new Intl.DateTimeFormat('zh-TW', { timeZone: 'Asia/Taipei', year: 'numeric', month: '2-digit' }).formatToParts(now);
+            const y = parts.find(p=>p.type==='year').value;
+            const m = parts.find(p=>p.type==='month').value;
+            const currentYM = `${y}-${m}`;
+
+            let html = '';
+            residents.sort((a,b) => (a.unit||'').localeCompare(b.unit||'', undefined, {numeric: true}));
+            
+            residents.forEach((r, i) => {
+                let rowHtml = `
+                    <td class="px-6 py-3">${i + 1}</td>
+                    <td class="px-6 py-3">${r.unit || ''}</td>
+                    <td class="px-6 py-3">${r.name || ''}</td>
+                    <td class="px-6 py-3 text-right">${r.feePark ? '$' + parseInt(r.feePark).toLocaleString() : '-'}</td>
+                `;
+                
+                months.forEach(month => {
+                    let cellContent = '';
+                    const key = `${r.unit}-${month}`;
+                    const isPaid = paidMap.has(key);
+
+                    if (month <= currentYM) {
+                        if (isPaid) {
+                            cellContent = '<span class="text-green-600 font-bold">已繳</span>';
+                        } else {
+                            if (r.feePark && parseInt(r.feePark) > 0) {
+                                cellContent = '<span class="text-red-600 font-bold">未繳</span>';
+                            } else {
+                                cellContent = '<span class="text-gray-400">-</span>';
+                            }
+                        }
+                    } else {
+                        if (isPaid) {
+                            cellContent = '<span class="text-blue-600 font-bold">預繳</span>';
+                        }
+                    }
+                    rowHtml += `<td class="px-6 py-3">${cellContent}</td>`;
+                });
+                
+                html += `<tr>${rowHtml}</tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function renderResidentsOtherFee(){
+            const view = document.getElementById('residents-other-fee-view');
+            const tbody = document.getElementById('residents-other-fee-tbody');
+            if (!view || !tbody) return;
+            
+            const residents = getResidents();
+            const transactions = getTransactions();
+            const startMonth = '2025-12';
+            
+            // Generate fixed 12 months from startMonth
+            const months = [];
+            const d = new Date(startMonth + '-01');
+            for(let i=0; i<12; i++){
+                const y = d.getFullYear();
+                const m = String(d.getMonth()+1).padStart(2,'0');
+                months.push(`${y}-${m}`);
+                d.setMonth(d.getMonth()+1);
+            }
+            
+            // Update Table Header
+            const thead = view.querySelector('thead tr');
+            if(thead){
+                thead.innerHTML = `
+                    <th class="px-6 py-3">編號</th>
+                    <th class="px-6 py-3">戶號</th>
+                    <th class="px-6 py-3">姓名</th>
+                    <th class="px-6 py-3 text-right">每月其他費用</th>
+                    ${months.map(m => `<th class="px-6 py-3">${m}</th>`).join('')}
+                `;
+            }
+
+            // Pre-process transactions
+            const paidMap = new Set();
+            transactions.forEach(t => {
+                const isIncome = (t.mode === 'income') || (t.id && t.id.startsWith('I'));
+                
+                if (isIncome && t.category === '其他費用' && t.target) {
+                    let m = '';
+                    if (t.month) {
+                        m = t.month;
+                    } else if (t.date && t.date.length >= 7) {
+                        m = t.date.substring(0, 7); 
+                    }
+                    
+                    if (m) {
+                        const unit = t.target.trim();
+                        paidMap.add(`${unit}-${m}`);
+                    }
+                }
+            });
+            
+            const now = new Date();
+            const parts = new Intl.DateTimeFormat('zh-TW', { timeZone: 'Asia/Taipei', year: 'numeric', month: '2-digit' }).formatToParts(now);
+            const y = parts.find(p=>p.type==='year').value;
+            const m = parts.find(p=>p.type==='month').value;
+            const currentYM = `${y}-${m}`;
+
+            let html = '';
+            residents.sort((a,b) => (a.unit||'').localeCompare(b.unit||'', undefined, {numeric: true}));
+            
+            residents.forEach((r, i) => {
+                let rowHtml = `
+                    <td class="px-6 py-3">${i + 1}</td>
+                    <td class="px-6 py-3">${r.unit || ''}</td>
+                    <td class="px-6 py-3">${r.name || ''}</td>
+                    <td class="px-6 py-3 text-right">${r.feeOther ? '$' + parseInt(r.feeOther).toLocaleString() : '-'}</td>
+                `;
+                
+                months.forEach(month => {
+                    let cellContent = '';
+                    const key = `${r.unit}-${month}`;
+                    const isPaid = paidMap.has(key);
+
+                    if (month <= currentYM) {
+                        if (isPaid) {
+                            cellContent = '<span class="text-green-600 font-bold">已繳</span>';
+                        } else {
+                            if (r.feeOther && parseInt(r.feeOther) > 0) {
+                                cellContent = '<span class="text-red-600 font-bold">未繳</span>';
+                            } else {
+                                cellContent = '<span class="text-gray-400">-</span>';
+                            }
+                        }
+                    } else {
+                        if (isPaid) {
+                            cellContent = '<span class="text-blue-600 font-bold">預繳</span>';
+                        }
                     }
                     rowHtml += `<td class="px-6 py-3">${cellContent}</td>`;
                 });
@@ -2947,7 +3485,85 @@
         function renderResidentsDetail(){
             if (residentsDetailTbody){
                 const arr = getResidents();
-                residentsDetailTbody.innerHTML = arr.map((x,i)=> `
+                const transactions = getTransactions();
+                
+                // 1. Generate Months Range
+                const startMonth = '2025-12';
+                const monthsToCheck = [];
+                const d = new Date(startMonth + '-01');
+                for(let i=0; i<12; i++){
+                    const y = d.getFullYear();
+                    const m = String(d.getMonth()+1).padStart(2,'0');
+                    monthsToCheck.push(`${y}-${m}`);
+                    d.setMonth(d.getMonth()+1);
+                }
+
+                // 2. Build Paid Map with Category
+                const paidMap = new Set();
+                transactions.forEach(t => {
+                    const isIncome = (t.mode === 'income') || (t.id && t.id.startsWith('I'));
+                    if (isIncome && t.target) {
+                        let m = t.month;
+                        if (!m && t.date && t.date.length >= 7) m = t.date.substring(0, 7);
+                        
+                        if (m) {
+                            // Key format: Unit-Category-Month
+                            paidMap.add(`${t.target.trim()}-${t.category}-${m}`);
+                        }
+                    }
+                });
+
+                // 3. Current Month Check
+                const now = new Date();
+                const parts = new Intl.DateTimeFormat('zh-TW', { timeZone: 'Asia/Taipei', year: 'numeric', month: '2-digit' }).formatToParts(now);
+                const y = parts.find(p=>p.type==='year').value;
+                const m = parts.find(p=>p.type==='month').value;
+                const currentYM = `${y}-${m}`;
+
+                // Store unpaid data for event handlers
+                // Structure: { unit: { mgmt: [], park: [], other: [] } }
+                const unpaidInfoMap = {};
+
+                residentsDetailTbody.innerHTML = arr.map((x,i)=> {
+                    // Calculate unpaid months for each category
+                    const unpaidMgmt = [];
+                    const unpaidPark = [];
+                    const unpaidOther = [];
+
+                    monthsToCheck.forEach(month => {
+                        if (month <= currentYM) {
+                            // Management Fee
+                            if (x.feeMgmt && parseInt(x.feeMgmt) > 0) {
+                                if (!paidMap.has(`${x.unit}-管理費-${month}`)) {
+                                    unpaidMgmt.push(month);
+                                }
+                            }
+                            // Parking Fee
+                            if (x.feePark && parseInt(x.feePark) > 0) {
+                                if (!paidMap.has(`${x.unit}-停車費-${month}`)) {
+                                    unpaidPark.push(month);
+                                }
+                            }
+                            // Other Fee
+                            if (x.feeOther && parseInt(x.feeOther) > 0) {
+                                if (!paidMap.has(`${x.unit}-其他費用-${month}`)) {
+                                    unpaidOther.push(month);
+                                }
+                            }
+                        }
+                    });
+                    
+                    const hasUnpaid = unpaidMgmt.length > 0 || unpaidPark.length > 0 || unpaidOther.length > 0;
+                    
+                    if (hasUnpaid) {
+                        unpaidInfoMap[x.unit] = {
+                            mgmt: unpaidMgmt,
+                            park: unpaidPark,
+                            other: unpaidOther
+                        };
+                    }
+
+                    return `
                     <tr>
                         <td class="px-6 py-3">${i+1}</td>
                         <td class="px-6 py-3">${x.unit||''}</td>
@@ -2957,15 +3573,53 @@
                         <td class="px-6 py-3 text-right">${x.feeMgmt ? '$'+parseInt(x.feeMgmt).toLocaleString() : '-'}</td>
                         <td class="px-6 py-3 text-right">${x.feePark ? '$'+parseInt(x.feePark).toLocaleString() : '-'}</td>
                         <td class="px-6 py-3 text-right">${x.feeOther ? '$'+parseInt(x.feeOther).toLocaleString() : '-'}</td>
-                        <td class="px-6 py-3">${x.arrears==='欠繳' ? '<span class="text-red-600 font-bold">欠繳</span>' : '<span class="text-green-600">正常</span>'}</td>
+                        <td class="px-6 py-3">
+                            ${hasUnpaid
+                                ? `<button class="btn-show-unpaid px-2 py-1 bg-red-600 text-white rounded text-xs hover:bg-red-700 transition-colors shadow-sm" data-unit="${x.unit}">未繳</button>` 
+                                : '<span class="text-green-600">正常</span>'}
+                        </td>
                         <td class="px-6 py-3">${x.note||''}</td>
                         <td class="px-6 py-3">
                             <button data-i="${i}" class="edit-resident text-blue-600 mr-2">編輯</button>
                             <button data-i="${i}" class="del-resident text-red-600">刪除</button>
                         </td>
                     </tr>
-                `).join('');
+                `}).join('');
                 
+                // Add Event Listeners for Unpaid Buttons
+                Array.from(residentsDetailTbody.querySelectorAll('.btn-show-unpaid')).forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const unit = btn.getAttribute('data-unit');
+                        const data = unpaidInfoMap[unit] || { mgmt: [], park: [], other: [] };
+                        
+                        if (modalUnpaidTitle) modalUnpaidTitle.textContent = `住戶 ${unit} 欠繳月份`;
+                        
+                        // Populate 3 columns
+                        const listMgmt = document.getElementById('list-unpaid-mgmt');
+                        const listPark = document.getElementById('list-unpaid-park');
+                        const listOther = document.getElementById('list-unpaid-other');
+
+                        if (listMgmt) {
+                            listMgmt.innerHTML = data.mgmt.length > 0 
+                                ? data.mgmt.map(m => `<li class="py-2 border-b last:border-0 hover:bg-gray-50 rounded text-red-600 font-bold">${m}</li>`).join('')
+                                : '<li class="py-4 text-gray-400 text-sm">無欠繳</li>';
+                        }
+                        if (listPark) {
+                            listPark.innerHTML = data.park.length > 0 
+                                ? data.park.map(m => `<li class="py-2 border-b last:border-0 hover:bg-gray-50 rounded text-red-600 font-bold">${m}</li>`).join('')
+                                : '<li class="py-4 text-gray-400 text-sm">無欠繳</li>';
+                        }
+                        if (listOther) {
+                            listOther.innerHTML = data.other.length > 0 
+                                ? data.other.map(m => `<li class="py-2 border-b last:border-0 hover:bg-gray-50 rounded text-red-600 font-bold">${m}</li>`).join('')
+                                : '<li class="py-4 text-gray-400 text-sm">無欠繳</li>';
+                        }
+
+                        if (modalUnpaidDetail) modalUnpaidDetail.classList.remove('hidden');
+                    });
+                });
+
                 Array.from(residentsDetailTbody.querySelectorAll('.del-resident')).forEach(btn=>{ 
                     btn.addEventListener('click', ()=>{ 
                         openConfirm('確定要刪除此住戶嗎？', () => {
@@ -3690,10 +4344,24 @@
         });
 
         function renderIncomeDetail() {
+            // Reset filters to ensure original state when entering subpage
+            const sortEl = document.getElementById('income-filter-sort');
+            const monthEl = document.getElementById('income-filter-month');
+            const dateEl = document.getElementById('income-filter-date');
+            if (sortEl) sortEl.value = 'desc';
+            if (monthEl) monthEl.value = '';
+            if (dateEl) dateEl.value = '';
             renderTransactionDetail('income');
         }
         
         function renderExpenseDetail() {
+            // Reset filters to ensure original state when entering subpage
+            const sortEl = document.getElementById('expense-filter-sort');
+            const monthEl = document.getElementById('expense-filter-month');
+            const dateEl = document.getElementById('expense-filter-date');
+            if (sortEl) sortEl.value = 'desc';
+            if (monthEl) monthEl.value = '';
+            if (dateEl) dateEl.value = '';
             renderTransactionDetail('expense');
         }
 
@@ -3703,19 +4371,41 @@
             
             const allTrans = getTransactions();
             const prefix = (mode === 'income') ? 'I' : 'O';
-            const filtered = allTrans.filter(t => t.id && t.id.startsWith(prefix));
+            let filtered = allTrans.filter(t => t.id && t.id.startsWith(prefix));
             
-            filtered.sort((a,b) => new Date(b.date) - new Date(a.date));
+            // Get filter values
+            const sortEl = document.getElementById(mode + '-filter-sort');
+            const monthEl = document.getElementById(mode + '-filter-month');
+            const dateEl = document.getElementById(mode + '-filter-date');
+            
+            const sortVal = sortEl ? sortEl.value : 'desc';
+            const monthVal = monthEl ? monthEl.value : '';
+            const dateVal = dateEl ? dateEl.value : '';
+            
+            // Apply Date/Month Filter
+            if (dateVal) {
+                // Use startsWith to handle cases where date might have time component
+                filtered = filtered.filter(t => t.date && t.date.startsWith(dateVal));
+            } else if (monthVal) {
+                filtered = filtered.filter(t => t.date && t.date.startsWith(monthVal));
+            }
+            
+            // Apply Sort
+            filtered.sort((a,b) => {
+                const dateA = new Date(a.date);
+                const dateB = new Date(b.date);
+                return (sortVal === 'asc') ? dateA - dateB : dateB - dateA;
+            });
             
             tbody.innerHTML = filtered.map(t => `
                 <tr>
                     <td class="px-6 py-3">${t.id}</td>
-                    <td class="px-6 py-3">${t.date ? (t.date.includes('T') ? t.date.replace('T', ' ').substring(0, 19) : t.date + ' 00:00:00') : ''}</td>
+                    <td class="px-6 py-3">${t.date ? (t.date.includes('T') ? t.date.replace('T', ' ').substring(0, 16) : t.date) : ''}</td>
                     <td class="px-6 py-3">${t.target}</td>
                     <td class="px-6 py-3">${t.type}</td>
                     <td class="px-6 py-3">${t.category}</td>
                     <td class="px-6 py-3">${t.month}</td>
-                    <td class="px-6 py-3 text-right">$${parseInt(t.amount||0).toLocaleString()}</td>
+                    <td class="px-6 py-3 text-right ${mode === 'income' ? 'text-green-600' : 'text-red-600'}">$${parseInt(t.amount||0).toLocaleString()}</td>
                     <td class="px-6 py-3">${t.method}</td>
                     <td class="px-6 py-3">${t.note||''}</td>
                     <td class="px-6 py-3">
@@ -3746,6 +4436,77 @@
                     });
                 });
             });
+        }
+
+        // Filter Event Listeners
+        ['income', 'expense'].forEach(mode => {
+            const sortEl = document.getElementById(mode + '-filter-sort');
+            const monthEl = document.getElementById(mode + '-filter-month');
+            const dateEl = document.getElementById(mode + '-filter-date');
+            const exportBtn = document.getElementById('btn-export-' + mode);
+            
+            if (sortEl) sortEl.addEventListener('change', () => renderTransactionDetail(mode));
+            if (monthEl) monthEl.addEventListener('change', () => {
+                if (monthEl.value && dateEl) dateEl.value = ''; // Clear date if month selected
+                renderTransactionDetail(mode);
+            });
+            if (dateEl) dateEl.addEventListener('change', () => {
+                if (dateEl.value && monthEl) monthEl.value = ''; // Clear month if date selected
+                renderTransactionDetail(mode);
+            });
+            if (exportBtn) exportBtn.addEventListener('click', () => exportTransactionDetail(mode));
+        });
+
+        function exportTransactionDetail(mode) {
+            const allTrans = getTransactions();
+            const prefix = (mode === 'income') ? 'I' : 'O';
+            let filtered = allTrans.filter(t => t.id && t.id.startsWith(prefix));
+            
+            // Get filter values
+            const sortEl = document.getElementById(mode + '-filter-sort');
+            const monthEl = document.getElementById(mode + '-filter-month');
+            const dateEl = document.getElementById(mode + '-filter-date');
+            
+            const sortVal = sortEl ? sortEl.value : 'desc';
+            const monthVal = monthEl ? monthEl.value : '';
+            const dateVal = dateEl ? dateEl.value : '';
+            
+            // Apply Date/Month Filter
+            if (dateVal) {
+                // Use startsWith to handle cases where date might have time component
+                filtered = filtered.filter(t => t.date && t.date.startsWith(dateVal));
+            } else if (monthVal) {
+                filtered = filtered.filter(t => t.date && t.date.startsWith(monthVal));
+            }
+            
+            // Apply Sort
+            filtered.sort((a,b) => {
+                const dateA = new Date(a.date);
+                const dateB = new Date(b.date);
+                return (sortVal === 'asc') ? dateA - dateB : dateB - dateA;
+            });
+            
+            // Prepare Data for Excel
+            const data = filtered.map(t => ({
+                '編號': t.id,
+                '日期': t.date,
+                '對象': t.target,
+                '類型': t.type,
+                '類別': t.category,
+                '月份': t.month,
+                '金額': parseInt(t.amount||0),
+                '收支方式': t.method,
+                '備註': t.note || ''
+            }));
+            
+            // Create Worksheet
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, (mode === 'income' ? '收入明細' : '支出明細'));
+            
+            // Export
+            const filename = `西北社區_${mode === 'income' ? '收入' : '支出'}明細_${new Date().toISOString().slice(0,10)}.xlsx`;
+            XLSX.writeFile(wb, filename);
         }
 
 
@@ -3919,6 +4680,77 @@
             if (unpaidResidents.length === 0) {
                 tbodyUnpaidList.innerHTML = '<tr><td colspan="3" class="px-4 py-4 text-center text-gray-500">本月無未繳住戶</td></tr>';
             }
+        }
+
+        // --- Dashboard Unpaid Detail Modal Logic ---
+        
+        const modalDashboardUnpaid = document.getElementById('modal-dashboard-unpaid-list');
+        const btnCloseDashboardUnpaid = document.getElementById('btn-close-dashboard-unpaid');
+        const listDashboardUnpaid = document.getElementById('list-dashboard-unpaid');
+        const titleDashboardUnpaid = document.getElementById('modal-dashboard-unpaid-title');
+        
+        const btnViewUnpaidMgmt = document.getElementById('btn-view-unpaid-mgmt');
+        const btnViewUnpaidPark = document.getElementById('btn-view-unpaid-park');
+        const btnViewUnpaidOther = document.getElementById('btn-view-unpaid-other');
+        
+        if (btnCloseDashboardUnpaid) {
+            btnCloseDashboardUnpaid.addEventListener('click', () => {
+                if (modalDashboardUnpaid) modalDashboardUnpaid.classList.add('hidden');
+            });
+        }
+        
+        function openDashboardUnpaidModal(category) {
+            if (!modalDashboardUnpaid || !listDashboardUnpaid) return;
+            
+            let data = [];
+            let title = '';
+            
+            if (category === 'mgmt') {
+                data = dashboardUnpaidData.mgmt || [];
+                title = '管理費未繳名單';
+            } else if (category === 'park') {
+                data = dashboardUnpaidData.park || [];
+                title = '停車費未繳名單';
+            } else if (category === 'other') {
+                data = dashboardUnpaidData.other || [];
+                title = '其他費用未繳名單';
+            }
+            
+            // Calculate Total Amount
+            let totalAmount = data.reduce((acc, curr) => acc + (curr.amount || 0), 0);
+            
+            if (titleDashboardUnpaid) titleDashboardUnpaid.textContent = title;
+            const elTotal = document.getElementById('modal-dashboard-unpaid-total-amount');
+            if (elTotal) elTotal.textContent = '$' + totalAmount.toLocaleString();
+            
+            if (data.length === 0) {
+                listDashboardUnpaid.innerHTML = '<tr><td colspan="3" class="px-4 py-4 text-center text-gray-500">無未繳資料</td></tr>';
+            } else {
+                // Sort by unit
+                data.sort((a,b) => (a.unit||'').localeCompare(b.unit||'', undefined, {numeric: true}));
+                
+                listDashboardUnpaid.innerHTML = data.map(item => `
+                    <tr class="hover:bg-gray-50">
+                        <td class="py-2 px-2 border-b font-medium">${item.unit}</td>
+                        <td class="py-2 px-2 border-b">${item.name}</td>
+                        <td class="py-2 px-2 border-b text-right text-red-600 font-bold">${item.count} 個月</td>
+                    </tr>
+                `).join('');
+            }
+            
+            modalDashboardUnpaid.classList.remove('hidden');
+        }
+        
+        if (btnViewUnpaidMgmt) {
+            btnViewUnpaidMgmt.addEventListener('click', () => openDashboardUnpaidModal('mgmt'));
+        }
+        
+        if (btnViewUnpaidPark) {
+            btnViewUnpaidPark.addEventListener('click', () => openDashboardUnpaidModal('park'));
+        }
+        
+        if (btnViewUnpaidOther) {
+            btnViewUnpaidOther.addEventListener('click', () => openDashboardUnpaidModal('other'));
         }
 
     </script>
