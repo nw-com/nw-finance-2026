@@ -234,14 +234,14 @@
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-xs font-medium text-gray-500 uppercase">本月總收入</p>
-                                    <h3 class="text-2xl font-bold text-gray-800 mt-1">$158,200</h3>
+                                    <h3 id="dashboard-income" class="text-2xl font-bold text-gray-800 mt-1">$0</h3>
                                 </div>
                                 <div class="p-2 bg-red-50 rounded-lg text-red-600">
                                     <i class="fa-solid fa-arrow-trend-up"></i>
                                 </div>
                             </div>
-                            <p class="text-xs text-green-600 mt-2 flex items-center">
-                                <i class="fa-solid fa-caret-up mr-1"></i> 較上月 +5.2%
+                            <p id="dashboard-income-compare" class="text-xs text-green-600 mt-2 flex items-center">
+                                <i class="fa-solid fa-caret-up mr-1"></i> 較上月 +0%
                             </p>
                         </div>
 
@@ -249,14 +249,14 @@
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-xs font-medium text-gray-500 uppercase">本月總支出</p>
-                                    <h3 class="text-2xl font-bold text-gray-800 mt-1">$42,500</h3>
+                                    <h3 id="dashboard-expense" class="text-2xl font-bold text-gray-800 mt-1">$0</h3>
                                 </div>
                                 <div class="p-2 bg-gray-100 rounded-lg text-gray-600">
                                     <i class="fa-solid fa-arrow-trend-down"></i>
                                 </div>
                             </div>
-                            <p class="text-xs text-red-500 mt-2 flex items-center">
-                                <i class="fa-solid fa-caret-up mr-1"></i> 較上月 +1.2%
+                            <p id="dashboard-expense-compare" class="text-xs text-red-500 mt-2 flex items-center">
+                                <i class="fa-solid fa-caret-up mr-1"></i> 較上月 +0%
                             </p>
                         </div>
 
@@ -264,7 +264,7 @@
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-xs font-medium text-gray-500 uppercase">目前結餘</p>
-                                    <h3 class="text-2xl font-bold text-red-800 mt-1">$2,105,700</h3>
+                                    <h3 id="dashboard-balance" class="text-2xl font-bold text-red-800 mt-1">$0</h3>
                                 </div>
                                 <div class="p-2 bg-red-50 rounded-lg text-red-800">
                                     <i class="fa-solid fa-piggy-bank"></i>
@@ -277,13 +277,13 @@
                             <div class="flex justify-between items-start">
                                 <div>
                                     <p class="text-xs font-medium text-gray-500 uppercase">未繳管理費</p>
-                                    <h3 class="text-2xl font-bold text-gray-800 mt-1">5 戶</h3>
+                                    <h3 id="dashboard-unpaid" class="text-2xl font-bold text-gray-800 mt-1">0 戶</h3>
                                 </div>
                                 <div class="p-2 bg-orange-50 rounded-lg text-orange-400">
                                     <i class="fa-solid fa-circle-exclamation"></i>
                                 </div>
                             </div>
-                            <p class="text-xs text-orange-500 mt-2 cursor-pointer hover:underline">查看名單</p>
+                            <p id="btn-view-unpaid" class="text-xs text-orange-500 mt-2 cursor-pointer hover:underline">查看名單</p>
                         </div>
                     </div>
 
@@ -597,6 +597,28 @@
                             </div>
                         </div>
                     </div>
+                    <div id="residents-mgmt-fee-view" class="space-y-6 hidden">
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg">
+                                <h3 class="font-bold text-gray-700">管理費繳費明細</h3>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm text-gray-600">
+                                    <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-bold">
+                                        <tr>
+                                            <th class="px-6 py-3">編號</th>
+                                            <th class="px-6 py-3">戶號</th>
+                                            <th class="px-6 py-3">姓名</th>
+                                            <th class="px-6 py-3 text-right">每月管理費</th>
+                                            <th class="px-6 py-3">月份</th>
+                                            <th class="px-6 py-3">繳費狀況</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="residents-mgmt-fee-tbody" class="divide-y divide-gray-200"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="view-settings" class="content-view hidden">
@@ -892,11 +914,12 @@
                         </div>
                         <div>
                             <label class="block text-sm mb-1">日期</label>
-                            <input id="input-trans-date" type="date" class="w-full border rounded px-3 py-2" />
+                            <input id="input-trans-date" type="datetime-local" step="1" class="w-full border rounded px-3 py-2" />
                         </div>
                         <div>
                             <label class="block text-sm mb-1">對象</label>
-                            <input id="input-trans-target" class="w-full border rounded px-3 py-2" />
+                            <select id="select-trans-target" class="w-full border rounded px-3 py-2 mb-1"></select>
+                            <input id="input-trans-target" class="w-full border rounded px-3 py-2 hidden" />
                         </div>
                         <div>
                             <label class="block text-sm mb-1">月份</label>
@@ -911,7 +934,8 @@
                         </div>
                         <div>
                             <label class="block text-sm mb-1">類別</label>
-                            <select id="input-trans-category" class="w-full border rounded px-3 py-2"></select>
+                            <select id="input-trans-category" class="w-full border rounded px-3 py-2 mb-1"></select>
+                            <input id="input-trans-category-custom" class="w-full border rounded px-3 py-2 hidden" placeholder="輸入自定義類別" />
                         </div>
                         <div>
                             <label class="block text-sm mb-1">金額</label>
@@ -1042,9 +1066,27 @@
         // 應用程式邏輯
         // ==========================================
 
+        // GMT+8 Date Formatter
+        function formatGmt8DateTime(date) {
+            return date.toLocaleString('zh-TW', {
+                timeZone: 'Asia/Taipei',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            }).replace(/\//g, '-').replace(/, /g, ' ');
+        }
+
         // 設定日期
-        const today = new Date();
-        document.getElementById('current-date').textContent = today.toISOString().split('T')[0];
+        function updateSystemClock() {
+            const el = document.getElementById('current-date');
+            if(el) el.textContent = formatGmt8DateTime(new Date());
+        }
+        updateSystemClock();
+        setInterval(updateSystemClock, 1000);
 
         // UI 參考
         const loginView = document.getElementById('login-view');
@@ -1234,7 +1276,7 @@
             'income': ['收入明細','收入設定'],
             'expense': ['支出明細','支出設定'],
             'bank': [], // Initial empty, will be populated by updateBankSubtabs
-            'residents': ['住戶明細','住戶設定'],
+            'residents': ['住戶明細','管理費明細','住戶設定'],
             'reports': ['日報表','月報表','年報表','報表設定'],
             'settings': ['一般設定','備份還原']
         };
@@ -1348,8 +1390,8 @@
                                             <td class="px-6 py-3">${acc.holderName || ''}</td>
                                             <td class="px-6 py-3">${acc.accountNumber || ''}</td>
                                             <td class="px-6 py-3">${acc.amount ? '$'+parseInt(acc.amount).toLocaleString() : ''}</td>
-                                            <td class="px-6 py-3">${acc.startDate || ''}</td>
-                                            <td class="px-6 py-3">${acc.endDate || ''}</td>
+                                            <td class="px-6 py-3">${acc.startDate ? acc.startDate + ' 00:00:00' : ''}</td>
+                                            <td class="px-6 py-3">${acc.endDate ? acc.endDate + ' 00:00:00' : ''}</td>
                                             <td class="px-6 py-3">${acc.note || ''}</td>
                                             <td class="px-6 py-3 flex gap-2">
                                                 <button class="px-2 py-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 edit-bank-detail" data-i="${idx}">編輯</button>
@@ -1374,6 +1416,7 @@
                                             arr.splice(idx, 1);
                                             setBankAccounts(arr);
                                             updateBankSubtabs();
+                                            updateDashboardStats();
                                             // Switch to bank settings
                                             const tabs = document.getElementById('subtab-bar').children;
                                             if(tabs.length > 0) tabs[tabs.length-1].click();
@@ -1420,11 +1463,14 @@
             } else if (tab === 'residents'){
                 const rd = document.getElementById('residents-detail-view');
                 const rs = document.getElementById('residents-settings-view');
-                if (rd && rs){ 
+                const rmf = document.getElementById('residents-mgmt-fee-view');
+                if (rd && rs && rmf){ 
                     rd.classList.toggle('hidden', idx!==0); 
-                    rs.classList.toggle('hidden', idx!==1); 
-                    if (idx===1) renderResidentsSettings(); 
+                    rs.classList.toggle('hidden', idx!==2); 
+                    rmf.classList.toggle('hidden', idx!==1);
                     if (idx===0) renderResidentsDetail();
+                    if (idx===1) renderResidentsMgmtFee();
+                    if (idx===2) renderResidentsSettings(); 
                 }
             }
         }
@@ -2276,6 +2322,112 @@
                 });
         }
         
+        function updateDashboardStats() {
+            const transactions = getTransactions();
+            const residents = getResidents();
+            const bankAccounts = getBankAccounts();
+            
+            // 1. Calculate Total Income and Total Expense (Sum of all list items)
+            let totalIncome = 0;
+            let totalExpense = 0;
+            
+            // Also track Paid Map for Residents (still need logic for Unpaid Management Fees?)
+            // The user didn't ask to change "Unpaid" logic, but "Unpaid" usually depends on "This Month".
+            // So I will keep the "Unpaid" logic based on "Current Month".
+            
+            // Current Year-Month (GMT+8) for Unpaid calculation
+            const now = new Date();
+            const fmt = new Intl.DateTimeFormat('zh-TW', { timeZone: 'Asia/Taipei', year: 'numeric', month: '2-digit' });
+            const parts = fmt.formatToParts(now);
+            const y = parts.find(p=>p.type==='year').value;
+            const m = parts.find(p=>p.type==='month').value;
+            const currentYM = `${y}-${m}`;
+            
+            const paidMap = new Set();
+            
+            transactions.forEach(t => {
+                const amt = parseInt(t.amount || 0);
+                const isIncome = (t.mode === 'income') || (t.id && t.id.startsWith('I'));
+                
+                if (isIncome) {
+                    totalIncome += amt;
+                    
+                    // Unpaid Logic (Collect paid for current month)
+                    let tm = t.month;
+                    if (!tm && t.date && t.date.length >= 7) tm = t.date.substring(0, 7);
+                    
+                    if (t.category === '管理費' && t.target) {
+                        const unit = t.target.trim(); 
+                        if (tm) paidMap.add(`${unit}-${tm}`);
+                    }
+                } else {
+                    totalExpense += amt;
+                }
+            });
+            
+            // 2. Calculate Balance (Sum of all Bank Accounts)
+            let totalAssets = 0;
+            bankAccounts.forEach(acc => {
+                if (acc.type === '定存') {
+                    // Fixed Deposit: use stored amount
+                    totalAssets += parseInt(acc.amount || 0);
+                } else {
+                    // Savings / Petty Cash: calculate from transactions
+                    const key = (acc.type === '零用金') 
+                        ? `零用金-${acc.pettyName}` 
+                        : `${acc.type}-${acc.bankName}`;
+                        
+                    // Filter transactions for this account
+                    // Note: This relies on the method string matching exactly
+                    const accTrans = transactions.filter(t => t.method === key);
+                    let accBalance = 0;
+                    accTrans.forEach(t => {
+                        const amt = parseInt(t.amount || 0);
+                        const isInc = (t.mode === 'income') || (t.id && t.id.startsWith('I'));
+                        if (isInc) accBalance += amt;
+                        else accBalance -= amt;
+                    });
+                    totalAssets += accBalance;
+                }
+            });
+            
+            // Update UI
+            const elIncome = document.getElementById('dashboard-income');
+            const elExpense = document.getElementById('dashboard-expense');
+            const elBalance = document.getElementById('dashboard-balance');
+            const elUnpaid = document.getElementById('dashboard-unpaid');
+            
+            // Update labels to "Total" instead of "Monthly"
+            // We can do this by updating the DOM text node if we can find it, or just rely on the user understanding.
+            // But better to be explicit.
+            const labelIncome = elIncome ? elIncome.parentElement.querySelector('p') : null;
+            const labelExpense = elExpense ? elExpense.parentElement.querySelector('p') : null;
+            if (labelIncome) labelIncome.textContent = '總收入';
+            if (labelExpense) labelExpense.textContent = '總支出';
+            
+            // Hide comparison text as it's not applicable for "All Time Total" vs "Last Month"
+            const elIncomeComp = document.getElementById('dashboard-income-compare');
+            const elExpenseComp = document.getElementById('dashboard-expense-compare');
+            if (elIncomeComp) elIncomeComp.innerHTML = '';
+            if (elExpenseComp) elExpenseComp.innerHTML = '';
+            
+            if (elIncome) elIncome.textContent = '$' + totalIncome.toLocaleString();
+            if (elExpense) elExpense.textContent = '$' + totalExpense.toLocaleString();
+            if (elBalance) elBalance.textContent = '$' + totalAssets.toLocaleString();
+            
+            // Unpaid Count Logic
+            let unpaidCount = 0;
+            residents.forEach(r => {
+                if (r.feeMgmt && parseInt(r.feeMgmt) > 0) {
+                    const key = `${r.unit}-${currentYM}`;
+                    if (!paidMap.has(key)) {
+                        unpaidCount++;
+                    }
+                }
+            });
+            if (elUnpaid) elUnpaid.textContent = unpaidCount + ' 戶';
+        }
+
         function refreshAllUI() {
             if(typeof renderBankSettings === 'function') renderBankSettings();
             if(typeof renderIncomeSettings === 'function') renderIncomeSettings();
@@ -2283,6 +2435,7 @@
             if(typeof renderResidentsSettings === 'function') renderResidentsSettings();
             if(typeof renderResidentsDetail === 'function') renderResidentsDetail();
             if(typeof updateBankSubtabs === 'function') updateBankSubtabs();
+            if(typeof updateDashboardStats === 'function') updateDashboardStats();
         }
 
         function lsGet(key){ 
@@ -2496,6 +2649,112 @@
         }
         function closeEditResident(){ editCtx = null; if (modalEditResident) modalEditResident.classList.add('hidden'); }
 
+        function getMonthsRange(startStr) {
+            const months = [];
+            const start = new Date(startStr + '-01');
+            const now = new Date(); 
+            let current = new Date(start);
+            while (current <= now || (current.getFullYear() === now.getFullYear() && current.getMonth() === now.getMonth())) {
+                const y = current.getFullYear();
+                const m = String(current.getMonth() + 1).padStart(2, '0');
+                months.push(`${y}-${m}`);
+                current.setMonth(current.getMonth() + 1);
+                if (months.length > 60) break; 
+            }
+            if (months.length === 0) months.push(startStr);
+            return months;
+        }
+
+        function renderResidentsMgmtFee(){
+            const view = document.getElementById('residents-mgmt-fee-view');
+            const tbody = document.getElementById('residents-mgmt-fee-tbody');
+            if (!view || !tbody) return;
+            
+            const residents = getResidents();
+            const transactions = getTransactions();
+            const startMonth = '2025-12';
+            
+            // Generate fixed 12 months from startMonth
+            const months = [];
+            const d = new Date(startMonth + '-01');
+            for(let i=0; i<12; i++){
+                const y = d.getFullYear();
+                const m = String(d.getMonth()+1).padStart(2,'0');
+                months.push(`${y}-${m}`);
+                d.setMonth(d.getMonth()+1);
+            }
+            
+            // Update Table Header
+            const thead = view.querySelector('thead tr');
+            if(thead){
+                thead.innerHTML = `
+                    <th class="px-6 py-3">編號</th>
+                    <th class="px-6 py-3">戶號</th>
+                    <th class="px-6 py-3">姓名</th>
+                    <th class="px-6 py-3 text-right">每月管理費</th>
+                    ${months.map(m => `<th class="px-6 py-3">${m}</th>`).join('')}
+                `;
+            }
+
+            // Pre-process transactions
+            const paidMap = new Set();
+            transactions.forEach(t => {
+                // Determine if it is an income transaction
+                // Check mode (if available) or ID prefix
+                const isIncome = (t.mode === 'income') || (t.id && t.id.startsWith('I'));
+                
+                if (isIncome && t.category === '管理費' && t.target) {
+                    let m = '';
+                    // Prioritize explicitly set month, fallback to date
+                    if (t.month) {
+                        m = t.month;
+                    } else if (t.date && t.date.length >= 7) {
+                        m = t.date.substring(0, 7); 
+                    }
+                    
+                    if (m) {
+                        const unit = t.target.trim();
+                        paidMap.add(`${unit}-${m}`);
+                    }
+                }
+            });
+            
+            // Current Year-Month for comparison (GMT+8)
+            const now = new Date();
+            const parts = new Intl.DateTimeFormat('zh-TW', { timeZone: 'Asia/Taipei', year: 'numeric', month: '2-digit' }).formatToParts(now);
+            const y = parts.find(p=>p.type==='year').value;
+            const m = parts.find(p=>p.type==='month').value;
+            const currentYM = `${y}-${m}`;
+
+            let html = '';
+            residents.sort((a,b) => (a.unit||'').localeCompare(b.unit||'', undefined, {numeric: true}));
+            
+            residents.forEach((r, i) => {
+                let rowHtml = `
+                    <td class="px-6 py-3">${i + 1}</td>
+                    <td class="px-6 py-3">${r.unit || ''}</td>
+                    <td class="px-6 py-3">${r.name || ''}</td>
+                    <td class="px-6 py-3 text-right">${r.feeMgmt ? '$' + parseInt(r.feeMgmt).toLocaleString() : '-'}</td>
+                `;
+                
+                months.forEach(month => {
+                    let cellContent = '';
+                    // Only show status if month <= currentYM
+                    if (month <= currentYM) {
+                        const key = `${r.unit}-${month}`;
+                        const isPaid = paidMap.has(key);
+                        cellContent = isPaid 
+                            ? '<span class="text-green-600 font-bold">已繳</span>' 
+                            : '<span class="text-red-600 font-bold">未繳</span>';
+                    }
+                    rowHtml += `<td class="px-6 py-3">${cellContent}</td>`;
+                });
+                
+                html += `<tr>${rowHtml}</tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
         function renderResidentsDetail(){
             if (residentsDetailTbody){
                 const arr = getResidents();
@@ -2526,6 +2785,7 @@
                             arr2.splice(i,1); 
                             setResidents(arr2); 
                             renderResidentsDetail(); 
+                            updateDashboardStats();
                         });
                     }); 
                 });
@@ -2624,6 +2884,7 @@
                             setBankAccounts(arr2);
                             updateBankSubtabs();
                             renderBankSettings();
+                            updateDashboardStats();
                         });
                     });
                 });
@@ -2719,6 +2980,7 @@
             updateBankSubtabs();
             closeEditBank(); 
             renderBankSettings(); 
+            updateDashboardStats();
         }); }
         if (cancelEditBank){ cancelEditBank.addEventListener('click', closeEditBank); }
         if (btnAddBuilding){ btnAddBuilding.addEventListener('click', ()=> openEditBuilding({kind:'building', index:-1, value:''})); }
@@ -2744,6 +3006,7 @@
             setResidents(arr); 
             closeEditResident(); 
             renderResidentsDetail(); 
+            updateDashboardStats();
         }); }
         if (cancelEditResident){ cancelEditResident.addEventListener('click', closeEditResident); }
 
@@ -2776,7 +3039,6 @@
                     '每月管理費': r.feeMgmt,
                     '每月停車費': r.feePark,
                     '每月其他費用': r.feeOther,
-                    '欠繳狀況': r.arrears,
                     '備註': r.note
                 }));
 
@@ -2823,7 +3085,7 @@
                             feeMgmt: row['每月管理費'] ? String(row['每月管理費']).trim() : '0',
                             feePark: row['每月停車費'] ? String(row['每月停車費']).trim() : '0',
                             feeOther: row['每月其他費用'] ? String(row['每月其他費用']).trim() : '0',
-                            arrears: row['欠繳狀況'] ? String(row['欠繳狀況']).trim() : '正常',
+                            arrears: '正常', // 系統自動帶出，不從 Excel 匯入
                             note: row['備註'] ? String(row['備註']).trim() : ''
                         }));
 
@@ -2835,6 +3097,7 @@
                         }
 
                         renderResidentsDetail();
+                        updateDashboardStats();
                         alert('匯入完成');
                         fileImportResident.value = ''; 
                     } catch (err) {
@@ -2853,10 +3116,12 @@
         const modalTransTitle = document.getElementById('modal-trans-title');
         const inputTransId = document.getElementById('input-trans-id');
         const inputTransDate = document.getElementById('input-trans-date');
+        const selectTransTarget = document.getElementById('select-trans-target');
         const inputTransTarget = document.getElementById('input-trans-target');
         const inputTransMonth = document.getElementById('input-trans-month');
         const inputTransType = document.getElementById('input-trans-type');
         const inputTransCategory = document.getElementById('input-trans-category');
+        const inputTransCategoryCustom = document.getElementById('input-trans-category-custom');
         const inputTransAmount = document.getElementById('input-trans-amount');
         const inputTransMethod = document.getElementById('input-trans-method');
         const inputTransNote = document.getElementById('input-trans-note');
@@ -2893,7 +3158,8 @@
         function generateTransactionId(mode, dateStr) {
             if (!dateStr) return '';
             const prefix = (mode === 'income') ? 'I' : 'O';
-            const datePart = dateStr.replace(/-/g, '');
+            const dateOnly = dateStr.split('T')[0];
+            const datePart = dateOnly.replace(/-/g, '');
             const baseId = prefix + datePart;
             
             const allTrans = getTransactions();
@@ -2917,20 +3183,65 @@
             } else {
                 categories = (type === '固定') ? getExpenseFixed() : getExpenseOther();
             }
-            inputTransCategory.innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join('');
+            let html = categories.map(c => `<option value="${c}">${c}</option>`).join('');
+            html += '<option value="自定義">自定義</option>';
+            inputTransCategory.innerHTML = html;
             
+            if (inputTransCategoryCustom) {
+                inputTransCategoryCustom.classList.add('hidden');
+                inputTransCategoryCustom.value = '';
+            }
+
             const accounts = getBankAccounts();
             const methods = accounts.map(acc => {
                 if (acc.type === '零用金') return `零用金-${acc.pettyName}`;
                 return `${acc.type}-${acc.bankName}`;
             });
             inputTransMethod.innerHTML = methods.map(m => `<option value="${m}">${m}</option>`).join('');
+            
+            // Populate Target Select
+            if (selectTransTarget) {
+                const residents = getResidents();
+                let targetHtml = '<option value="自定義">自定義</option>';
+                // Sort residents by unit (simple alphanumeric sort)
+                residents.sort((a,b) => (a.unit||'').localeCompare(b.unit||'', undefined, {numeric: true}));
+                
+                targetHtml += residents.map(r => {
+                    const label = r.unit + (r.name ? ` (${r.name})` : '');
+                    return `<option value="${r.unit}">${label}</option>`;
+                }).join('');
+                selectTransTarget.innerHTML = targetHtml;
+            }
+        }
+
+        if (selectTransTarget && inputTransTarget) {
+            selectTransTarget.addEventListener('change', () => {
+                if (selectTransTarget.value === '自定義') {
+                    inputTransTarget.classList.remove('hidden');
+                    inputTransTarget.value = '';
+                    inputTransTarget.focus();
+                } else {
+                    inputTransTarget.classList.add('hidden');
+                    inputTransTarget.value = selectTransTarget.value;
+                }
+            });
         }
 
         if (inputTransType) {
             inputTransType.addEventListener('change', () => {
                 if (editCtx && editCtx.mode) {
                     updateTransactionModalDropdowns(editCtx.mode);
+                }
+            });
+        }
+
+        if (inputTransCategory) {
+            inputTransCategory.addEventListener('change', () => {
+                if (inputTransCategory.value === '自定義') {
+                    inputTransCategoryCustom.classList.remove('hidden');
+                    inputTransCategoryCustom.focus();
+                } else {
+                    inputTransCategoryCustom.classList.add('hidden');
                 }
             });
         }
@@ -2960,18 +3271,68 @@
             if (ctx.item) {
                 inputTransId.value = ctx.item.id;
                 inputTransDate.value = ctx.item.date;
+                
+                // Set Target Logic
+                const currentTarget = ctx.item.target;
+                inputTransTarget.value = currentTarget;
+                
+                // Check if target is in resident list
+                const residentExists = Array.from(selectTransTarget.options).some(opt => opt.value === currentTarget && opt.value !== '自定義');
+                if (residentExists) {
+                    selectTransTarget.value = currentTarget;
+                    inputTransTarget.classList.add('hidden');
+                } else {
+                    selectTransTarget.value = '自定義';
+                    inputTransTarget.classList.remove('hidden');
+                }
+
                 inputTransTarget.value = ctx.item.target;
                 inputTransMonth.value = ctx.item.month;
+                
                 inputTransCategory.value = ctx.item.category;
+                // Check if category exists in dropdown, if not (or if it is '自定義'), handle custom input
+                if (inputTransCategory.value !== ctx.item.category || ctx.item.category === '自定義') {
+                    inputTransCategory.value = '自定義';
+                    if (inputTransCategoryCustom) {
+                        inputTransCategoryCustom.value = ctx.item.category;
+                        inputTransCategoryCustom.classList.remove('hidden');
+                    }
+                }
+
                 inputTransAmount.value = ctx.item.amount;
                 inputTransMethod.value = ctx.item.method;
                 inputTransNote.value = ctx.item.note;
             } else {
-                const today = new Date().toISOString().split('T')[0];
-                inputTransDate.value = today;
-                inputTransId.value = generateTransactionId(ctx.mode, today);
+                const now = new Date();
+                const parts = new Intl.DateTimeFormat('zh-TW', {
+                    timeZone: 'Asia/Taipei',
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false
+                }).formatToParts(now);
+                
+                const getPart = (type) => parts.find(p => p.type === type).value;
+                const y = getPart('year');
+                const m = getPart('month');
+                const d = getPart('day');
+                const h = getPart('hour');
+                const min = getPart('minute');
+                const s = getPart('second');
+                const todayFull = `${y}-${m}-${d}T${h}:${min}:${s}`;
+                
+                inputTransDate.value = todayFull;
+                inputTransId.value = generateTransactionId(ctx.mode, todayFull);
+                
+                // Default Target to Custom
+                selectTransTarget.value = '自定義';
                 inputTransTarget.value = '';
-                inputTransMonth.value = today.substring(0, 7);
+                inputTransTarget.classList.remove('hidden');
+
+                inputTransMonth.value = todayFull.substring(0, 7);
                 inputTransAmount.value = '';
                 inputTransNote.value = '';
                 if (inputTransCategory.options.length > 0) inputTransCategory.selectedIndex = 0;
@@ -2993,13 +3354,59 @@
         if (confirmEditTransaction) confirmEditTransaction.addEventListener('click', () => {
             if (!editCtx) return;
             
+            let category = inputTransCategory.value;
+            if (category === '自定義') {
+                category = (inputTransCategoryCustom.value || '').trim();
+                if (!category) {
+                    alert('請輸入自定義類別名稱');
+                    return;
+                }
+                
+                // Save custom category to settings
+                const type = inputTransType.value;
+                if (editCtx.mode === 'income') {
+                    if (type === '固定') {
+                        const arr = getIncomeFixed();
+                        if (!arr.includes(category)) {
+                            arr.push(category);
+                            setIncomeFixed(arr);
+                        }
+                    } else {
+                        const arr = getIncomeOther();
+                        if (!arr.includes(category)) {
+                            arr.push(category);
+                            setIncomeOther(arr);
+                        }
+                    }
+                } else {
+                    if (type === '固定') {
+                        const arr = getExpenseFixed();
+                        if (!arr.includes(category)) {
+                            arr.push(category);
+                            setExpenseFixed(arr);
+                        }
+                    } else {
+                        const arr = getExpenseOther();
+                        if (!arr.includes(category)) {
+                            arr.push(category);
+                            setExpenseOther(arr);
+                        }
+                    }
+                }
+            }
+
+            let target = inputTransTarget.value;
+            if (selectTransTarget.value !== '自定義') {
+                target = selectTransTarget.value;
+            }
+
             const item = {
                 id: inputTransId.value,
                 date: inputTransDate.value,
-                target: inputTransTarget.value,
+                target: target,
                 month: inputTransMonth.value,
                 type: inputTransType.value,
-                category: inputTransCategory.value,
+                category: category,
                 amount: inputTransAmount.value,
                 method: inputTransMethod.value,
                 note: inputTransNote.value,
@@ -3020,9 +3427,11 @@
             }
             
             setTransactions(allTrans);
+            const currentMode = editCtx.mode;
             closeEditTransaction();
-            if (editCtx.mode === 'income') renderIncomeDetail();
+            if (currentMode === 'income') renderIncomeDetail();
             else renderExpenseDetail();
+            updateDashboardStats();
         });
 
         function renderIncomeDetail() {
@@ -3046,7 +3455,7 @@
             tbody.innerHTML = filtered.map(t => `
                 <tr>
                     <td class="px-6 py-3">${t.id}</td>
-                    <td class="px-6 py-3">${t.date}</td>
+                    <td class="px-6 py-3">${t.date ? (t.date.includes('T') ? t.date.replace('T', ' ').substring(0, 19) : t.date + ' 00:00:00') : ''}</td>
                     <td class="px-6 py-3">${t.target}</td>
                     <td class="px-6 py-3">${t.type}</td>
                     <td class="px-6 py-3">${t.category}</td>
@@ -3078,6 +3487,7 @@
                         const newTrans = getTransactions().filter(t => t.id !== id);
                         setTransactions(newTrans);
                         renderTransactionDetail(mode);
+                        updateDashboardStats();
                     });
                 });
             });
