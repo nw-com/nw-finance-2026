@@ -334,8 +334,10 @@
 
             <!-- Secondary Toolbar -->
             <div id="secondary-toolbar" class="h-[5%] bg-white border-b border-gray-200 px-6 flex items-center gap-4">
-                <h2 class="text-xl font-bold text-gray-700">收支日報表</h2>
-                <input type="date" id="toolbar-date-filter" class="border rounded px-2 py-1 text-sm text-gray-700 bg-white">
+                <h2 id="report-title" class="text-xl font-bold text-gray-700">收支日報表</h2>
+                <input type="date" id="toolbar-daily-filter" class="border rounded px-2 py-1 text-sm text-gray-700 bg-white">
+                <input type="month" id="toolbar-monthly-filter" class="border rounded px-2 py-1 text-sm text-gray-700 bg-white hidden">
+                <select id="toolbar-yearly-filter" class="border rounded px-2 py-1 text-sm text-gray-700 bg-white hidden"></select>
                 <button onclick="window.print()" class="ml-auto px-4 py-1 bg-purple-600 text-white rounded hover:bg-purple-700 flex items-center gap-2">
                     <i class="fa-solid fa-print"></i> 列印
                 </button>
@@ -729,7 +731,7 @@
                                         <th id="report-date-header" colspan="8" class="px-2 py-2 text-center font-normal text-sm" style="height: 10mm;">114 年 01 月 25 日</th>
                                     </tr>
                                     <tr>
-                                        <th colspan="8" class="border border-gray-300 px-2 py-1 text-left font-bold text-[10px]">收入明細</th>
+                                        <th colspan="8" class="border border-gray-300 px-2 py-1 text-left font-bold text-[10px] text-green-700">收入明細</th>
                                     </tr>
                                     <tr>
                                         <th class="border border-gray-300 px-2 py-1" style="width: 10mm;">序號</th>
@@ -754,9 +756,9 @@
                                     <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
                                     <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
                                     <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
-                                    <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-center font-bold bg-yellow-400">收入合計</td><td class="border border-gray-300 px-2 py-1 bg-yellow-400">&nbsp;</td><td class="border border-gray-300 px-2 py-1 bg-yellow-400">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-center font-bold bg-green-100 text-green-700">收入合計</td><td class="border border-gray-300 px-2 py-1 bg-green-100 text-green-700">&nbsp;</td><td class="border border-gray-300 px-2 py-1 bg-green-100">&nbsp;</td></tr>
                                     <tr>
-                                        <td colspan="8" class="border border-gray-300 px-2 py-1 text-left font-bold text-[10px] bg-gray-200">支出明細</td>
+                                        <td colspan="8" class="border border-gray-300 px-2 py-1 text-left font-bold text-[10px] bg-gray-200 text-red-700">支出明細</td>
                                     </tr>
                                     <tr>
                                         <td class="border border-gray-300 px-2 py-1 bg-gray-200 font-bold text-center">序號</td>
@@ -779,9 +781,9 @@
                                     <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
                                     <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
                                     <tr>
-                                        <td colspan="6" class="border border-gray-300 px-2 py-1 text-center font-bold bg-yellow-400">支出合計</td>
-                                        <td class="border border-gray-300 px-2 py-1 bg-yellow-400">&nbsp;</td>
-                                        <td class="border border-gray-300 px-2 py-1 bg-yellow-400">&nbsp;</td>
+                                        <td colspan="6" class="border border-gray-300 px-2 py-1 text-center font-bold bg-red-100 text-red-700">支出合計</td>
+                                        <td class="border border-gray-300 px-2 py-1 bg-red-100 text-red-700">&nbsp;</td>
+                                        <td class="border border-gray-300 px-2 py-1 bg-red-100">&nbsp;</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -799,15 +801,30 @@
                                     <col style="width: 30mm;">
                                 </colgroup>
                                 <tbody>
-                                    <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1">&nbsp;</td><td colspan="2" class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
-                                    <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1">&nbsp;</td><td colspan="2" class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
-                                    <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1">&nbsp;</td><td colspan="2" class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
-                                    <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1">&nbsp;</td><td colspan="2" class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
-                                    <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1">&nbsp;</td><td colspan="2" class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
-                                    <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1">&nbsp;</td><td colspan="2" class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
-                                    <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1">&nbsp;</td><td colspan="2" class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
-                                    <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1">&nbsp;</td><td colspan="2" class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
-                                    <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1">&nbsp;</td><td colspan="2" class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right">前日銀行結餘</td><td colspan="2" id="summary-prev-bank-balance" class="border border-gray-300 px-2 py-1 text-right">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right">前日零用金加總結餘</td><td colspan="2" id="summary-prev-petty-balance" class="border border-gray-300 px-2 py-1 text-right">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right bg-green-100 text-green-700">本日銀行收入總計</td><td colspan="2" id="summary-today-bank-income" class="border border-gray-300 px-2 py-1 text-right bg-green-100 text-green-700">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right bg-green-100 text-green-700">本日零用金收入總計</td><td colspan="2" id="summary-today-petty-income" class="border border-gray-300 px-2 py-1 text-right bg-green-100 text-green-700">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right bg-red-100 text-red-700">本日銀行支出總計</td><td colspan="2" id="summary-today-bank-expense" class="border border-gray-300 px-2 py-1 text-right bg-red-100 text-red-700">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right bg-red-100 text-red-700">本日零用金支出總計</td><td colspan="2" id="summary-today-petty-expense" class="border border-gray-300 px-2 py-1 text-right bg-red-100 text-red-700">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right">本日銀行結餘</td><td colspan="2" id="summary-today-bank-balance" class="border border-gray-300 px-2 py-1 text-right">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right">本日零用金加總結餘</td><td colspan="2" id="summary-today-petty-balance" class="border border-gray-300 px-2 py-1 text-right">&nbsp;</td></tr>
+                                </tbody>
+                            </table>
+                            <table class="w-full border-collapse text-[10px]">
+                                <colgroup>
+                                    <col style="width: 25%;">
+                                    <col style="width: 25%;">
+                                    <col style="width: 25%;">
+                                    <col style="width: 25%;">
+                                </colgroup>
+                                <tbody>
+                                    <tr style="height: 6mm;">
+                                        <td class="px-2 py-1 text-left">主任委員 : </td>
+                                        <td class="px-2 py-1 text-left">監察委員 : </td>
+                                        <td class="px-2 py-1 text-left">財務委員 : </td>
+                                        <td class="px-2 py-1 text-left">社區主任 : </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -1635,7 +1652,7 @@
             'expense': ['支出明細','支出設定'],
             'bank': [], // Initial empty, will be populated by updateBankSubtabs
             'residents': ['住戶明細','管理費明細','停車費明細','其他明細','住戶設定'],
-            'reports': ['收支日報表'],
+            'reports': ['收支日報表', '收支月報表', '收支年報表'],
             'settings': ['一般設定','備份還原']
         };
 
@@ -2249,9 +2266,9 @@
             const expenseTrans = currentDayTransactions.filter(t => !((t.mode === 'income') || (t.id && t.id.startsWith('I'))));
 
             // Helper to create cell
-            const createCell = (text) => {
+            const createCell = (text, className = '') => {
                 const td = document.createElement('td');
-                td.className = 'border border-gray-300 px-2 py-1';
+                td.className = 'border border-gray-300 px-2 py-1 ' + className;
                 td.innerHTML = text || '&nbsp;';
                 return td;
             };
@@ -2271,7 +2288,7 @@
                 row.appendChild(createCell(transaction.type));
                 row.appendChild(createCell(transaction.category));
                 row.appendChild(createCell(transaction.month || (transaction.date ? transaction.date.slice(0, 7) : '')));
-                row.appendChild(createCell(amount.toLocaleString()));
+                row.appendChild(createCell(amount.toLocaleString(), 'text-green-700'));
                 row.appendChild(createCell(transaction.note));
                 
                 tbody.insertBefore(row, incomeTotalRow);
@@ -2302,7 +2319,7 @@
                 row.appendChild(createCell(transaction.type));
                 row.appendChild(createCell(transaction.category));
                 row.appendChild(createCell(transaction.month || (transaction.date ? transaction.date.slice(0, 7) : '')));
-                row.appendChild(createCell(amount.toLocaleString()));
+                row.appendChild(createCell(amount.toLocaleString(), 'text-red-700'));
                 row.appendChild(createCell(transaction.note));
                 
                 tbody.insertBefore(row, expenseTotalRow);
@@ -2326,6 +2343,61 @@
             if (expenseTotalRow.cells.length >= 2) {
                 expenseTotalRow.cells[1].textContent = '$' + expenseTotal.toLocaleString();
             }
+
+            // 7. Calculate Summary Table
+            const getVal = (t) => parseInt(t.amount || 0);
+            const isPetty = (t) => (t.method || '').includes('零用金');
+            // Previous Balance
+            const prevTrans = transactions.filter(t => t.date && t.date < currentDay);
+            
+            let prevBankBal = 0;
+            let prevPettyBal = 0;
+
+            prevTrans.forEach(t => {
+                const val = getVal(t);
+                if (t.mode === 'income') {
+                    if (isPetty(t)) prevPettyBal += val;
+                    else prevBankBal += val;
+                } else {
+                    if (isPetty(t)) prevPettyBal -= val;
+                    else prevBankBal -= val;
+                }
+            });
+
+            // Today's values
+            let todayBankInc = 0;
+            let todayPettyInc = 0;
+            let todayBankExp = 0;
+            let todayPettyExp = 0;
+
+            currentDayTransactions.forEach(t => {
+                const val = getVal(t);
+                if (t.mode === 'income') {
+                    if (isPetty(t)) todayPettyInc += val;
+                    else todayBankInc += val;
+                } else {
+                    if (isPetty(t)) todayPettyExp += val;
+                    else todayBankExp += val;
+                }
+            });
+
+            const todayBankBal = prevBankBal + todayBankInc - todayBankExp;
+            const todayPettyBal = prevPettyBal + todayPettyInc - todayPettyExp;
+
+            // Update DOM
+            const setSum = (id, val) => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = '$' + val.toLocaleString();
+            };
+
+            setSum('summary-prev-bank-balance', prevBankBal);
+            setSum('summary-prev-petty-balance', prevPettyBal);
+            setSum('summary-today-bank-income', todayBankInc);
+            setSum('summary-today-petty-income', todayPettyInc);
+            setSum('summary-today-bank-expense', todayBankExp);
+            setSum('summary-today-petty-expense', todayPettyExp);
+            setSum('summary-today-bank-balance', todayBankBal);
+            setSum('summary-today-petty-balance', todayPettyBal);
         }
 
         function switchTab(tabId) {
