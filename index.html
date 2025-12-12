@@ -720,16 +720,16 @@
                  <div id="view-reports" class="content-view hidden">
                     <div class="bg-white py-8 shadow-sm mx-auto" style="width: 210mm; min-height: 297mm; padding-left: 10mm; padding-right: 10mm;">
                         <div class="overflow-x-auto">
-                            <table class="w-full border-collapse text-center text-xs">
+                            <table class="w-full border-collapse text-center text-[10px]">
                                 <thead class="bg-gray-100">
                                     <tr class="bg-white">
-                                        <th id="report-community-header" colspan="8" class="px-2 py-3 text-center font-bold text-2xl" style="height: 12mm;">&lt;社區名稱&gt;社區收支月報表</th>
+                                        <th id="report-community-header" colspan="8" class="px-2 py-3 text-center font-bold text-lg" style="height: 12mm;">&lt;社區名稱&gt;社區收支月報表</th>
                                     </tr>
                                     <tr class="bg-white">
-                                        <th id="report-date-header" colspan="8" class="px-2 py-2 text-center font-normal text-lg" style="height: 10mm;">114 年 01 月 25 日</th>
+                                        <th id="report-date-header" colspan="8" class="px-2 py-2 text-center font-normal text-sm" style="height: 10mm;">114 年 01 月 25 日</th>
                                     </tr>
                                     <tr>
-                                        <th colspan="8" class="border border-gray-300 px-2 py-1 text-left font-bold text-sm">收入明細</th>
+                                        <th colspan="8" class="border border-gray-300 px-2 py-1 text-left font-bold text-[10px]">收入明細</th>
                                     </tr>
                                     <tr>
                                         <th class="border border-gray-300 px-2 py-1" style="width: 10mm;">序號</th>
@@ -742,7 +742,7 @@
                                         <th class="border border-gray-300 px-2 py-1" style="width: 30mm;">備註</th>
                                     </tr>
                                 </thead>
-                                <tbody class="text-xs">
+                                <tbody class="text-[10px]">
                                     <!-- 27 Rows -->
                                     <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
                                     <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
@@ -756,7 +756,7 @@
                                     <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
                                     <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-center font-bold bg-yellow-400">收入合計</td><td class="border border-gray-300 px-2 py-1 bg-yellow-400">&nbsp;</td><td class="border border-gray-300 px-2 py-1 bg-yellow-400">&nbsp;</td></tr>
                                     <tr>
-                                        <td colspan="8" class="border border-gray-300 px-2 py-1 text-left font-bold text-sm bg-gray-200">支出明細</td>
+                                        <td colspan="8" class="border border-gray-300 px-2 py-1 text-left font-bold text-[10px] bg-gray-200">支出明細</td>
                                     </tr>
                                     <tr>
                                         <td class="border border-gray-300 px-2 py-1 bg-gray-200 font-bold text-center">序號</td>
@@ -783,6 +783,31 @@
                                         <td class="border border-gray-300 px-2 py-1 bg-yellow-400">&nbsp;</td>
                                         <td class="border border-gray-300 px-2 py-1 bg-yellow-400">&nbsp;</td>
                                     </tr>
+                                </tbody>
+                            </table>
+
+                            <!-- Additional Table: 2 columns (simulated via 8 cols), 9 rows, 6mm spacing -->
+                            <table class="w-full border-collapse text-center text-[10px]" style="margin-top: 6mm;">
+                                <colgroup>
+                                    <col style="width: 10mm;">
+                                    <col style="width: 20mm;">
+                                    <col style="width: 30mm;">
+                                    <col style="width: 20mm;">
+                                    <col style="width: 20mm;">
+                                    <col style="width: 20mm;">
+                                    <col style="width: 20mm;">
+                                    <col style="width: 30mm;">
+                                </colgroup>
+                                <tbody>
+                                    <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1">&nbsp;</td><td colspan="2" class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1">&nbsp;</td><td colspan="2" class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1">&nbsp;</td><td colspan="2" class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1">&nbsp;</td><td colspan="2" class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1">&nbsp;</td><td colspan="2" class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1">&nbsp;</td><td colspan="2" class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1">&nbsp;</td><td colspan="2" class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1">&nbsp;</td><td colspan="2" class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1">&nbsp;</td><td colspan="2" class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -2241,7 +2266,7 @@
                 row.style.height = '6mm';
                 
                 row.appendChild(createCell(incomeRowCount));
-                row.appendChild(createCell(transaction.date));
+                row.appendChild(createCell(transaction.date ? (transaction.date.includes('T') ? transaction.date.split('T')[0] : transaction.date) : ''));
                 row.appendChild(createCell(transaction.target));
                 row.appendChild(createCell(transaction.type));
                 row.appendChild(createCell(transaction.category));
@@ -2272,7 +2297,7 @@
                 row.style.height = '6mm';
                 
                 row.appendChild(createCell(expenseRowCount));
-                row.appendChild(createCell(transaction.date));
+                row.appendChild(createCell(transaction.date ? (transaction.date.includes('T') ? transaction.date.split('T')[0] : transaction.date) : ''));
                 row.appendChild(createCell(transaction.target));
                 row.appendChild(createCell(transaction.type));
                 row.appendChild(createCell(transaction.category));
