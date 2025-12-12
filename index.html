@@ -239,6 +239,12 @@
             <!-- R02 子分頁按鈕列 -->
             <div id="subtab-bar" class="h-[10%] bg-white border-b border-gray-200 px-6 flex items-center gap-4"></div>
 
+            <!-- Secondary Toolbar -->
+            <div id="secondary-toolbar" class="h-[5%] bg-white border-b border-gray-200 px-6 flex items-center gap-4">
+                <h2 class="text-xl font-bold text-gray-700">收支日報表</h2>
+                <input type="date" id="toolbar-date-filter" class="border rounded px-2 py-1 text-sm text-gray-700 bg-white">
+            </div>
+
             <!-- R03~R10 10% 列結構，用於與左側對齊 -->
             <div class="h-[10%] border-b border-gray-100"></div>
             <div class="h-[10%] border-b border-gray-100"></div>
@@ -250,7 +256,7 @@
             <div class="h-[10%]"></div>
 
             <!-- 子分頁內容覆蓋於 R03~R10 區域，保持列高 1:1 對齊 -->
-            <div id="right-content" class="absolute inset-x-0 top-[20%] bottom-0 overflow-auto p-6">
+            <div id="right-content" class="absolute inset-x-0 top-[25%] bottom-0 overflow-auto p-6">
                 <!-- 載入指示器 -->
                 <div id="content-loader" class="hidden absolute inset-0 bg-white/50 flex items-center justify-center z-10">
                     <div class="loader"></div>
@@ -602,10 +608,61 @@
                 </div>
 
                  <div id="view-reports" class="content-view hidden">
-                    <div class="bg-white p-8 rounded-lg shadow-sm text-center">
-                        <i class="fa-solid fa-chart-line text-4xl text-gray-300 mb-4"></i>
-                        <h3 class="text-xl font-bold text-gray-700">財務報表中心</h3>
-                        <p class="text-gray-500 mt-2">月報表、季報表與年度預算執行率分析。</p>
+                    <div class="bg-white py-8 shadow-sm mx-auto" style="width: 210mm; min-height: 297mm; padding-left: 10mm; padding-right: 10mm;">
+                        <div class="overflow-x-auto">
+                            <table class="w-full border-collapse text-center text-sm">
+                                <thead class="bg-gray-100">
+                                    <tr class="bg-white">
+                                        <th id="report-community-header" colspan="10" class="px-2 py-3 text-center font-bold text-[36px]" style="height: 12mm;">&lt;社區名稱&gt;社區收支月報表</th>
+                                    </tr>
+                                    <tr class="bg-white">
+                                        <th id="report-date-header" colspan="10" class="px-2 py-2 text-center font-normal text-[26px]" style="height: 10mm;">114 年 01 月 25 日</th>
+                                    </tr>
+                                    <tr>
+                                        <th class="border border-gray-300 px-2 py-1">欄1</th>
+                                        <th class="border border-gray-300 px-2 py-1">欄2</th>
+                                        <th class="border border-gray-300 px-2 py-1">欄3</th>
+                                        <th class="border border-gray-300 px-2 py-1">欄4</th>
+                                        <th class="border border-gray-300 px-2 py-1">欄5</th>
+                                        <th class="border border-gray-300 px-2 py-1">欄6</th>
+                                        <th class="border border-gray-300 px-2 py-1">欄7</th>
+                                        <th class="border border-gray-300 px-2 py-1">欄8</th>
+                                        <th class="border border-gray-300 px-2 py-1">欄9</th>
+                                        <th class="border border-gray-300 px-2 py-1">欄10</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-[16px]">
+                                    <!-- 27 Rows -->
+                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
@@ -1207,6 +1264,7 @@
                                 <option value="固定">固定</option>
                                 <option value="其他">其他</option>
                             </select>
+                            <input id="input-trans-type-custom" class="w-full border rounded px-3 py-2 hidden mt-1" placeholder="輸入自定義類型">
                         </div>
                         <div>
                             <label class="block text-sm mb-1">類別</label>
@@ -1243,7 +1301,7 @@
             <div class="absolute inset-0 bg-black/40"></div>
             <div class="absolute inset-0 flex items-center justify-center p-6">
                 <div class="bg-white rounded-lg w-full max-w-sm p-6 space-y-4 shadow-xl">
-                    <h4 class="text-lg font-bold">確認刪除</h4>
+                    <h4 id="modal-confirm-title" class="text-lg font-bold">確認刪除</h4>
                     <p id="modal-confirm-msg" class="text-gray-600">確定要刪除嗎？</p>
                     <div class="flex justify-end gap-2">
                         <button id="btn-confirm-cancel" class="px-3 py-2 border rounded hover:bg-gray-50">取消</button>
@@ -1392,6 +1450,16 @@
         // 應用程式邏輯
         // ==========================================
 
+        const SUBTAB_CONFIG = {
+            'dashboard': [],
+            'income': ['收入明細','收入設定'],
+            'expense': ['支出明細','支出設定'],
+            'bank': [], // Initial empty, will be populated by updateBankSubtabs
+            'residents': ['住戶明細','管理費明細','停車費明細','其他明細','住戶設定'],
+            'reports': ['收支日報表'],
+            'settings': ['一般設定','備份還原']
+        };
+
         // GMT+8 Date Formatter
         function formatGmt8DateTime(date) {
             return date.toLocaleString('zh-TW', {
@@ -1425,14 +1493,8 @@
         const togglePasswordBtn = document.getElementById('toggle-password');
         const rememberMe = document.getElementById('remember-me');
 
-        const persistedLogin = localStorage.getItem('persistLogin') === 'true';
-        const lastLoginMode = localStorage.getItem('lastLoginMode');
-        if (persistedLogin) {
-            if (lastLoginMode === 'demo') isDemoMode = true;
-            enterApp();
-        } else {
-            if (loginView) loginView.style.visibility = 'visible';
-        }
+        // Initialization moved to the end of the script to ensure all consts are defined
+
 
         function setLoginLoading(loading) {
             if (!loginBtn) return;
@@ -1555,6 +1617,10 @@
             applyCommunityToUI();
             updateUserDisplayName();
             attachMainLogoPermission();
+
+            // Restore last visited tab
+            const lastTab = localStorage.getItem('lastVisitedTab') || 'dashboard';
+            switchTab(lastTab);
         }
 
         // 登出/離開主程式
@@ -1597,16 +1663,6 @@
         // 頁面切換邏輯
         // ==========================================
         
-        const SUBTAB_CONFIG = {
-            'dashboard': [],
-            'income': ['收入明細','收入設定'],
-            'expense': ['支出明細','支出設定'],
-            'bank': [], // Initial empty, will be populated by updateBankSubtabs
-            'residents': ['住戶明細','管理費明細','停車費明細','其他明細','住戶設定'],
-            'reports': ['日報表','月報表','年報表','報表設定'],
-            'settings': ['一般設定','備份還原']
-        };
-
         function renderSubtabs(tabId) {
             const bar = document.getElementById('subtab-bar');
             const content = document.getElementById('right-content');
@@ -1945,6 +2001,7 @@
         }
 
         function switchTab(tabId) {
+            localStorage.setItem('lastVisitedTab', tabId);
             document.querySelectorAll('.nav-item').forEach(el => {
                 el.classList.remove('bg-red-800', 'border-white');
                 el.classList.add('border-transparent');
@@ -1970,6 +2027,26 @@
             };
             document.getElementById('page-title').innerHTML = titles[tabId] || '系統頁面';
             renderSubtabs(tabId);
+
+            // Dynamic Toolbar Logic
+            const secToolbar = document.getElementById('secondary-toolbar');
+            const rightContent = document.getElementById('right-content');
+            if (secToolbar && rightContent) {
+                // Reset custom top positioning
+                rightContent.classList.remove('top-[25%]');
+                
+                if (tabId === 'reports') {
+                    secToolbar.classList.remove('hidden');
+                    secToolbar.classList.add('flex');
+                    // Override renderSubtabs positioning for Reports view
+                    rightContent.classList.remove('top-[20%]', 'top-[10%]');
+                    rightContent.classList.add('top-[25%]');
+                } else {
+                    secToolbar.classList.add('hidden');
+                    secToolbar.classList.remove('flex');
+                    // renderSubtabs already set the correct top (10% or 20%)
+                }
+            }
         }
 
         // ==========================================
@@ -2032,6 +2109,9 @@
             const name = localStorage.getItem('currentCommunityName') || '西北保全社區';
             const span = document.getElementById('sidebar-community-name');
             if (span) span.textContent = name;
+            
+            const reportHeader = document.getElementById('report-community-header');
+            if (reportHeader) reportHeader.textContent = name + '社區收支月報表';
         }
 
         const settingsModal = document.getElementById('settings-modal');
@@ -4247,6 +4327,7 @@
         const inputTransTarget = document.getElementById('input-trans-target');
         const inputTransMonth = document.getElementById('input-trans-month');
         const inputTransType = document.getElementById('input-trans-type');
+        const inputTransTypeCustom = document.getElementById('input-trans-type-custom');
         const inputTransCategory = document.getElementById('input-trans-category');
         const inputTransCategoryCustom = document.getElementById('input-trans-category-custom');
         const inputTransAmount = document.getElementById('input-trans-amount');
@@ -4262,11 +4343,14 @@
         let confirmCallback = null;
         const modalConfirm = document.getElementById('modal-confirm');
         const modalConfirmMsg = document.getElementById('modal-confirm-msg');
+        const modalConfirmTitle = document.getElementById('modal-confirm-title');
         const btnConfirmCancel = document.getElementById('btn-confirm-cancel');
         const btnConfirmOk = document.getElementById('btn-confirm-ok');
 
-        function openConfirm(msg, callback) {
+        function openConfirm(msg, callback, title = '確認刪除', btnText = '確認刪除') {
             if(modalConfirmMsg) modalConfirmMsg.textContent = msg;
+            if(modalConfirmTitle) modalConfirmTitle.textContent = title;
+            if(btnConfirmOk) btnConfirmOk.textContent = btnText;
             confirmCallback = callback;
             if(modalConfirm) modalConfirm.classList.remove('hidden');
         }
@@ -4371,6 +4455,17 @@
                 if (editCtx && editCtx.mode) {
                     updateTransactionModalDropdowns(editCtx.mode);
                 }
+                // Handle custom type visibility
+                if (inputTransType.value === '其他') {
+                    if (inputTransTypeCustom) {
+                        inputTransTypeCustom.classList.remove('hidden');
+                        inputTransTypeCustom.focus();
+                    }
+                } else {
+                    if (inputTransTypeCustom) {
+                        inputTransTypeCustom.classList.add('hidden');
+                    }
+                }
             });
         }
 
@@ -4401,9 +4496,28 @@
             modalTransTitle.textContent = (ctx.index === -1 ? '新增' : '編輯') + modeText + '資料';
             
             if (ctx.item) {
-                inputTransType.value = ctx.item.type || '固定';
+                // Determine if type is custom or standard
+                const typeVal = ctx.item.type || '固定';
+                if (typeVal === '固定' || typeVal === '其他') {
+                    inputTransType.value = typeVal;
+                    if (inputTransTypeCustom) {
+                        inputTransTypeCustom.classList.add('hidden');
+                        inputTransTypeCustom.value = '';
+                    }
+                } else {
+                    // It's a custom type, set select to '其他' and show custom input with value
+                    inputTransType.value = '其他';
+                    if (inputTransTypeCustom) {
+                        inputTransTypeCustom.classList.remove('hidden');
+                        inputTransTypeCustom.value = typeVal;
+                    }
+                }
             } else {
                 inputTransType.value = '固定';
+                if (inputTransTypeCustom) {
+                    inputTransTypeCustom.classList.add('hidden');
+                    inputTransTypeCustom.value = '';
+                }
             }
             updateTransactionModalDropdowns(ctx.mode);
 
@@ -4476,6 +4590,12 @@
                 inputTransNote.value = '';
                 if (inputTransCategory.options.length > 0) inputTransCategory.selectedIndex = 0;
                 if (inputTransMethod.options.length > 0) inputTransMethod.selectedIndex = 0;
+                
+                // Reset custom type input for new record
+                if (inputTransTypeCustom) {
+                    inputTransTypeCustom.classList.add('hidden');
+                    inputTransTypeCustom.value = '';
+                }
             }
             
             modalEditTransaction.classList.remove('hidden');
@@ -4502,7 +4622,11 @@
                 }
                 
                 // Save custom category to settings
-                const type = inputTransType.value;
+                let type = inputTransType.value;
+                if (type === '其他' && inputTransTypeCustom && !inputTransTypeCustom.classList.contains('hidden')) {
+                    type = inputTransTypeCustom.value.trim() || '其他';
+                }
+
                 if (editCtx.mode === 'income') {
                     if (type === '固定') {
                         const arr = getIncomeFixed();
@@ -4531,6 +4655,15 @@
                             setExpenseOther(arr);
                         }
                     }
+                }
+            }
+
+            // Handle custom type logic
+            let finalType = inputTransType.value;
+            if (finalType === '其他' && inputTransTypeCustom && !inputTransTypeCustom.classList.contains('hidden')) {
+                const customTypeVal = inputTransTypeCustom.value.trim();
+                if (customTypeVal) {
+                    finalType = customTypeVal;
                 }
             }
 
@@ -4564,33 +4697,113 @@
                 date: inputTransDate.value,
                 target: target,
                 month: inputTransMonth.value,
-                type: inputTransType.value,
+                type: finalType,
                 category: category,
                 amount: inputTransAmount.value,
                 method: inputTransMethod.value,
                 note: inputTransNote.value,
                 mode: editCtx.mode
             };
-            
-            const allTrans = getTransactions();
-            
-            if (editCtx.index >= 0) {
-                const realIndex = allTrans.findIndex(t => t.id === item.id);
-                if (realIndex >= 0) {
-                    allTrans[realIndex] = item;
+
+            const executeSave = (finalItem, sideEffects = null) => {
+                const allTrans = getTransactions();
+                if (sideEffects) sideEffects(allTrans);
+                
+                if (editCtx.index >= 0) {
+                    const realIndex = allTrans.findIndex(t => t.id === finalItem.id);
+                    if (realIndex >= 0) {
+                        allTrans[realIndex] = finalItem;
+                    } else {
+                        allTrans.push(finalItem);
+                    }
                 } else {
-                    allTrans.push(item);
+                    allTrans.push(finalItem);
                 }
-            } else {
-                allTrans.push(item);
+                
+                setTransactions(allTrans);
+                const currentMode = editCtx.mode;
+                closeEditTransaction();
+                if (currentMode === 'income') renderIncomeDetail();
+                else renderExpenseDetail();
+                updateDashboardStats();
+            };
+
+            if (item.mode === 'income') {
+                const residents = getResidents();
+                const resident = residents.find(r => r.unit === item.target || r.name === item.target);
+                
+                if (resident) {
+                    let defaultAmount = 0;
+                    if (item.category === '管理費') defaultAmount = parseInt(resident.feeMgmt || 0);
+                    else if (item.category === '停車費') defaultAmount = parseInt(resident.feePark || 0);
+                    else if (item.category === '其他費用') defaultAmount = parseInt(resident.feeOther || 0);
+                    
+                    if (defaultAmount > 0) {
+                        const currentAmount = parseInt(item.amount || 0);
+                        const allTrans = getTransactions();
+                        const relatedTrans = allTrans.filter(t => 
+                            t.target === item.target && 
+                            t.category === item.category && 
+                            t.month === item.month && 
+                            t.mode === 'income' &&
+                            t.id !== item.id
+                        );
+                        
+                        const paidSoFar = relatedTrans.reduce((sum, t) => sum + parseInt(t.amount || 0), 0);
+                        const totalAfterThis = paidSoFar + currentAmount;
+                        
+                        // Catch-up Helper
+                        const doCatchUpAndSave = () => {
+                            if (relatedTrans.length > 0 && paidSoFar < defaultAmount) {
+                                // Linking Logic
+                                const prevIds = [];
+                                const sideEffects = (transList) => {
+                                    relatedTrans.forEach(rt => {
+                                        const found = transList.find(t => t.id === rt.id);
+                                        if (found) {
+                                            // Remove "未繳足額"
+                                            if (found.note && found.note.includes('未繳足額')) {
+                                                found.note = found.note.replace('未繳足額', '').trim();
+                                            }
+                                            // Add "補繳ID:..."
+                                            if (!found.note.includes(`(補繳ID:${item.id})`)) {
+                                                found.note = (found.note + ` (補繳ID:${item.id})`).trim();
+                                            }
+                                            prevIds.push(rt.id);
+                                        }
+                                    });
+                                };
+                                // Update current note
+                                if (prevIds.length > 0) {
+                                    item.note = (item.note + ` (前筆ID:${prevIds.join(',')})`).trim();
+                                }
+                                executeSave(item, sideEffects);
+                            } else {
+                                executeSave(item);
+                            }
+                        };
+
+                        if (totalAfterThis < defaultAmount) {
+                            openConfirm('低於此筆應繳費用', () => {
+                                if (!item.note.includes('未繳足額')) {
+                                    item.note = (item.note + ' 未繳足額').trim();
+                                }
+                                executeSave(item);
+                            }, '提醒', '確認繳費');
+                            return;
+                        } else if (totalAfterThis > defaultAmount) {
+                            openConfirm('超過此筆應繳費用', () => doCatchUpAndSave(), '提醒', '確認繳費');
+                            return;
+                        } else {
+                            // Exact match
+                            doCatchUpAndSave();
+                            return;
+                        }
+                    }
+                }
             }
-            
-            setTransactions(allTrans);
-            const currentMode = editCtx.mode;
-            closeEditTransaction();
-            if (currentMode === 'income') renderIncomeDetail();
-            else renderExpenseDetail();
-            updateDashboardStats();
+
+            executeSave(item);
         });
 
         function renderIncomeDetail() {
@@ -5094,6 +5307,57 @@
         
         if (btnViewUnpaidOther) {
             btnViewUnpaidOther.addEventListener('click', () => openDashboardUnpaidModal('other'));
+        }
+
+        // Initialize Date Filter Default Value and Sync with Report Header
+        (function(){
+            const dateFilter = document.getElementById('toolbar-date-filter');
+            const reportDateHeader = document.getElementById('report-date-header');
+
+            function updateReportHeader(dateStr) {
+                if (!reportDateHeader || !dateStr) return;
+                try {
+                    const dateParts = dateStr.split('-');
+                    if (dateParts.length === 3) {
+                        const year = parseInt(dateParts[0]);
+                        const month = dateParts[1];
+                        const day = dateParts[2];
+                        const rocYear = year - 1911;
+                        reportDateHeader.textContent = `${rocYear} 年 ${month} 月 ${day} 日`;
+                    }
+                } catch (e) {
+                    console.error("Date formatting error:", e);
+                }
+            }
+
+            if (dateFilter) {
+                // Set default to today
+                const now = new Date();
+                const yyyy = now.getFullYear();
+                const mm = String(now.getMonth() + 1).padStart(2, '0');
+                const dd = String(now.getDate()).padStart(2, '0');
+                const todayStr = `${yyyy}-${mm}-${dd}`;
+                
+                dateFilter.value = todayStr;
+                
+                // Initial sync
+                updateReportHeader(todayStr);
+
+                // Add change listener
+                dateFilter.addEventListener('change', (e) => {
+                    updateReportHeader(e.target.value);
+                });
+            }
+        })();
+
+        // Moved initialization here
+        const persistedLogin = localStorage.getItem('persistLogin') === 'true';
+        const lastLoginMode = localStorage.getItem('lastLoginMode');
+        if (persistedLogin) {
+            if (lastLoginMode === 'demo') isDemoMode = true;
+            enterApp();
+        } else {
+            if (loginView) loginView.style.visibility = 'visible';
         }
 
     </script>
