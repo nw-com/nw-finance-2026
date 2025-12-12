@@ -3205,7 +3205,7 @@
                             <td class="px-6 py-4">${t.month || ''}</td>
                             <td class="px-6 py-4 text-right ${amtClass}">$${parseInt(t.amount||0).toLocaleString()}</td>
                             <td class="px-6 py-4">${t.method || ''}</td>
-                            <td class="px-6 py-4 text-gray-500 text-xs">${t.note || ''}</td>
+                            <td class="px-6 py-4 text-xs ${(t.note && t.note.includes('未繳足額')) ? 'text-red-600 font-bold' : 'text-gray-500'}">${t.note || ''}</td>
                         </tr>
                         `;
                     }).join('');
@@ -4756,7 +4756,9 @@
                         const doCatchUpAndSave = () => {
                             if (relatedTrans.length > 0 && paidSoFar < defaultAmount) {
                                 // Linking Logic
-                                const prevIds = [];
+                                // Calculate prevIds immediately from relatedTrans
+                                const prevIds = relatedTrans.map(rt => rt.id);
+                                
                                 const sideEffects = (transList) => {
                                     relatedTrans.forEach(rt => {
                                         const found = transList.find(t => t.id === rt.id);
@@ -4765,17 +4767,16 @@
                                             if (found.note && found.note.includes('未繳足額')) {
                                                 found.note = found.note.replace('未繳足額', '').trim();
                                             }
-                                            // Add "補繳ID:..."
-                                            if (!found.note.includes(`(補繳ID:${item.id})`)) {
-                                                found.note = (found.note + ` (補繳ID:${item.id})`).trim();
+                                            // Add "補足編號:..."
+                                            if (!found.note.includes(`(補足編號:${item.id})`)) {
+                                                found.note = (found.note + ` (補足編號:${item.id})`).trim();
                                             }
-                                            prevIds.push(rt.id);
                                         }
                                     });
                                 };
                                 // Update current note
                                 if (prevIds.length > 0) {
-                                    item.note = (item.note + ` (前筆ID:${prevIds.join(',')})`).trim();
+                                    item.note = (item.note + ` (補足編號:${prevIds.join(',')})`).trim();
                                 }
                                 executeSave(item, sideEffects);
                             } else {
@@ -4869,7 +4870,7 @@
                     <td class="px-6 py-3">${t.month}</td>
                     <td class="px-6 py-3 text-right ${mode === 'income' ? 'text-green-600' : 'text-red-600'}">$${parseInt(t.amount||0).toLocaleString()}</td>
                     <td class="px-6 py-3">${t.method}</td>
-                    <td class="px-6 py-3">${t.note||''}</td>
+                    <td class="px-6 py-3 ${(t.note && t.note.includes('未繳足額')) ? 'text-red-600 font-bold' : ''}">${t.note||''}</td>
                     <td class="px-6 py-3">
                         <button class="btn-edit-trans text-blue-600 mr-2" data-id="${t.id}">編輯</button>
                         <button class="btn-del-trans text-red-600" data-id="${t.id}">刪除</button>
