@@ -2123,6 +2123,155 @@
             }
         }
 
+        function renderReport() {
+            const tbody = document.querySelector('#view-reports table tbody');
+            if (!tbody) return;
+
+            // 1. Identify Structure Rows
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            const incomeTotalRow = rows.find(tr => tr.innerText.includes('收入合計'));
+            const expenseSectionHeaderRow = rows.find(tr => tr.innerText.includes('支出明細'));
+            const expenseTotalRow = rows.find(tr => tr.innerText.includes('支出合計'));
+
+            if (!incomeTotalRow || !expenseSectionHeaderRow || !expenseTotalRow) {
+                return;
+            }
+            
+            const expenseColumnHeaderRow = expenseSectionHeaderRow.nextElementSibling;
+
+            // 2. Clear Income Rows (Everything before Income Total)
+            while (tbody.firstChild && tbody.firstChild !== incomeTotalRow) {
+                tbody.removeChild(tbody.firstChild);
+            }
+
+            // 3. Clear Expense Rows (Everything between Expense Column Header and Expense Total)
+            if (expenseColumnHeaderRow) {
+                let curr = expenseColumnHeaderRow.nextSibling;
+                while (curr && curr !== expenseTotalRow) {
+                    const next = curr.nextSibling;
+                    tbody.removeChild(curr);
+                    curr = next;
+                }
+            }
+
+            // 4. Fetch and Filter Data
+            const transactions = getTransactions();
+            const dateFilter = document.getElementById('toolbar-date-filter');
+            let currentDay;
+
+            if (dateFilter && dateFilter.value) {
+                currentDay = dateFilter.value;
+            } else {
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                currentDay = `${year}-${month}-${day}`;
+                // Set default value to filter
+                if (dateFilter) dateFilter.value = currentDay;
+            }
+            
+            // Update Report Date Header
+            const dateHeader = document.getElementById('report-date-header');
+            if (dateHeader) {
+                const [y, m, d] = currentDay.split('-');
+                dateHeader.textContent = `${parseInt(y) - 1911} 年 ${parseInt(m)} 月 ${parseInt(d)} 日`;
+            }
+
+            const currentDayTransactions = transactions.filter(transaction => {
+                if (!transaction.date) return false;
+                return transaction.date.startsWith(currentDay);
+            });
+
+            // 5. Generate Rows
+            let incomeRowCount = 0;
+            let expenseRowCount = 0;
+            let incomeTotal = 0;
+            let expenseTotal = 0;
+
+            const incomeTrans = currentDayTransactions.filter(t => (t.mode === 'income') || (t.id && t.id.startsWith('I')));
+            const expenseTrans = currentDayTransactions.filter(t => !((t.mode === 'income') || (t.id && t.id.startsWith('I'))));
+
+            // Helper to create cell
+            const createCell = (text) => {
+                const td = document.createElement('td');
+                td.className = 'border border-gray-300 px-2 py-1';
+                td.innerHTML = text || '&nbsp;';
+                return td;
+            };
+
+            // Render Income Rows
+            incomeTrans.forEach(transaction => {
+                incomeRowCount++;
+                const amount = parseInt(transaction.amount || 0);
+                incomeTotal += amount;
+
+                const row = document.createElement('tr');
+                row.style.height = '6mm';
+                
+                row.appendChild(createCell(incomeRowCount));
+                row.appendChild(createCell(transaction.date));
+                row.appendChild(createCell(transaction.target));
+                row.appendChild(createCell(transaction.type));
+                row.appendChild(createCell(transaction.category));
+                row.appendChild(createCell(transaction.month || (transaction.date ? transaction.date.slice(0, 7) : '')));
+                row.appendChild(createCell(amount.toLocaleString()));
+                row.appendChild(createCell(transaction.note));
+                
+                tbody.insertBefore(row, incomeTotalRow);
+            });
+
+            // Fill empty income rows to reach 10
+            while (incomeRowCount < 10) {
+                const row = document.createElement('tr');
+                row.style.height = '6mm';
+                // 8 columns
+                for(let i=0; i<8; i++) row.appendChild(createCell(''));
+                tbody.insertBefore(row, incomeTotalRow);
+                incomeRowCount++;
+            }
+
+            // Render Expense Rows
+            expenseTrans.forEach(transaction => {
+                expenseRowCount++;
+                const amount = parseInt(transaction.amount || 0);
+                expenseTotal += amount;
+
+                const row = document.createElement('tr');
+                row.style.height = '6mm';
+                
+                row.appendChild(createCell(expenseRowCount));
+                row.appendChild(createCell(transaction.date));
+                row.appendChild(createCell(transaction.target));
+                row.appendChild(createCell(transaction.type));
+                row.appendChild(createCell(transaction.category));
+                row.appendChild(createCell(transaction.month || (transaction.date ? transaction.date.slice(0, 7) : '')));
+                row.appendChild(createCell(amount.toLocaleString()));
+                row.appendChild(createCell(transaction.note));
+                
+                tbody.insertBefore(row, expenseTotalRow);
+            });
+
+            // Fill empty expense rows to reach 10
+            while (expenseRowCount < 10) {
+                const row = document.createElement('tr');
+                row.style.height = '6mm';
+                // 8 columns
+                for(let i=0; i<8; i++) row.appendChild(createCell(''));
+                tbody.insertBefore(row, expenseTotalRow);
+                expenseRowCount++;
+            }
+
+            // 6. Update Totals
+            if (incomeTotalRow.cells.length >= 2) {
+                incomeTotalRow.cells[1].textContent = '$' + incomeTotal.toLocaleString();
+            }
+
+            if (expenseTotalRow.cells.length >= 2) {
+                expenseTotalRow.cells[1].textContent = '$' + expenseTotal.toLocaleString();
+            }
+        }
+
         function switchTab(tabId) {
             localStorage.setItem('lastVisitedTab', tabId);
             document.querySelectorAll('.nav-item').forEach(el => {
@@ -2164,6 +2313,14 @@
                     // Override renderSubtabs positioning for Reports view
                     rightContent.classList.remove('top-[20%]', 'top-[10%]');
                     rightContent.classList.add('top-[25%]');
+
+                    // Attach listener to date filter
+                    const dateFilter = document.getElementById('toolbar-date-filter');
+                    if (dateFilter) {
+                        dateFilter.onchange = renderReport;
+                    }
+                    
+                    renderReport();
                 } else {
                     secToolbar.classList.add('hidden');
                     secToolbar.classList.remove('flex');
