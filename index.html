@@ -338,7 +338,7 @@
                 <input type="date" id="toolbar-daily-filter" class="border rounded px-2 py-1 text-sm text-gray-700 bg-white">
                 <input type="month" id="toolbar-monthly-filter" class="border rounded px-2 py-1 text-sm text-gray-700 bg-white hidden">
                 <select id="toolbar-yearly-filter" class="border rounded px-2 py-1 text-sm text-gray-700 bg-white hidden"></select>
-                <button onclick="window.print()" class="ml-auto px-4 py-1 bg-purple-600 text-white rounded hover:bg-purple-700 flex items-center gap-2">
+                <button id="btn-print-report" onclick="window.print()" class="ml-auto px-4 py-1 bg-purple-600 text-white rounded hover:bg-purple-700 flex items-center gap-2">
                     <i class="fa-solid fa-print"></i> 列印
                 </button>
             </div>
@@ -2435,6 +2435,8 @@
                 const tMonthly = document.getElementById('toolbar-monthly-filter');
                 const tYearly = document.getElementById('toolbar-yearly-filter');
                 const reportTitle = document.getElementById('report-title');
+                const btnPrint = document.getElementById('btn-print-report');
+                const secondaryToolbar = document.getElementById('secondary-toolbar');
 
                 if (vDaily && vMonthly && vYearly) {
                     vDaily.classList.toggle('hidden', idx !== 0);
@@ -2445,6 +2447,12 @@
                     if (tDaily) tDaily.classList.toggle('hidden', idx !== 0);
                     if (tMonthly) tMonthly.classList.toggle('hidden', idx !== 1);
                     if (tYearly) tYearly.classList.toggle('hidden', idx !== 2);
+                    if (btnPrint) btnPrint.classList.toggle('hidden', idx === 3);
+
+                    // Toggle secondary toolbar for Report Settings (idx === 3)
+                    if (secondaryToolbar) {
+                        secondaryToolbar.classList.toggle('hidden', idx === 3);
+                    }
 
                     if (idx === 0) {
                         if(reportTitle) reportTitle.textContent = '收支日報表';
