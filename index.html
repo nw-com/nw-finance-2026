@@ -510,20 +510,7 @@
                                     <!-- 交易紀錄 -->
                                 </tbody>
                             </table>
-                            <div style="height: 6mm;"></div>
-                            <table class="w-full border-collapse border border-gray-300 text-sm">
-                                <tbody>
-                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1 w-1/2">&nbsp;</td><td class="border border-gray-300 px-2 py-1 w-1/2">&nbsp;</td></tr>
-                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
-                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
-                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
-                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
-                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
-                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
-                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
-                                    <tr style="height: 6mm;"><td class="border border-gray-300 px-2 py-1">&nbsp;</td><td class="border border-gray-300 px-2 py-1">&nbsp;</td></tr>
-                                </tbody>
-                            </table>
+
                         </div>
                     </div>
                 </div>
@@ -996,11 +983,107 @@
                                     </tbody>
                                 </table>
                             </div>
+                </div>
+            </div>
+
+            <!-- Report Settings View -->
+            <div id="report-settings-view" class="hidden max-w-4xl mx-auto p-6 space-y-6">
+                <!-- Daily Report Email Settings -->
+                <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                    <div class="flex justify-between items-center border-b mb-4 pb-2">
+                        <h3 class="text-lg font-bold text-gray-800">日報表Email設定</h3>
+                        <div class="flex items-center gap-2 text-sm text-gray-600">
+                            <span>發送時間:</span>
+                            <input type="time" step="1" id="config-daily-time" class="border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500" onchange="saveReportTimeSettings()">
                         </div>
+                    </div>
+                    <div class="flex gap-2 mb-4">
+                        <input type="email" id="input-daily-email" placeholder="輸入Email地址" class="flex-1 px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <button onclick="addReportEmail('daily')" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">新增</button>
+                    </div>
+                    <div class="bg-gray-50 rounded border border-gray-200 p-2">
+                        <ul id="list-daily-email" class="divide-y divide-gray-200">
+                            <!-- Email List Items -->
+                        </ul>
                     </div>
                 </div>
 
-                <div id="view-bank" class="content-view hidden">
+                <!-- Monthly Report Email Settings -->
+                <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                    <div class="flex justify-between items-center border-b mb-4 pb-2">
+                        <h3 class="text-lg font-bold text-gray-800">月報表Email設定</h3>
+                        <div class="flex items-center gap-2 text-sm text-gray-600">
+                            <span>每月</span>
+                            <select id="config-monthly-day" class="border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500" onchange="saveReportTimeSettings()">
+                                <option value="L">最後一天</option>
+                                <option value="1">1日</option>
+                                <option value="2">2日</option>
+                                <option value="3">3日</option>
+                                <option value="4">4日</option>
+                                <option value="5">5日</option>
+                                <option value="10">10日</option>
+                                <option value="15">15日</option>
+                                <option value="20">20日</option>
+                                <option value="25">25日</option>
+                            </select>
+                            <input type="time" step="1" id="config-monthly-time" class="border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500" onchange="saveReportTimeSettings()">
+                        </div>
+                    </div>
+                    <div class="flex gap-2 mb-4">
+                        <input type="email" id="input-monthly-email" placeholder="輸入Email地址" class="flex-1 px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <button onclick="addReportEmail('monthly')" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">新增</button>
+                    </div>
+                    <div class="bg-gray-50 rounded border border-gray-200 p-2">
+                        <ul id="list-monthly-email" class="divide-y divide-gray-200">
+                            <!-- Email List Items -->
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Yearly Report Email Settings -->
+                <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                    <div class="flex justify-between items-center border-b mb-4 pb-2">
+                        <h3 class="text-lg font-bold text-gray-800">年報表Email設定</h3>
+                        <div class="flex items-center gap-2 text-sm text-gray-600">
+                            <span>每年</span>
+                            <select id="config-yearly-month" class="border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500" onchange="saveReportTimeSettings()">
+                                <option value="1">1月</option>
+                                <option value="2">2月</option>
+                                <option value="3">3月</option>
+                                <option value="4">4月</option>
+                                <option value="5">5月</option>
+                                <option value="6">6月</option>
+                                <option value="7">7月</option>
+                                <option value="8">8月</option>
+                                <option value="9">9月</option>
+                                <option value="10">10月</option>
+                                <option value="11">11月</option>
+                                <option value="12">12月</option>
+                            </select>
+                            <select id="config-yearly-day" class="border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500" onchange="saveReportTimeSettings()">
+                                <option value="L">最後一天</option>
+                                <option value="1">1日</option>
+                                <option value="15">15日</option>
+                                <option value="30">30日</option>
+                                <option value="31">31日</option>
+                            </select>
+                            <input type="time" step="1" id="config-yearly-time" class="border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500" onchange="saveReportTimeSettings()">
+                        </div>
+                    </div>
+                    <div class="flex gap-2 mb-4">
+                        <input type="email" id="input-yearly-email" placeholder="輸入Email地址" class="flex-1 px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <button onclick="addReportEmail('yearly')" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">新增</button>
+                    </div>
+                    <div class="bg-gray-50 rounded border border-gray-200 p-2">
+                        <ul id="list-yearly-email" class="divide-y divide-gray-200">
+                            <!-- Email List Items -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-bank" class="content-view hidden">
                     <div id="bank-detail-view" class="space-y-6 hidden">
                         <!-- Account Info Card -->
                         <div class="bg-white rounded-lg p-6 shadow-sm border-l-4 border-red-600 flex justify-between items-center">
@@ -2347,6 +2430,7 @@
                 const vDaily = document.getElementById('report-daily-view');
                 const vMonthly = document.getElementById('report-monthly-view');
                 const vYearly = document.getElementById('report-yearly-view');
+                const vSettings = document.getElementById('report-settings-view');
                 const tDaily = document.getElementById('toolbar-daily-filter');
                 const tMonthly = document.getElementById('toolbar-monthly-filter');
                 const tYearly = document.getElementById('toolbar-yearly-filter');
@@ -2356,6 +2440,7 @@
                     vDaily.classList.toggle('hidden', idx !== 0);
                     vMonthly.classList.toggle('hidden', idx !== 1);
                     vYearly.classList.toggle('hidden', idx !== 2);
+                    if (vSettings) vSettings.classList.toggle('hidden', idx !== 3);
                     
                     if (tDaily) tDaily.classList.toggle('hidden', idx !== 0);
                     if (tMonthly) tMonthly.classList.toggle('hidden', idx !== 1);
@@ -2370,6 +2455,9 @@
                     } else if (idx === 2) {
                         if(reportTitle) reportTitle.textContent = '收支年報表';
                         renderYearlyReport();
+                    } else if (idx === 3) {
+                        if(reportTitle) reportTitle.textContent = '報表Email設定';
+                        renderReportEmailSettings();
                     }
                 }
             }
@@ -6046,6 +6134,294 @@
         } else {
             if (loginView) loginView.style.visibility = 'visible';
         }
+
+        // ==========================================
+        // Report Email Settings Logic
+        // ==========================================
+
+        function getReportEmailSettings() {
+            const defaultSettings = {
+                daily: { emails: [], time: '08:00:00' },
+                monthly: { emails: [], day: 'L', time: '08:00:00' },
+                yearly: { emails: [], month: '12', day: 'L', time: '08:00:00' }
+            };
+            try {
+                const saved = localStorage.getItem('reportEmailSettings');
+                if (!saved) return defaultSettings;
+
+                const data = JSON.parse(saved);
+                
+                // Migration check: if old format (arrays directly)
+                if (Array.isArray(data.daily)) {
+                    return {
+                        daily: { emails: data.daily || [], time: '08:00:00' },
+                        monthly: { emails: data.monthly || [], day: 'L', time: '08:00:00' },
+                        yearly: { emails: data.yearly || [], month: '12', day: 'L', time: '08:00:00' }
+                    };
+                }
+
+                // Merge with default to ensure all fields exist
+                return {
+                    daily: { ...defaultSettings.daily, ...data.daily },
+                    monthly: { ...defaultSettings.monthly, ...data.monthly },
+                    yearly: { ...defaultSettings.yearly, ...data.yearly }
+                };
+            } catch (e) {
+                console.error('Error loading report email settings:', e);
+                return defaultSettings;
+            }
+        }
+
+        function saveReportEmailSettings(settings) {
+            try {
+                localStorage.setItem('reportEmailSettings', JSON.stringify(settings));
+            } catch (e) {
+                console.error('Error saving report email settings:', e);
+                alert('儲存設定失敗');
+            }
+        }
+
+        function renderReportEmailSettings() {
+            const settings = getReportEmailSettings();
+            
+            // Render Email Lists
+            renderReportEmailList('daily', settings.daily.emails);
+            renderReportEmailList('monthly', settings.monthly.emails);
+            renderReportEmailList('yearly', settings.yearly.emails);
+
+            // Render Time Settings
+            const dailyTimeEl = document.getElementById('config-daily-time');
+            if (dailyTimeEl) dailyTimeEl.value = settings.daily.time;
+
+            const monthlyDayEl = document.getElementById('config-monthly-day');
+            const monthlyTimeEl = document.getElementById('config-monthly-time');
+            if (monthlyDayEl) monthlyDayEl.value = settings.monthly.day;
+            if (monthlyTimeEl) monthlyTimeEl.value = settings.monthly.time;
+
+            const yearlyMonthEl = document.getElementById('config-yearly-month');
+            const yearlyDayEl = document.getElementById('config-yearly-day');
+            const yearlyTimeEl = document.getElementById('config-yearly-time');
+            if (yearlyMonthEl) yearlyMonthEl.value = settings.yearly.month;
+            if (yearlyDayEl) yearlyDayEl.value = settings.yearly.day;
+            if (yearlyTimeEl) yearlyTimeEl.value = settings.yearly.time;
+        }
+
+        function saveReportTimeSettings() {
+            const settings = getReportEmailSettings();
+
+            const dailyTimeEl = document.getElementById('config-daily-time');
+            if (dailyTimeEl) settings.daily.time = dailyTimeEl.value;
+
+            const monthlyDayEl = document.getElementById('config-monthly-day');
+            const monthlyTimeEl = document.getElementById('config-monthly-time');
+            if (monthlyDayEl) settings.monthly.day = monthlyDayEl.value;
+            if (monthlyTimeEl) settings.monthly.time = monthlyTimeEl.value;
+
+            const yearlyMonthEl = document.getElementById('config-yearly-month');
+            const yearlyDayEl = document.getElementById('config-yearly-day');
+            const yearlyTimeEl = document.getElementById('config-yearly-time');
+            if (yearlyMonthEl) settings.yearly.month = yearlyMonthEl.value;
+            if (yearlyDayEl) settings.yearly.day = yearlyDayEl.value;
+            if (yearlyTimeEl) settings.yearly.time = yearlyTimeEl.value;
+
+            saveReportEmailSettings(settings);
+            // Optional: Show a small toast or log
+            console.log('Report time settings saved');
+        }
+
+        function renderReportEmailList(type, list) {
+            const listEl = document.getElementById(`list-${type}-email`);
+            if (!listEl) return;
+            
+            if (!list || list.length === 0) {
+                listEl.innerHTML = '<li class="px-4 py-2 text-gray-500 text-center text-sm">尚無Email</li>';
+                return;
+            }
+            
+            listEl.innerHTML = list.map((email, index) => `
+                <li class="px-4 py-2 flex justify-between items-center group hover:bg-gray-100">
+                    <span class="text-gray-700">${email}</span>
+                    <button onclick="deleteReportEmail('${type}', ${index})" class="text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </li>
+            `).join('');
+        }
+
+        function addReportEmail(type) {
+            const inputEl = document.getElementById(`input-${type}-email`);
+            if (!inputEl) return;
+            
+            const email = inputEl.value.trim();
+            if (!email) {
+                alert('請輸入Email地址');
+                return;
+            }
+            
+            // Simple email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert('請輸入有效的Email格式');
+                return;
+            }
+            
+            const settings = getReportEmailSettings();
+            if (settings[type].emails.includes(email)) {
+                alert('此Email已存在');
+                return;
+            }
+            
+            settings[type].emails.push(email);
+            saveReportEmailSettings(settings);
+            
+            inputEl.value = ''; // Clear input
+            renderReportEmailList(type, settings[type].emails);
+        }
+
+        function deleteReportEmail(type, index) {
+            openConfirm('確定要刪除此Email嗎？', () => {
+                const settings = getReportEmailSettings();
+                settings[type].emails.splice(index, 1);
+                saveReportEmailSettings(settings);
+                renderReportEmailList(type, settings[type].emails);
+            });
+        }
+
+        // ==========================================
+        // Automated Email Sending Logic (Client-Side Trigger)
+        // ==========================================
+        
+        function checkAndSendReportEmails() {
+            if (!db) return; // Ensure Firestore is initialized
+            
+            const settings = getReportEmailSettings();
+            const now = new Date();
+            const timeStr = now.toTimeString().split(' ')[0]; // "HH:MM:SS"
+            const currentDay = now.getDate();
+            const currentMonth = now.getMonth() + 1;
+            const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+            const todayStr = now.toISOString().split('T')[0];
+
+            // Helper to check time (within same minute)
+            const isTimeMatch = (targetTime) => {
+                if (!targetTime) return false;
+                // Compare HH:MM
+                return targetTime.substring(0, 5) === timeStr.substring(0, 5);
+            };
+
+            // 1. Daily Report
+            if (settings.daily.emails.length > 0 && isTimeMatch(settings.daily.time)) {
+                const key = `lastSentReport_daily_${todayStr}`;
+                if (!localStorage.getItem(key)) {
+                    sendReportEmail('daily', settings.daily.emails);
+                    localStorage.setItem(key, 'true');
+                }
+            }
+
+            // 2. Monthly Report
+            if (settings.monthly.emails.length > 0 && isTimeMatch(settings.monthly.time)) {
+                let isDayMatch = false;
+                if (settings.monthly.day === 'L') {
+                    isDayMatch = (currentDay === lastDayOfMonth);
+                } else {
+                    isDayMatch = (currentDay === parseInt(settings.monthly.day));
+                }
+
+                if (isDayMatch) {
+                    const key = `lastSentReport_monthly_${todayStr}`;
+                    if (!localStorage.getItem(key)) {
+                        sendReportEmail('monthly', settings.monthly.emails);
+                        localStorage.setItem(key, 'true');
+                    }
+                }
+            }
+
+            // 3. Yearly Report
+            if (settings.yearly.emails.length > 0 && isTimeMatch(settings.yearly.time)) {
+                let isMonthMatch = (currentMonth === parseInt(settings.yearly.month));
+                let isDayMatch = false;
+                if (settings.yearly.day === 'L') {
+                    isDayMatch = (currentDay === lastDayOfMonth);
+                } else {
+                    isDayMatch = (currentDay === parseInt(settings.yearly.day));
+                }
+
+                if (isMonthMatch && isDayMatch) {
+                    const key = `lastSentReport_yearly_${todayStr}`;
+                    if (!localStorage.getItem(key)) {
+                        sendReportEmail('yearly', settings.yearly.emails);
+                        localStorage.setItem(key, 'true');
+                    }
+                }
+            }
+        }
+
+        async function sendReportEmail(type, recipients) {
+            console.log(`Sending ${type} report to:`, recipients);
+            
+            let subject = '';
+            let htmlContent = '';
+            const dateStr = new Date().toISOString().split('T')[0];
+            const communityName = localStorage.getItem('currentCommunityName') || '西北保全社區';
+
+            // Construct Chinese Content
+            if (type === 'daily') {
+                subject = `${communityName} - 收支日報表 (${dateStr})`;
+                htmlContent = `
+                    <div style="font-family: Arial, sans-serif;">
+                        <h2 style="color: #333;">${communityName} - 收支日報表</h2>
+                        <p>日期: ${dateStr}</p>
+                        <p>請查收今日的財務收支日報表。</p>
+                        <p style="color: #666; font-size: 12px;">本郵件由 西北財務系統 自動發送，請勿回覆。</p>
+                    </div>
+                `;
+            } else if (type === 'monthly') {
+                const monthStr = dateStr.substring(0, 7);
+                subject = `${communityName} - 收支月報表 (${monthStr})`;
+                htmlContent = `
+                    <div style="font-family: Arial, sans-serif;">
+                        <h2 style="color: #333;">${communityName} - 收支月報表</h2>
+                        <p>月份: ${monthStr}</p>
+                        <p>請查收本月的財務收支月報表。</p>
+                        <p style="color: #666; font-size: 12px;">本郵件由 西北財務系統 自動發送，請勿回覆。</p>
+                    </div>
+                `;
+            } else if (type === 'yearly') {
+                const yearStr = dateStr.substring(0, 4);
+                subject = `${communityName} - 收支年報表 (${yearStr})`;
+                htmlContent = `
+                    <div style="font-family: Arial, sans-serif;">
+                        <h2 style="color: #333;">${communityName} - 收支年報表</h2>
+                        <p>年份: ${yearStr}</p>
+                        <p>請查收本年度的財務收支年報表。</p>
+                        <p style="color: #666; font-size: 12px;">本郵件由 西北財務系統 自動發送，請勿回覆。</p>
+                    </div>
+                `;
+            }
+
+            try {
+                // Try to write to 'mail' collection (Standard Firebase Trigger Email Extension)
+                await db.collection('mail').add({
+                    to: recipients,
+                    message: {
+                        subject: subject,
+                        html: htmlContent,
+                        // Custom Sender Name (if supported by extension config or transport)
+                        from: "西北財務系統 <noreply@northwest.com>"
+                    }
+                });
+                console.log('Email trigger document created successfully');
+            } catch (e) {
+                console.error('Error sending email:', e);
+                // Fallback or Alert?
+                // Since this is background, maybe just log.
+            }
+        }
+
+        // Start the scheduler
+        setInterval(checkAndSendReportEmails, 60000); // Check every minute
+        // Initial check
+        setTimeout(checkAndSendReportEmails, 5000);
 
     </script>
 </body>
