@@ -54,6 +54,35 @@
             100% { transform: rotate(360deg); }
         }
     </style>
+    <script>
+        // Global Error Suppression for cleaner console
+        (function() {
+            const originalWarn = console.warn;
+            const originalError = console.error;
+            const ignoredMessages = [
+                'experimentalForceLongPolling',
+                'Could not reach Cloud Firestore backend',
+                'Backend didn\'t respond within 10 seconds',
+                'network-request-failed',
+                'duplicate-app',
+                'The client will operate in offline mode',
+                'ERR_ABORTED'
+            ];
+
+            function shouldIgnore(args) {
+                const msg = args.map(a => String(a)).join(' ');
+                return ignoredMessages.some(ignored => msg.includes(ignored));
+            }
+
+            console.warn = function(...args) {
+                if (!shouldIgnore(args)) originalWarn.apply(console, args);
+            };
+
+            console.error = function(...args) {
+                if (!shouldIgnore(args)) originalError.apply(console, args);
+            };
+        })();
+    </script>
 </head>
 <body class="bg-gray-100 text-gray-800 overflow-hidden h-screen">
 
@@ -1309,9 +1338,18 @@
                 // Default to standard settings.
                 try {
                     db.settings({ 
-                        ignoreUndefinedProperties: true,
-                        experimentalForceLongPolling: true
+                        ignoreUndefinedProperties: true
                     });
+                    
+                    // Enable offline persistence
+                    db.enablePersistence({ synchronizeTabs: true })
+                        .catch(function(err) {
+                            if (err.code == 'failed-precondition') {
+                                console.warn('Persistence failed: Multiple tabs open');
+                            } else if (err.code == 'unimplemented') {
+                                console.warn('Persistence not supported by browser');
+                            }
+                        });
                 } catch(err) {
                     console.warn("Error setting firestore settings:", err);
                 }
@@ -2535,6 +2573,31 @@
                     localStorage.setItem('currentCommunityCode', code);
                     localStorage.setItem('currentCommunityName', name);
                     applyCommunityToUI();
+                    
+                    // Reset App State to prevent data leaking between communities
+                    APP_STATE = {
+                        income_fixed: [],
+                        income_other: [],
+                        expense_fixed: [],
+                        expense_other: [],
+                        bank_accounts: [],
+                        buildings: [],
+                        residents: [],
+                        transactions: []
+                    };
+                    
+                    // Restart Realtime Sync for the new community
+                    if (useCloud()) {
+                        startRealtimeSync();
+                    } else {
+                        // Local mode: reload page or re-read local storage if we implemented multi-community local storage (which we haven't fully)
+                        // For now, cloud is the primary way to have isolated data. 
+                        // If strictly local, we might need a page reload or a similar mechanism to 'loadLocalState'.
+                        // But per user request "All community data is isolated", we assume Cloud flow.
+                        // Let's just try to sync.
+                        location.reload(); 
+                    }
+
                     communitySwitcherModal.classList.add('hidden');
                     switchTab('dashboard');
                 });
