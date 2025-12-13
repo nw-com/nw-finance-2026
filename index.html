@@ -332,17 +332,6 @@
             <!-- R02 子分頁按鈕列 -->
             <div id="subtab-bar" class="h-[10%] bg-white border-b border-gray-200 px-6 flex items-center gap-4"></div>
 
-            <!-- Secondary Toolbar -->
-            <div id="secondary-toolbar" class="h-[5%] bg-white border-b border-gray-200 px-6 flex items-center gap-4">
-                <h2 id="report-title" class="text-xl font-bold text-gray-700">收支日報表</h2>
-                <input type="date" id="toolbar-daily-filter" class="border rounded px-2 py-1 text-sm text-gray-700 bg-white">
-                <input type="month" id="toolbar-monthly-filter" class="border rounded px-2 py-1 text-sm text-gray-700 bg-white hidden">
-                <select id="toolbar-yearly-filter" class="border rounded px-2 py-1 text-sm text-gray-700 bg-white hidden"></select>
-                <button id="btn-print-report" onclick="window.print()" class="ml-auto px-4 py-1 bg-purple-600 text-white rounded hover:bg-purple-700 flex items-center gap-2">
-                    <i class="fa-solid fa-print"></i> 列印
-                </button>
-            </div>
-
             <!-- R03~R10 10% 列結構，用於與左側對齊 -->
             <div class="h-[10%] border-b border-gray-100"></div>
             <div class="h-[10%] border-b border-gray-100"></div>
@@ -2067,7 +2056,7 @@
         }
 
         // 進入主程式
-        function enterApp() {
+        async function enterApp() {
             loginView.classList.add('hidden');
             mainApp.classList.remove('hidden');
             // 這裡可以觸發資料加載
@@ -2076,7 +2065,7 @@
             localStorage.setItem('persistLogin','true');
             localStorage.setItem('lastLoginMode', isDemoMode ? 'demo' : 'firebase');
             applyCommunityToUI();
-            updateUserDisplayName();
+            await updateUserDisplayName();
             attachMainLogoPermission();
 
             // Restore last visited tab
@@ -2150,6 +2139,21 @@
                 const id = 'subtab-' + tabId + '-' + idx;
                 return '<a id="' + id + '" href="#" class="subtab-item h-full flex items-center px-3 text-gray-700 hover:text-red-700 border-b-2 border-transparent">' + label + '</a>';
             }).join('');
+
+            if (tabId === 'reports') {
+                bar.innerHTML += `
+                    <div class="ml-auto flex items-center gap-2">
+                        <h2 id="report-title" class="text-xl font-bold text-gray-700 mr-4 hidden md:block">收支日報表</h2>
+                        <input type="date" id="toolbar-daily-filter" class="border rounded px-2 py-1 text-sm text-gray-700 bg-white">
+                        <input type="month" id="toolbar-monthly-filter" class="border rounded px-2 py-1 text-sm text-gray-700 bg-white hidden">
+                        <select id="toolbar-yearly-filter" class="border rounded px-2 py-1 text-sm text-gray-700 bg-white hidden"></select>
+                        <button id="btn-print-report" onclick="window.print()" class="px-4 py-1 bg-purple-600 text-white rounded hover:bg-purple-700 flex items-center gap-2">
+                            <i class="fa-solid fa-print"></i> 列印
+                        </button>
+                    </div>
+                `;
+            }
+
             const anchors = Array.from(bar.querySelectorAll('.subtab-item'));
             anchors.forEach(a => {
                 a.addEventListener('click', e => {
@@ -2773,46 +2777,28 @@
             renderSubtabs(tabId);
 
             // Dynamic Toolbar Logic
-            const secToolbar = document.getElementById('secondary-toolbar');
-            const rightContent = document.getElementById('right-content');
-            if (secToolbar && rightContent) {
-                // Reset custom top positioning
-                rightContent.classList.remove('top-[25%]');
-                
-                if (tabId === 'reports') {
-                    secToolbar.classList.remove('hidden');
-                    secToolbar.classList.add('flex');
-                    // Override renderSubtabs positioning for Reports view
-                    rightContent.classList.remove('top-[20%]', 'top-[10%]');
-                    rightContent.classList.add('top-[25%]');
-
-                    // Populate Year Filter if empty
-                    const yearSelect = document.getElementById('toolbar-yearly-filter');
-                    if (yearSelect && yearSelect.options.length === 0) {
-                        const currentYear = new Date().getFullYear();
-                        for (let y = currentYear + 1; y >= currentYear - 5; y--) {
-                            const opt = document.createElement('option');
-                            opt.value = y;
-                            opt.textContent = (y - 1911) + ' 年';
-                            if (y === currentYear) opt.selected = true;
-                            yearSelect.appendChild(opt);
-                        }
+            if (tabId === 'reports') {
+                // Populate Year Filter if empty
+                const yearSelect = document.getElementById('toolbar-yearly-filter');
+                if (yearSelect && yearSelect.options.length === 0) {
+                    const currentYear = new Date().getFullYear();
+                    for (let y = currentYear + 1; y >= currentYear - 5; y--) {
+                        const opt = document.createElement('option');
+                        opt.value = y;
+                        opt.textContent = (y - 1911) + ' 年';
+                        if (y === currentYear) opt.selected = true;
+                        yearSelect.appendChild(opt);
                     }
-
-                    // Attach listeners
-                    const tDaily = document.getElementById('toolbar-daily-filter');
-                    const tMonthly = document.getElementById('toolbar-monthly-filter');
-                    const tYearly = document.getElementById('toolbar-yearly-filter');
-                    
-                    if (tDaily) tDaily.onchange = renderDailyReport;
-                    if (tMonthly) tMonthly.onchange = renderMonthlyReport;
-                    if (tYearly) tYearly.onchange = renderYearlyReport;
-
-                } else {
-                    secToolbar.classList.add('hidden');
-                    secToolbar.classList.remove('flex');
-                    // renderSubtabs already set the correct top (10% or 20%)
                 }
+
+                // Attach listeners
+                const tDaily = document.getElementById('toolbar-daily-filter');
+                const tMonthly = document.getElementById('toolbar-monthly-filter');
+                const tYearly = document.getElementById('toolbar-yearly-filter');
+                
+                if (tDaily) tDaily.onchange = renderDailyReport;
+                if (tMonthly) tMonthly.onchange = renderMonthlyReport;
+                if (tYearly) tYearly.onchange = renderYearlyReport;
             }
         }
 
@@ -6195,7 +6181,8 @@
                 yearly: { emails: [], month: '12', day: 'L', time: '08:00:00' }
             };
             try {
-                const saved = localStorage.getItem('reportEmailSettings');
+                const communityCode = getCurrentCommunityCode();
+                const saved = localStorage.getItem(`reportEmailSettings_${communityCode}`);
                 if (!saved) return defaultSettings;
 
                 const data = JSON.parse(saved);
@@ -6223,7 +6210,8 @@
 
         function saveReportEmailSettings(settings) {
             try {
-                localStorage.setItem('reportEmailSettings', JSON.stringify(settings));
+                const communityCode = getCurrentCommunityCode();
+                localStorage.setItem(`reportEmailSettings_${communityCode}`, JSON.stringify(settings));
             } catch (e) {
                 console.error('Error saving report email settings:', e);
                 alert('儲存設定失敗');
@@ -6257,25 +6245,49 @@
 
         function saveReportTimeSettings() {
             const settings = getReportEmailSettings();
+            const communityCode = getCurrentCommunityCode();
+            const todayStr = new Date().toISOString().split('T')[0];
 
             const dailyTimeEl = document.getElementById('config-daily-time');
-            if (dailyTimeEl) settings.daily.time = dailyTimeEl.value;
+            if (dailyTimeEl) {
+                // Check if time changed
+                if (settings.daily.time !== dailyTimeEl.value) {
+                    // Reset sent flag for testing
+                    localStorage.removeItem(`lastSentReport_daily_${communityCode}_${todayStr}`);
+                }
+                settings.daily.time = dailyTimeEl.value;
+            }
 
             const monthlyDayEl = document.getElementById('config-monthly-day');
             const monthlyTimeEl = document.getElementById('config-monthly-time');
             if (monthlyDayEl) settings.monthly.day = monthlyDayEl.value;
-            if (monthlyTimeEl) settings.monthly.time = monthlyTimeEl.value;
+            if (monthlyTimeEl) {
+                if (settings.monthly.time !== monthlyTimeEl.value) {
+                     localStorage.removeItem(`lastSentReport_monthly_${communityCode}_${todayStr}`);
+                }
+                settings.monthly.time = monthlyTimeEl.value;
+            }
 
             const yearlyMonthEl = document.getElementById('config-yearly-month');
             const yearlyDayEl = document.getElementById('config-yearly-day');
             const yearlyTimeEl = document.getElementById('config-yearly-time');
             if (yearlyMonthEl) settings.yearly.month = yearlyMonthEl.value;
             if (yearlyDayEl) settings.yearly.day = yearlyDayEl.value;
-            if (yearlyTimeEl) settings.yearly.time = yearlyTimeEl.value;
+            if (yearlyTimeEl) {
+                 if (settings.yearly.time !== yearlyTimeEl.value) {
+                     localStorage.removeItem(`lastSentReport_yearly_${communityCode}_${todayStr}`);
+                }
+                settings.yearly.time = yearlyTimeEl.value;
+            }
 
             saveReportEmailSettings(settings);
+            
+            // Immediately check if we should send (in case the time matches now)
+            checkAndSendReportEmails();
+
             // Optional: Show a small toast or log
             console.log('Report time settings saved');
+            alert('時間設定已儲存 (已重置今日發送狀態，若時間符合將重新發送)');
         }
 
         function renderReportEmailList(type, list) {
@@ -6341,7 +6353,10 @@
         // ==========================================
         
         function checkAndSendReportEmails() {
-            if (!db) return; // Ensure Firestore is initialized
+            if (!db) {
+                 console.log('Skipping report check: Firestore not initialized');
+                 return; 
+            }
             
             const settings = getReportEmailSettings();
             const now = new Date();
@@ -6350,6 +6365,7 @@
             const currentMonth = now.getMonth() + 1;
             const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
             const todayStr = now.toISOString().split('T')[0];
+            const communityCode = getCurrentCommunityCode();
 
             // Helper to check time (within same minute)
             const isTimeMatch = (targetTime) => {
@@ -6359,47 +6375,55 @@
             };
 
             // 1. Daily Report
-            if (settings.daily.emails.length > 0 && isTimeMatch(settings.daily.time)) {
-                const key = `lastSentReport_daily_${todayStr}`;
-                if (!localStorage.getItem(key)) {
-                    sendReportEmail('daily', settings.daily.emails);
-                    localStorage.setItem(key, 'true');
+            if (settings.daily.emails.length > 0) {
+                if (isTimeMatch(settings.daily.time)) {
+                    const key = `lastSentReport_daily_${communityCode}_${todayStr}`;
+                    if (!localStorage.getItem(key)) {
+                        sendReportEmail('daily', settings.daily.emails);
+                        localStorage.setItem(key, 'true');
+                    } else {
+                        console.log('Daily report already sent today');
+                    }
                 }
             }
 
             // 2. Monthly Report
-            if (settings.monthly.emails.length > 0 && isTimeMatch(settings.monthly.time)) {
-                let isDayMatch = false;
-                if (settings.monthly.day === 'L') {
-                    isDayMatch = (currentDay === lastDayOfMonth);
-                } else {
-                    isDayMatch = (currentDay === parseInt(settings.monthly.day));
-                }
+            if (settings.monthly.emails.length > 0) {
+                 if (isTimeMatch(settings.monthly.time)) {
+                    let isDayMatch = false;
+                    if (settings.monthly.day === 'L') {
+                        isDayMatch = (currentDay === lastDayOfMonth);
+                    } else {
+                        isDayMatch = (currentDay === parseInt(settings.monthly.day));
+                    }
 
-                if (isDayMatch) {
-                    const key = `lastSentReport_monthly_${todayStr}`;
-                    if (!localStorage.getItem(key)) {
-                        sendReportEmail('monthly', settings.monthly.emails);
-                        localStorage.setItem(key, 'true');
+                    if (isDayMatch) {
+                        const key = `lastSentReport_monthly_${communityCode}_${todayStr}`;
+                        if (!localStorage.getItem(key)) {
+                            sendReportEmail('monthly', settings.monthly.emails);
+                            localStorage.setItem(key, 'true');
+                        }
                     }
                 }
             }
 
             // 3. Yearly Report
-            if (settings.yearly.emails.length > 0 && isTimeMatch(settings.yearly.time)) {
-                let isMonthMatch = (currentMonth === parseInt(settings.yearly.month));
-                let isDayMatch = false;
-                if (settings.yearly.day === 'L') {
-                    isDayMatch = (currentDay === lastDayOfMonth);
-                } else {
-                    isDayMatch = (currentDay === parseInt(settings.yearly.day));
-                }
+            if (settings.yearly.emails.length > 0) {
+                if (isTimeMatch(settings.yearly.time)) {
+                    let isMonthMatch = (currentMonth === parseInt(settings.yearly.month));
+                    let isDayMatch = false;
+                    if (settings.yearly.day === 'L') {
+                        isDayMatch = (currentDay === lastDayOfMonth);
+                    } else {
+                        isDayMatch = (currentDay === parseInt(settings.yearly.day));
+                    }
 
-                if (isMonthMatch && isDayMatch) {
-                    const key = `lastSentReport_yearly_${todayStr}`;
-                    if (!localStorage.getItem(key)) {
-                        sendReportEmail('yearly', settings.yearly.emails);
-                        localStorage.setItem(key, 'true');
+                    if (isMonthMatch && isDayMatch) {
+                        const key = `lastSentReport_yearly_${communityCode}_${todayStr}`;
+                        if (!localStorage.getItem(key)) {
+                            sendReportEmail('yearly', settings.yearly.emails);
+                            localStorage.setItem(key, 'true');
+                        }
                     }
                 }
             }
