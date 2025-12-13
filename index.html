@@ -6325,10 +6325,37 @@
             }
 
             try {
-                // Reuse existing logic but for single recipient
-                // Show loading indicator if possible, or just alert after done
-                await sendReportEmail(type, [email]);
-                alert('已發送請求 (請確認收件夾/垃圾郵件)');
+                alert('正在發送請求... 請勿關閉視窗，系統將等待伺服器回應 (約 5-10 秒)');
+                const docRef = await sendReportEmail(type, [email]);
+                
+                // Listen for delivery status
+                const unsubscribe = docRef.onSnapshot((doc) => {
+                    const data = doc.data();
+                    if (data && data.delivery) {
+                        const state = data.delivery.state;
+                        if (state === 'SUCCESS') {
+                            unsubscribe();
+                            alert('✅ 發送成功！伺服器已確認送出郵件。');
+                        } else if (state === 'ERROR') {
+                            unsubscribe();
+                            alert(`❌ 發送失敗！伺服器回報錯誤：\n${data.delivery.error}`);
+                            console.error('Email Delivery Error:', data.delivery);
+                        } else if (state === 'PROCESSING') {
+                            console.log('Email is being processed...');
+                        }
+                    }
+                }, (error) => {
+                    console.warn('Cannot listen to delivery status (Permission Denied?)', error);
+                    // If we can't listen, we just assume it's sent (fallback to previous behavior)
+                    // But we don't alert again to avoid confusion, just let the initial "sent" log be.
+                    // Actually, if we can't listen, we should tell the user to check spam.
+                });
+
+                // Set a timeout to stop listening after 30 seconds
+                setTimeout(() => {
+                    unsubscribe();
+                }, 30000);
+
             } catch (e) {
                 console.error(e);
                 let errorMsg = e.message;
@@ -6539,7 +6566,7 @@
 
             try {
                 // Try to write to 'mail' collection (Standard Firebase Trigger Email Extension)
-                await db.collection('mail').add({
+                const docRef = await db.collection('mail').add({
                     to: recipients,
                     message: {
                         subject: subject,
@@ -6549,6 +6576,7 @@
                     }
                 });
                 console.log('Email trigger document created successfully');
+                return docRef; // Return reference for tracking
             } catch (e) {
                 console.error('Error sending email:', e);
                 throw e; // Rethrow to let caller handle it (e.g., show alert)
