@@ -709,7 +709,7 @@
                 <div id="view-reports" class="content-view hidden">
                     <!-- Daily Report View -->
                     <div id="report-daily-view">
-                        <div class="bg-white py-8 shadow-sm mx-auto" style="width: 210mm; min-height: 297mm; padding-left: 10mm; padding-right: 10mm;">
+                        <div class="bg-white shadow-sm mx-auto flex flex-col justify-between" style="width: 210mm; min-height: 297mm; padding: 10mm;">
                             <div class="overflow-x-auto">
                                 <table class="w-full border-collapse text-center text-[10px]">
                                     <thead class="bg-gray-100">
@@ -797,12 +797,16 @@
                                     </tbody>
                                 </table>
                             </div>
+                            <div class="flex justify-between items-end mt-4 text-[12px] font-medium text-gray-600">
+                                <div>列印日期 : <span class="report-print-date"></span></div>
+                                <div>製表人 : <span class="report-print-user"></span></div>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Monthly Report View -->
                     <div id="report-monthly-view" class="hidden">
-                        <div class="bg-white py-8 shadow-sm mx-auto" style="width: 210mm; min-height: 297mm; padding-left: 10mm; padding-right: 10mm;">
+                        <div class="bg-white shadow-sm mx-auto flex flex-col justify-between" style="width: 210mm; min-height: 297mm; padding: 10mm;">
                             <div class="overflow-x-auto">
                                 <table class="w-full border-collapse text-center text-[10px]">
                                     <thead class="bg-gray-100">
@@ -890,12 +894,16 @@
                                     </tbody>
                                 </table>
                             </div>
+                            <div class="flex justify-between items-end mt-4 text-[12px] font-medium text-gray-600">
+                                <div>列印日期 : <span class="report-print-date"></span></div>
+                                <div>製表人 : <span class="report-print-user"></span></div>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Yearly Report View -->
                     <div id="report-yearly-view" class="hidden">
-                        <div class="bg-white py-8 shadow-sm mx-auto" style="width: 210mm; min-height: 297mm; padding-left: 10mm; padding-right: 10mm;">
+                        <div class="bg-white shadow-sm mx-auto flex flex-col justify-between" style="width: 210mm; min-height: 297mm; padding: 10mm;">
                             <div class="overflow-x-auto">
                                 <table class="w-full border-collapse text-center text-[10px]">
                                     <thead class="bg-gray-100">
@@ -983,7 +991,11 @@
                                     </tbody>
                                 </table>
                             </div>
-                </div>
+                            <div class="flex justify-between items-end mt-4 text-[12px] font-medium text-gray-600">
+                                <div>列印日期 : <span class="report-print-date"></span></div>
+                                <div>製表人 : <span class="report-print-user"></span></div>
+                            </div>
+                        </div>
             </div>
 
             <!-- Report Settings View -->
@@ -1897,6 +1909,7 @@
         // ==========================================
         // 應用程式邏輯
         // ==========================================
+        let currentUserName = '';
 
         const SUBTAB_CONFIG = {
             'dashboard': [],
@@ -2712,6 +2725,23 @@
             setSum('today-petty-expense', todayPettyExp);
             setSum('today-bank-balance', todayBankBal);
             setSum('today-petty-balance', todayPettyBal);
+            
+            updateReportFooter(type);
+        }
+
+        function updateReportFooter(type) {
+            const now = new Date();
+            const dateStr = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')}`;
+            
+            const viewId = 'report-' + type + '-view';
+            const view = document.getElementById(viewId);
+            if (!view) return;
+            
+            const dateEl = view.querySelector('.report-print-date');
+            const userEl = view.querySelector('.report-print-user');
+            
+            if (dateEl) dateEl.textContent = dateStr;
+            if (userEl) userEl.textContent = currentUserName || '未知';
         }
 
         function switchTab(tabId) {
@@ -3359,15 +3389,26 @@
             if (!email) return false;
             return String(email).trim().toLowerCase() === 'nwapp.eason@gmail.com'; 
         }
-        function updateUserDisplayName(){
+        async function updateUserDisplayName(){
             const el = document.getElementById('user-display-name');
             if (!el) return;
             const email = getCurrentUserEmail();
+            let displayName = '未登入';
+            
             if (isAdminEmail(email)) {
-                el.textContent = '系統管理員';
-            } else {
-                el.textContent = email ? email : '未登入';
+                displayName = '系統管理員';
+            } else if (email) {
+                try {
+                    const accounts = await fetchAccounts();
+                    const acc = accounts.find(a => a.email === email);
+                    displayName = acc && acc.name ? acc.name : email;
+                } catch(e) {
+                    displayName = email;
+                }
             }
+            
+            el.textContent = displayName;
+            currentUserName = displayName;
         }
         function attachMainLogoPermission(){
             const email = getCurrentUserEmail();
