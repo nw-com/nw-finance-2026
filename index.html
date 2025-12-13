@@ -6331,7 +6331,15 @@
                 alert('已發送請求 (請確認收件夾/垃圾郵件)');
             } catch (e) {
                 console.error(e);
-                alert('發送失敗: ' + e.message);
+                let errorMsg = e.message;
+                if (e.code === 'permission-denied') {
+                    errorMsg = `權限不足 (Permission Denied)。
+可能原因：
+1. Firebase Console 未啟用匿名登入 (Authentication > Sign-in method > Anonymous)。
+2. Firestore Rules 未開放寫入權限 (Firestore Database > Rules)。
+請檢查 Console 設定。`;
+                }
+                alert('發送失敗: ' + errorMsg);
             }
         }
 
@@ -6472,13 +6480,21 @@
             console.log(`Sending ${type} report to:`, recipients);
 
             // Ensure Auth (Anonymous) for Firestore Write Permissions
-            if (auth && !auth.currentUser) {
-                try {
-                    console.log('Attempting auto-login before sending email...');
-                    await auth.signInAnonymously();
-                } catch(e) {
-                    console.warn("Auto-login for email sending failed:", e);
-                }
+            if (auth) {
+                 if (!auth.currentUser) {
+                    try {
+                        console.log('Attempting auto-login before sending email...');
+                        await auth.signInAnonymously();
+                    } catch(e) {
+                        console.warn("Auto-login for email sending failed:", e);
+                        // If anonymous login is disabled in Console, this will fail.
+                        // We continue anyway to let the Firestore error bubble up if needed, 
+                        // or maybe throw here? 
+                        // Let's not throw yet, maybe public write is allowed? (Unlikely)
+                    }
+                 } else {
+                     console.log('Current user:', auth.currentUser.uid, 'Is Anonymous:', auth.currentUser.isAnonymous);
+                 }
             }
             
             let subject = '';
