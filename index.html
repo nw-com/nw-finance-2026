@@ -6378,7 +6378,7 @@
         // Automated Email Sending Logic (Client-Side Trigger)
         // ==========================================
         
-        function checkAndSendReportEmails() {
+        async function checkAndSendReportEmails() {
             if (!db) {
                  console.log('Skipping report check: Firestore not initialized');
                  return; 
@@ -6405,8 +6405,13 @@
                 if (isTimeMatch(settings.daily.time)) {
                     const key = `lastSentReport_daily_${communityCode}_${todayStr}`;
                     if (!localStorage.getItem(key)) {
-                        sendReportEmail('daily', settings.daily.emails);
-                        localStorage.setItem(key, 'true');
+                        try {
+                            console.log('Triggering daily report email...');
+                            await sendReportEmail('daily', settings.daily.emails);
+                            localStorage.setItem(key, 'true');
+                        } catch (e) {
+                            console.error('Failed to send daily report:', e);
+                        }
                     } else {
                         console.log('Daily report already sent today');
                     }
@@ -6426,8 +6431,12 @@
                     if (isDayMatch) {
                         const key = `lastSentReport_monthly_${communityCode}_${todayStr}`;
                         if (!localStorage.getItem(key)) {
-                            sendReportEmail('monthly', settings.monthly.emails);
-                            localStorage.setItem(key, 'true');
+                            try {
+                                await sendReportEmail('monthly', settings.monthly.emails);
+                                localStorage.setItem(key, 'true');
+                            } catch (e) {
+                                console.error('Failed to send monthly report:', e);
+                            }
                         }
                     }
                 }
@@ -6447,8 +6456,12 @@
                     if (isMonthMatch && isDayMatch) {
                         const key = `lastSentReport_yearly_${communityCode}_${todayStr}`;
                         if (!localStorage.getItem(key)) {
-                            sendReportEmail('yearly', settings.yearly.emails);
-                            localStorage.setItem(key, 'true');
+                            try {
+                                await sendReportEmail('yearly', settings.yearly.emails);
+                                localStorage.setItem(key, 'true');
+                            } catch (e) {
+                                console.error('Failed to send yearly report:', e);
+                            }
                         }
                     }
                 }
@@ -6457,6 +6470,16 @@
 
         async function sendReportEmail(type, recipients) {
             console.log(`Sending ${type} report to:`, recipients);
+
+            // Ensure Auth (Anonymous) for Firestore Write Permissions
+            if (auth && !auth.currentUser) {
+                try {
+                    console.log('Attempting auto-login before sending email...');
+                    await auth.signInAnonymously();
+                } catch(e) {
+                    console.warn("Auto-login for email sending failed:", e);
+                }
+            }
             
             let subject = '';
             let htmlContent = '';
@@ -6512,8 +6535,7 @@
                 console.log('Email trigger document created successfully');
             } catch (e) {
                 console.error('Error sending email:', e);
-                // Fallback or Alert?
-                // Since this is background, maybe just log.
+                throw e; // Rethrow to let caller handle it (e.g., show alert)
             }
         }
 
