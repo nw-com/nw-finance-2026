@@ -6302,11 +6302,37 @@
             listEl.innerHTML = list.map((email, index) => `
                 <li class="px-4 py-2 flex justify-between items-center group hover:bg-gray-100">
                     <span class="text-gray-700">${email}</span>
-                    <button onclick="deleteReportEmail('${type}', ${index})" class="text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
+                    <div class="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                         <button onclick="triggerSingleReportEmail('${type}', '${email}')" class="text-blue-600 hover:text-blue-800 text-xs border border-blue-600 rounded px-2 py-1 hover:bg-blue-50 transition-colors">
+                            發送
+                        </button>
+                        <button onclick="deleteReportEmail('${type}', ${index})" class="text-red-500 hover:text-red-700">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
                 </li>
             `).join('');
+        }
+
+        async function triggerSingleReportEmail(type, email) {
+            if (!confirm(`確定要立即發送 ${type === 'daily' ? '日報表' : type === 'monthly' ? '月報表' : '年報表'} 給 ${email} 嗎？`)) {
+                return;
+            }
+            
+            if (!db) {
+                alert('Firebase Firestore 尚未初始化，無法發送郵件。請確認網路連線或稍後再試。');
+                return;
+            }
+
+            try {
+                // Reuse existing logic but for single recipient
+                // Show loading indicator if possible, or just alert after done
+                await sendReportEmail(type, [email]);
+                alert('已發送請求 (請確認收件夾/垃圾郵件)');
+            } catch (e) {
+                console.error(e);
+                alert('發送失敗: ' + e.message);
+            }
         }
 
         function addReportEmail(type) {
