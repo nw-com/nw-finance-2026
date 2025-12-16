@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- SheetJS (Excel) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- html2pdf.js (PDF Generation) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <!-- Google Fonts (Noto Sans TC) -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 
@@ -468,7 +470,7 @@
 
 
                     <!-- 收支紀錄表格 -->
-                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col h-[350px]">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col h-[600px]">
                         <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg flex-none">
                             <h3 class="font-bold text-gray-700">收支紀錄</h3>
                             <div class="flex items-center gap-2">
@@ -721,6 +723,7 @@
                                             <th class="border border-gray-300 px-2 py-1" style="width: 20mm;">金額</th>
                                             <th class="border border-gray-300 px-2 py-1" style="width: 30mm;">備註</th>
                                         </tr>
+
                                     </thead>
                                     <tbody class="text-[10px]">
                                         <!-- Rows will be populated by JS -->
@@ -800,51 +803,81 @@
                                 <table class="w-full border-collapse text-center text-[10px]">
                                     <thead class="bg-gray-100">
                                         <tr class="bg-white">
-                                            <th id="report-monthly-community-header" colspan="8" class="px-2 py-3 text-center font-bold text-lg" style="height: 12mm;">&lt;社區名稱&gt;社區收支月報表</th>
+                                            <th id="report-monthly-community-header" colspan="8" class="px-2 py-3 text-center font-bold text-lg" style="height: 12mm;">&lt;社區名稱&gt;管理委員會</th>
                                         </tr>
                                         <tr class="bg-white">
-                                            <th id="report-monthly-date-header" colspan="8" class="px-2 py-2 text-center font-normal text-sm" style="height: 10mm;">114 年 01 月</th>
+                                            <th id="report-monthly-date-header" colspan="8" class="px-2 py-2 text-center font-normal text-sm" style="height: 10mm;">114 年 01 月 社區收支月報表</th>
                                         </tr>
-                                        <tr>
-                                            <th colspan="8" class="border border-gray-300 px-2 py-1 text-left font-bold text-[10px] text-green-700">收入明細</th>
+                                        <!-- Added 6 rows 7 columns grid -->
+                                        <tr style="height: 6mm;">
+                                            <td colspan="8" class="px-2 py-1 text-left bg-white border-0 text-sm font-bold">(一) 管理費收入概況</td>
                                         </tr>
-                                        <tr>
-                                            <th class="border border-gray-300 px-2 py-1" style="width: 10mm;">序號</th>
-                                            <th class="border border-gray-300 px-2 py-1" style="width: 20mm;">日期</th>
-                                            <th class="border border-gray-300 px-2 py-1" style="width: 30mm;">對象</th>
-                                            <th class="border border-gray-300 px-2 py-1" style="width: 20mm;">類型</th>
-                                            <th class="border border-gray-300 px-2 py-1" style="width: 20mm;">類別</th>
-                                            <th class="border border-gray-300 px-2 py-1" style="width: 20mm;">月份</th>
-                                            <th class="border border-gray-300 px-2 py-1" style="width: 20mm;">金額</th>
-                                            <th class="border border-gray-300 px-2 py-1" style="width: 30mm;">備註</th>
+                                        <tr style="height: 6mm;">
+                                            <td colspan="2" class="border border-gray-300 px-2 py-1 bg-white text-center" style="width: 38mm;">本期管理費收入概況</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-center" style="width: 20mm;">金額</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-center" style="width: 16mm;">收繳率</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-center" style="width: 38mm;">未繳金額明細</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-center" style="width: 20mm;">未繳金額</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-center" style="width: 38mm;">預繳金額明細</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-center" style="width: 20mm;">預繳金額</td>
+                                        </tr>
+                                        <tr style="height: 6mm;">
+                                            <td colspan="2" class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                        </tr>
+                                        <tr style="height: 6mm;">
+                                            <td colspan="2" class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                        </tr>
+                                        <tr style="height: 6mm;">
+                                            <td colspan="2" class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                        </tr>
+                                        <tr style="height: 6mm;">
+                                            <td colspan="2" class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                         </tr>
                                     </thead>
-                                    <tbody class="text-[10px]">
-                                        <!-- Rows will be populated by JS -->
-                                        <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-center font-bold bg-green-100 text-green-700">收入合計</td><td class="border border-gray-300 px-2 py-1 bg-green-100 text-green-700">&nbsp;</td><td class="border border-gray-300 px-2 py-1 bg-green-100">&nbsp;</td></tr>
-                                        <tr>
-                                            <td colspan="8" class="border border-gray-300 px-2 py-1 text-left font-bold text-[10px] bg-gray-200 text-red-700">支出明細</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="border border-gray-300 px-2 py-1 bg-gray-200 font-bold text-center">序號</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-gray-200 font-bold text-center">日期</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-gray-200 font-bold text-center">對象</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-gray-200 font-bold text-center">類型</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-gray-200 font-bold text-center">類別</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-gray-200 font-bold text-center">月份</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-gray-200 font-bold text-center">金額</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-gray-200 font-bold text-center">備註</td>
-                                        </tr>
-                                        <!-- Rows will be populated by JS -->
-                                        <tr>
-                                            <td colspan="6" class="border border-gray-300 px-2 py-1 text-center font-bold bg-red-100 text-red-700">支出合計</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-red-100 text-red-700">&nbsp;</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-red-100">&nbsp;</td>
+                                </table>
+                                
+                                <div style="height: 5mm;"></div>
+
+                                <table class="w-full border-collapse text-center text-[10px]">
+                                    <tbody>
+                                        <tr style="height: 6mm;">
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                         </tr>
                                     </tbody>
                                 </table>
 
-                                <table class="w-full border-collapse text-center text-[10px]" style="margin-top: 6mm;">
+                                <div style="height: 5mm;"></div>
+
+                                <table class="w-full border-collapse text-center text-[10px]">
                                     <colgroup>
                                         <col style="width: 10mm;">
                                         <col style="width: 20mm;">
@@ -1817,15 +1850,15 @@
                         ignoreUndefinedProperties: true
                     });
                     
-                    // Enable offline persistence
-                    db.enablePersistence({ synchronizeTabs: true })
-                        .catch(function(err) {
-                            if (err.code == 'failed-precondition') {
-                                console.warn('Persistence failed: Multiple tabs open');
-                            } else if (err.code == 'unimplemented') {
-                                console.warn('Persistence not supported by browser');
-                            }
-                        });
+                    // Disable offline persistence to enforce strict cloud connection
+                    // db.enablePersistence({ synchronizeTabs: true })
+                    //     .catch(function(err) {
+                    //         if (err.code == 'failed-precondition') {
+                    //             console.warn('Persistence failed: Multiple tabs open');
+                    //         } else if (err.code == 'unimplemented') {
+                    //             console.warn('Persistence not supported by browser');
+                    //         }
+                    //     });
                 } catch(err) {
                     console.warn("Error setting firestore settings:", err);
                 }
@@ -1833,20 +1866,20 @@
                 
                 // 確保有身份以便讀取雲端設定
                 // 若尚未登入，進行匿名登入（需在 Firebase Console 啟用 Anonymous）
-                (async ()=>{ 
-                    try { 
-                        if (!auth.currentUser) { 
-                            // 嘗試匿名登入，若失敗則不報錯，僅記錄警告
-                            await auth.signInAnonymously().catch(e => {
-                                // 忽略網路錯誤或功能未啟用的錯誤，避免 console 太多紅字
-                                // console.warn('Auto anonymous sign-in failed:', e.code);
-                            });
-                            localStorage.setItem('lastLoginMode','anonymous'); 
-                        } 
-                    } catch(e){ 
-                        // console.warn('Anonymous sign-in process error:', e); 
-                    } 
-                })();
+                // (async ()=>{ 
+                //    try { 
+                //        if (!auth.currentUser) { 
+                //            // 嘗試匿名登入，若失敗則不報錯，僅記錄警告
+                //            await auth.signInAnonymously().catch(e => {
+                //                // 忽略網路錯誤或功能未啟用的錯誤，避免 console 太多紅字
+                //                // console.warn('Auto anonymous sign-in failed:', e.code);
+                //            });
+                //            localStorage.setItem('lastLoginMode','anonymous'); 
+                //        } 
+                //    } catch(e){ 
+                //        // console.warn('Anonymous sign-in process error:', e); 
+                //    } 
+                // })();
             } else {
                 console.warn("No firebase config found, running in local mode but keeping UI as Online.");
             }
@@ -1993,49 +2026,30 @@
             }
             setLoginLoading(true);
 
-            // 先嘗試本機帳號登入（使用手機號碼作為預設密碼）
+            // 強制檢查網路連線
             if (!navigator.onLine) {
-                isDemoMode = true;
                 loginError.classList.remove('hidden');
-                loginError.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-1"></i> 網路離線，進入預覽模式`;
-                setCurrentCommunityByEmailAsync(email).then(()=> setTimeout(() => enterApp(), 300));
-                updateConnectionStatus('offline');
+                loginError.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-1"></i> 請檢查網路連線 (須使用雲端模式)`;
                 setLoginLoading(false);
                 return;
             }
 
-            if (isDemoMode) {
-                // 演示模式：任何非空輸入都允許登入
-                setCurrentCommunityByEmailAsync(email).then(()=> enterApp());
-            } else {
-                // 真實 Firebase 登入
-                try {
-                    await auth.signInWithEmailAndPassword(email, password);
-                    // 狀態監聽器會處理頁面切換
-                } catch (error) {
-                    // console.warn("Login failed:", error);
-                    if (error && error.code === 'auth/network-request-failed') {
-                        isDemoMode = true;
-                        loginError.classList.remove('hidden');
-                        loginError.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-1"></i> 網路異常，切換為離線預覽模式`;
-                        setCurrentCommunityByEmailAsync(email).then(()=> setTimeout(() => enterApp(), 300));
-                        updateConnectionStatus('offline');
-                    } else {
-                        // 允許本機帳號作為後備登入
-                        const handled = tryLocalLogin(email, password);
-                        if (!handled) {
-                            if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-                                // 如果是 Firebase 帳號錯誤，但本機帳號也失敗，就顯示「帳號或密碼錯誤」
-                                loginError.classList.remove('hidden');
-                                loginError.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-1"></i> 帳號或密碼錯誤`;
-                            } else {
-                                loginError.classList.remove('hidden');
-                                loginError.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-1"></i> ${error.message}`;
-                            }
-                        }
-                    }
-                    setLoginLoading(false);
+            // 強制使用 Firebase 登入
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                // 狀態監聽器會處理頁面切換
+            } catch (error) {
+                console.error("Login failed:", error);
+                loginError.classList.remove('hidden');
+                
+                if (error.code === 'auth/network-request-failed') {
+                     loginError.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-1"></i> 網路連線異常，請檢查網路`;
+                } else if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                    loginError.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-1"></i> 帳號或密碼錯誤`;
+                } else {
+                    loginError.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-1"></i> ${error.message}`;
                 }
+                setLoginLoading(false);
             }
         });
 
@@ -2488,24 +2502,7 @@
             }
         }
 
-        function tryLocalLogin(email, password) {
-            const accounts = getAccounts();
-            const acc = accounts.find(a => a.email === email);
-            if (!acc) return false;
-            if (String(acc.phone).trim() === String(password).trim()) {
-                setCurrentCommunityByEmail(email);
-                localStorage.setItem('currentUserEmail', email);
-                localStorage.setItem('persistLogin','true');
-                localStorage.setItem('lastLoginMode','local');
-                enterApp('local');
-                return true;
-            } else {
-                loginError.classList.remove('hidden');
-                loginError.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-1"></i> 密碼錯誤`;
-                setLoginLoading(false);
-                return true; // 已處理（顯示錯誤），不再進行 Firebase 嘗試
-            }
-        }
+
 
         function renderDailyReport() { renderReportCommon('daily'); }
         function renderMonthlyReport() { renderReportCommon('monthly'); }
@@ -2517,37 +2514,7 @@
             const dateHeaderId = 'report-' + type + '-date-header';
             const summaryPrefix = 'summary-' + type + '-';
 
-            const tbody = document.querySelector('#' + viewId + ' table tbody');
-            if (!tbody) return;
-
-            // 1. Identify Structure Rows
-            const rows = Array.from(tbody.querySelectorAll('tr'));
-            const incomeTotalRow = rows.find(tr => tr.innerText.includes('收入合計'));
-            const expenseSectionHeaderRow = rows.find(tr => tr.innerText.includes('支出明細'));
-            const expenseTotalRow = rows.find(tr => tr.innerText.includes('支出合計'));
-
-            if (!incomeTotalRow || !expenseSectionHeaderRow || !expenseTotalRow) {
-                return;
-            }
-            
-            const expenseColumnHeaderRow = expenseSectionHeaderRow.nextElementSibling;
-
-            // 2. Clear Income Rows
-            while (tbody.firstChild && tbody.firstChild !== incomeTotalRow) {
-                tbody.removeChild(tbody.firstChild);
-            }
-
-            // 3. Clear Expense Rows
-            if (expenseColumnHeaderRow) {
-                let curr = expenseColumnHeaderRow.nextSibling;
-                while (curr && curr !== expenseTotalRow) {
-                    const next = curr.nextSibling;
-                    tbody.removeChild(curr);
-                    curr = next;
-                }
-            }
-
-            // 4. Fetch and Filter Data
+            // 1. Fetch and Filter Data First
             const transactions = getTransactions();
             const dateFilter = document.getElementById(filterId);
             let currentPeriod;
@@ -2567,7 +2534,7 @@
                 if (dateFilter) dateFilter.value = currentPeriod;
             }
             
-            // Update Report Date Header
+            // 2. Update Report Date Header
             const dateHeader = document.getElementById(dateHeaderId);
             if (dateHeader) {
                 let dateText = '';
@@ -2576,7 +2543,7 @@
                     dateText = `${parseInt(y) - 1911} 年 ${parseInt(m)} 月 ${parseInt(d)} 日`;
                 } else if (type === 'monthly') {
                     const [y, m] = currentPeriod.split('-');
-                    dateText = `${parseInt(y) - 1911} 年 ${parseInt(m)} 月`;
+                    dateText = `${parseInt(y) - 1911} 年 ${parseInt(m)} 月 社區收支月報表`;
                 } else if (type === 'yearly') {
                     dateText = `${parseInt(currentPeriod) - 1911} 年`;
                 }
@@ -2585,96 +2552,123 @@
 
             const isInPeriod = (t) => t.date && t.date.startsWith(currentPeriod);
             const isBeforePeriod = (t) => t.date && t.date < currentPeriod;
-
             const currentPeriodTransactions = transactions.filter(isInPeriod);
 
-            // 5. Generate Rows
-            let incomeRowCount = 0;
-            let expenseRowCount = 0;
-            let incomeTotal = 0;
-            let expenseTotal = 0;
+            // 3. Handle Detail Table (if exists and has correct structure)
+            const tbody = document.querySelector('#' + viewId + ' table tbody');
+            if (tbody) {
+                const rows = Array.from(tbody.querySelectorAll('tr'));
+                const incomeTotalRow = rows.find(tr => tr.innerText.includes('收入合計'));
+                const expenseSectionHeaderRow = rows.find(tr => tr.innerText.includes('支出明細'));
+                const expenseTotalRow = rows.find(tr => tr.innerText.includes('支出合計'));
 
-            const incomeTrans = currentPeriodTransactions.filter(t => (t.mode === 'income') || (t.id && t.id.startsWith('I')));
-            const expenseTrans = currentPeriodTransactions.filter(t => !((t.mode === 'income') || (t.id && t.id.startsWith('I'))));
+                if (incomeTotalRow && expenseSectionHeaderRow && expenseTotalRow) {
+                    const expenseColumnHeaderRow = expenseSectionHeaderRow.nextElementSibling;
 
-            // Helper to create cell
-            const createCell = (text, className = '') => {
-                const td = document.createElement('td');
-                td.className = 'border border-gray-300 px-2 py-1 ' + className;
-                td.innerHTML = text || '&nbsp;';
-                return td;
-            };
+                    // Clear Income Rows
+                    while (tbody.firstChild && tbody.firstChild !== incomeTotalRow) {
+                        tbody.removeChild(tbody.firstChild);
+                    }
 
-            // Render Income Rows
-            incomeTrans.forEach(transaction => {
-                incomeRowCount++;
-                const amount = parseInt(transaction.amount || 0);
-                incomeTotal += amount;
+                    // Clear Expense Rows
+                    if (expenseColumnHeaderRow) {
+                        let curr = expenseColumnHeaderRow.nextSibling;
+                        while (curr && curr !== expenseTotalRow) {
+                            const next = curr.nextSibling;
+                            tbody.removeChild(curr);
+                            curr = next;
+                        }
+                    }
 
-                const row = document.createElement('tr');
-                row.style.height = '6mm';
-                
-                row.appendChild(createCell(incomeRowCount));
-                row.appendChild(createCell(transaction.date ? (transaction.date.includes('T') ? transaction.date.split('T')[0] : transaction.date) : ''));
-                row.appendChild(createCell(transaction.target));
-                row.appendChild(createCell(transaction.type));
-                row.appendChild(createCell(transaction.category));
-                row.appendChild(createCell(transaction.month || (transaction.date ? transaction.date.slice(0, 7) : '')));
-                row.appendChild(createCell(amount.toLocaleString(), 'text-green-700'));
-                row.appendChild(createCell(transaction.note));
-                
-                tbody.insertBefore(row, incomeTotalRow);
-            });
+                    // Generate Rows
+                    let incomeRowCount = 0;
+                    let expenseRowCount = 0;
+                    let incomeTotal = 0;
+                    let expenseTotal = 0;
 
-            // Fill empty income rows to reach 10
-            while (incomeRowCount < 10) {
-                const row = document.createElement('tr');
-                row.style.height = '6mm';
-                for(let i=0; i<8; i++) row.appendChild(createCell(''));
-                tbody.insertBefore(row, incomeTotalRow);
-                incomeRowCount++;
+                    const incomeTrans = currentPeriodTransactions.filter(t => (t.mode === 'income') || (t.id && t.id.startsWith('I')));
+                    const expenseTrans = currentPeriodTransactions.filter(t => !((t.mode === 'income') || (t.id && t.id.startsWith('I'))));
+
+                    // Helper to create cell
+                    const createCell = (text, className = '') => {
+                        const td = document.createElement('td');
+                        td.className = 'border border-gray-300 px-2 py-1 ' + className;
+                        td.innerHTML = text || '&nbsp;';
+                        return td;
+                    };
+
+                    // Render Income Rows
+                    incomeTrans.forEach(transaction => {
+                        incomeRowCount++;
+                        const amount = parseInt(transaction.amount || 0);
+                        incomeTotal += amount;
+
+                        const row = document.createElement('tr');
+                        row.style.height = '6mm';
+                        
+                        row.appendChild(createCell(incomeRowCount));
+                        row.appendChild(createCell(transaction.date ? (transaction.date.includes('T') ? transaction.date.split('T')[0] : transaction.date) : ''));
+                        row.appendChild(createCell(transaction.target));
+                        row.appendChild(createCell(transaction.type));
+                        row.appendChild(createCell(transaction.category));
+                        row.appendChild(createCell(transaction.month || (transaction.date ? transaction.date.slice(0, 7) : '')));
+                        row.appendChild(createCell(amount.toLocaleString(), 'text-green-700'));
+                        row.appendChild(createCell(transaction.note));
+                        
+                        tbody.insertBefore(row, incomeTotalRow);
+                    });
+
+                    // Fill empty income rows to reach 10
+                    while (incomeRowCount < 10) {
+                        const row = document.createElement('tr');
+                        row.style.height = '6mm';
+                        for(let i=0; i<8; i++) row.appendChild(createCell(''));
+                        tbody.insertBefore(row, incomeTotalRow);
+                        incomeRowCount++;
+                    }
+
+                    // Render Expense Rows
+                    expenseTrans.forEach(transaction => {
+                        expenseRowCount++;
+                        const amount = parseInt(transaction.amount || 0);
+                        expenseTotal += amount;
+
+                        const row = document.createElement('tr');
+                        row.style.height = '6mm';
+                        
+                        row.appendChild(createCell(expenseRowCount));
+                        row.appendChild(createCell(transaction.date ? (transaction.date.includes('T') ? transaction.date.split('T')[0] : transaction.date) : ''));
+                        row.appendChild(createCell(transaction.target));
+                        row.appendChild(createCell(transaction.type));
+                        row.appendChild(createCell(transaction.category));
+                        row.appendChild(createCell(transaction.month || (transaction.date ? transaction.date.slice(0, 7) : '')));
+                        row.appendChild(createCell(amount.toLocaleString(), 'text-red-700'));
+                        row.appendChild(createCell(transaction.note));
+                        
+                        tbody.insertBefore(row, expenseTotalRow);
+                    });
+
+                    // Fill empty expense rows to reach 10
+                    while (expenseRowCount < 10) {
+                        const row = document.createElement('tr');
+                        row.style.height = '6mm';
+                        for(let i=0; i<8; i++) row.appendChild(createCell(''));
+                        tbody.insertBefore(row, expenseTotalRow);
+                        expenseRowCount++;
+                    }
+
+                    // Update Totals
+                    if (incomeTotalRow.cells.length >= 2) {
+                        incomeTotalRow.cells[1].textContent = '$' + incomeTotal.toLocaleString();
+                    }
+
+                    if (expenseTotalRow.cells.length >= 2) {
+                        expenseTotalRow.cells[1].textContent = '$' + expenseTotal.toLocaleString();
+                    }
+                }
             }
 
-            // Render Expense Rows
-            expenseTrans.forEach(transaction => {
-                expenseRowCount++;
-                const amount = parseInt(transaction.amount || 0);
-                expenseTotal += amount;
-
-                const row = document.createElement('tr');
-                row.style.height = '6mm';
-                
-                row.appendChild(createCell(expenseRowCount));
-                row.appendChild(createCell(transaction.date ? (transaction.date.includes('T') ? transaction.date.split('T')[0] : transaction.date) : ''));
-                row.appendChild(createCell(transaction.target));
-                row.appendChild(createCell(transaction.type));
-                row.appendChild(createCell(transaction.category));
-                row.appendChild(createCell(transaction.month || (transaction.date ? transaction.date.slice(0, 7) : '')));
-                row.appendChild(createCell(amount.toLocaleString(), 'text-red-700'));
-                row.appendChild(createCell(transaction.note));
-                
-                tbody.insertBefore(row, expenseTotalRow);
-            });
-
-            // Fill empty expense rows to reach 10
-            while (expenseRowCount < 10) {
-                const row = document.createElement('tr');
-                row.style.height = '6mm';
-                for(let i=0; i<8; i++) row.appendChild(createCell(''));
-                tbody.insertBefore(row, expenseTotalRow);
-                expenseRowCount++;
-            }
-
-            // 6. Update Totals
-            if (incomeTotalRow.cells.length >= 2) {
-                incomeTotalRow.cells[1].textContent = '$' + incomeTotal.toLocaleString();
-            }
-
-            if (expenseTotalRow.cells.length >= 2) {
-                expenseTotalRow.cells[1].textContent = '$' + expenseTotal.toLocaleString();
-            }
-
-            // 7. Calculate Summary Table
+            // 4. Calculate Summary Table
             const getVal = (t) => parseInt(t.amount || 0);
             const isPetty = (t) => (t.method || '').includes('零用金');
             
@@ -2867,7 +2861,7 @@
             if (hDaily) hDaily.textContent = name + '社區收支日報表';
 
             const hMonthly = document.getElementById('report-monthly-community-header');
-            if (hMonthly) hMonthly.textContent = name + '社區收支月報表';
+            if (hMonthly) hMonthly.textContent = name + '管理委員會';
 
             const hYearly = document.getElementById('report-yearly-community-header');
             if (hYearly) hYearly.textContent = name + '社區收支年報表';
@@ -6163,10 +6157,16 @@
         // Moved initialization here
         const persistedLogin = localStorage.getItem('persistLogin') === 'true';
         const lastLoginMode = localStorage.getItem('lastLoginMode');
-        if (persistedLogin) {
+        const currentUserEmail = localStorage.getItem('currentUserEmail');
+        
+        // 只有在確保有登入標記且有 Email 的情況下才自動進入
+        // 並且我們仍然依賴 onAuthStateChanged 來最終確認 (但為了 UX 體驗，先進入)
+        if (persistedLogin && currentUserEmail) {
             if (lastLoginMode === 'demo') isDemoMode = true;
             enterApp();
         } else {
+            // 若沒有 persistLogin 或沒有 email，則顯示登入頁面
+            // 若 onAuthStateChanged 之後發現有登入，會再自動 enterApp
             if (loginView) loginView.style.visibility = 'visible';
         }
 
@@ -6325,37 +6325,10 @@
             }
 
             try {
-                alert('正在發送請求... 請勿關閉視窗，系統將等待伺服器回應 (約 5-10 秒)');
-                const docRef = await sendReportEmail(type, [email]);
-                
-                // Listen for delivery status
-                const unsubscribe = docRef.onSnapshot((doc) => {
-                    const data = doc.data();
-                    if (data && data.delivery) {
-                        const state = data.delivery.state;
-                        if (state === 'SUCCESS') {
-                            unsubscribe();
-                            alert('✅ 發送成功！伺服器已確認送出郵件。');
-                        } else if (state === 'ERROR') {
-                            unsubscribe();
-                            alert(`❌ 發送失敗！伺服器回報錯誤：\n${data.delivery.error}`);
-                            console.error('Email Delivery Error:', data.delivery);
-                        } else if (state === 'PROCESSING') {
-                            console.log('Email is being processed...');
-                        }
-                    }
-                }, (error) => {
-                    console.warn('Cannot listen to delivery status (Permission Denied?)', error);
-                    // If we can't listen, we just assume it's sent (fallback to previous behavior)
-                    // But we don't alert again to avoid confusion, just let the initial "sent" log be.
-                    // Actually, if we can't listen, we should tell the user to check spam.
-                });
-
-                // Set a timeout to stop listening after 30 seconds
-                setTimeout(() => {
-                    unsubscribe();
-                }, 30000);
-
+                // Reuse existing logic but for single recipient
+                // Show loading indicator if possible, or just alert after done
+                await sendReportEmail(type, [email]);
+                alert('已發送請求 (請確認收件夾/垃圾郵件)');
             } catch (e) {
                 console.error(e);
                 let errorMsg = e.message;
@@ -6503,6 +6476,55 @@
             }
         }
 
+        async function generateReportPDF(type) {
+            console.log(`Generating PDF for ${type}...`);
+            const viewId = 'report-' + type + '-view';
+            const originalEl = document.getElementById(viewId);
+            if (!originalEl) return null;
+
+            const wasHidden = originalEl.classList.contains('hidden');
+            
+            // 1. Ensure visible for rendering
+            if (wasHidden) {
+                originalEl.classList.remove('hidden');
+                // Ensure data is populated
+                if (type === 'daily') renderDailyReport();
+                else if (type === 'monthly') renderMonthlyReport();
+                else if (type === 'yearly') renderYearlyReport();
+                
+                // Wait for DOM to update
+                await new Promise(r => setTimeout(r, 1000));
+            }
+
+            // Select the A4 paper element (inner white div)
+            // The structure is #view > div.bg-white
+            const element = originalEl.querySelector('.bg-white'); 
+
+            const opt = {
+                margin: 0,
+                filename: `report-${type}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true, logging: false },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            try {
+                // Generate PDF as Base64 Data URI
+                const pdfDataUri = await html2pdf().set(opt).from(element).outputPdf('datauristring');
+                // Remove the prefix "data:application/pdf;base64," to get pure base64
+                const base64Content = pdfDataUri.split(',')[1];
+                return base64Content;
+            } catch (err) {
+                console.error("PDF Generation failed:", err);
+                return null;
+            } finally {
+                // Restore visibility
+                if (wasHidden) {
+                    originalEl.classList.add('hidden');
+                }
+            }
+        }
+
         async function sendReportEmail(type, recipients) {
             console.log(`Sending ${type} report to:`, recipients);
 
@@ -6514,10 +6536,6 @@
                         await auth.signInAnonymously();
                     } catch(e) {
                         console.warn("Auto-login for email sending failed:", e);
-                        // If anonymous login is disabled in Console, this will fail.
-                        // We continue anyway to let the Firestore error bubble up if needed, 
-                        // or maybe throw here? 
-                        // Let's not throw yet, maybe public write is allowed? (Unlikely)
                     }
                  } else {
                      console.log('Current user:', auth.currentUser.uid, 'Is Anonymous:', auth.currentUser.isAnonymous);
@@ -6529,14 +6547,25 @@
             const dateStr = new Date().toISOString().split('T')[0];
             const communityName = localStorage.getItem('currentCommunityName') || '西北保全社區';
 
+            // Generate PDF
+            let pdfBase64 = null;
+            try {
+                pdfBase64 = await generateReportPDF(type);
+                if (pdfBase64) {
+                    console.log('PDF generated successfully, size:', pdfBase64.length);
+                }
+            } catch (e) {
+                console.error("Failed to generate PDF", e);
+            }
+
             // Construct Chinese Content
             if (type === 'daily') {
                 subject = `${communityName} - 收支日報表 (${dateStr})`;
                 htmlContent = `
-                    <div style="font-family: Arial, sans-serif;">
+                    <div style="font-family: 'Noto Sans TC', Arial, sans-serif;">
                         <h2 style="color: #333;">${communityName} - 收支日報表</h2>
                         <p>日期: ${dateStr}</p>
-                        <p>請查收今日的財務收支日報表。</p>
+                        <p>請查收今日的財務收支日報表 (如附件)。</p>
                         <p style="color: #666; font-size: 12px;">本郵件由 西北財務系統 自動發送，請勿回覆。</p>
                     </div>
                 `;
@@ -6544,10 +6573,10 @@
                 const monthStr = dateStr.substring(0, 7);
                 subject = `${communityName} - 收支月報表 (${monthStr})`;
                 htmlContent = `
-                    <div style="font-family: Arial, sans-serif;">
+                    <div style="font-family: 'Noto Sans TC', Arial, sans-serif;">
                         <h2 style="color: #333;">${communityName} - 收支月報表</h2>
                         <p>月份: ${monthStr}</p>
-                        <p>請查收本月的財務收支月報表。</p>
+                        <p>請查收本月的財務收支月報表 (如附件)。</p>
                         <p style="color: #666; font-size: 12px;">本郵件由 西北財務系統 自動發送，請勿回覆。</p>
                     </div>
                 `;
@@ -6555,28 +6584,42 @@
                 const yearStr = dateStr.substring(0, 4);
                 subject = `${communityName} - 收支年報表 (${yearStr})`;
                 htmlContent = `
-                    <div style="font-family: Arial, sans-serif;">
+                    <div style="font-family: 'Noto Sans TC', Arial, sans-serif;">
                         <h2 style="color: #333;">${communityName} - 收支年報表</h2>
                         <p>年份: ${yearStr}</p>
-                        <p>請查收本年度的財務收支年報表。</p>
+                        <p>請查收本年度的財務收支年報表 (如附件)。</p>
                         <p style="color: #666; font-size: 12px;">本郵件由 西北財務系統 自動發送，請勿回覆。</p>
                     </div>
                 `;
             }
 
+            const messageData = {
+                subject: subject,
+                html: htmlContent,
+                from: "西北財務系統 <noreply@northwest.com>"
+            };
+
+            // Add attachment if PDF was generated
+            if (pdfBase64) {
+                messageData.attachments = [
+                    {
+                        filename: `${communityName}-收支${type === 'daily' ? '日' : type === 'monthly' ? '月' : '年'}報表.pdf`,
+                        content: pdfBase64,
+                        encoding: 'base64'
+                    }
+                ];
+            } else {
+                htmlContent += '<p style="color: red;">(系統提示: PDF報表產生失敗，請登入系統查看)</p>';
+                messageData.html = htmlContent;
+            }
+
             try {
                 // Try to write to 'mail' collection (Standard Firebase Trigger Email Extension)
-                const docRef = await db.collection('mail').add({
+                await db.collection('mail').add({
                     to: recipients,
-                    message: {
-                        subject: subject,
-                        html: htmlContent,
-                        // Custom Sender Name (if supported by extension config or transport)
-                        from: "西北財務系統 <noreply@northwest.com>"
-                    }
+                    message: messageData
                 });
                 console.log('Email trigger document created successfully');
-                return docRef; // Return reference for tracking
             } catch (e) {
                 console.error('Error sending email:', e);
                 throw e; // Rethrow to let caller handle it (e.g., show alert)
