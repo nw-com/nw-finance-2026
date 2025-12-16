@@ -6326,9 +6326,38 @@
 
             try {
                 // Reuse existing logic but for single recipient
-                // Show loading indicator if possible, or just alert after done
-                await sendReportEmail(type, [email]);
-                alert('已發送請求 (請確認收件夾/垃圾郵件)');
+                alert('正在產生報表並發送，請稍候...');
+                const docRef = await sendReportEmail(type, [email]);
+                
+                // Monitor delivery status
+                // Wait for up to 30 seconds for a result
+                let statusChecked = false;
+                const unsubscribe = docRef.onSnapshot((doc) => {
+                    const data = doc.data();
+                    if (data && data.delivery) {
+                        if (data.delivery.state === 'SUCCESS') {
+                            statusChecked = true;
+                            unsubscribe();
+                            alert('發送成功！(郵件已送達或已轉交給郵件伺服器)');
+                        } else if (data.delivery.state === 'ERROR') {
+                            statusChecked = true;
+                            unsubscribe();
+                            alert('發送失敗: ' + (data.delivery.error || '未知錯誤'));
+                        } else if (data.delivery.state === 'PROCESSING') {
+                            // Still processing
+                            console.log('Email processing...');
+                        }
+                    }
+                });
+
+                // Set a timeout
+                setTimeout(() => {
+                    if (!statusChecked) {
+                        unsubscribe();
+                        alert('發送請求已送出，但系統回應逾時。請稍後檢查收件夾。\n如果持續發生，請確認 Firebase Extension 是否正確安裝。');
+                    }
+                }, 30000);
+
             } catch (e) {
                 console.error(e);
                 let errorMsg = e.message;
@@ -6615,11 +6644,12 @@
 
             try {
                 // Try to write to 'mail' collection (Standard Firebase Trigger Email Extension)
-                await db.collection('mail').add({
+                const docRef = await db.collection('mail').add({
                     to: recipients,
                     message: messageData
                 });
-                console.log('Email trigger document created successfully');
+                console.log('Email trigger document created successfully', docRef.id);
+                return docRef;
             } catch (e) {
                 console.error('Error sending email:', e);
                 throw e; // Rethrow to let caller handle it (e.g., show alert)
