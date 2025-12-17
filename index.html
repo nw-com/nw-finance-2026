@@ -335,7 +335,7 @@
             <div id="subtab-bar" class="h-[10%] bg-white border-b border-gray-200 px-6 flex items-center gap-4"></div>
 
             <!-- R03~R10 10% 列結構，用於與左側對齊 -->
-            <div class="h-[10%] border-b border-gray-100"></div>
+            <div id="secondary-toolbar" class="h-[10%] bg-white border-b border-gray-200 px-6 flex items-center gap-4"></div>
             <div class="h-[10%] border-b border-gray-100"></div>
             <div class="h-[10%] border-b border-gray-100"></div>
             <div class="h-[10%] border-b border-gray-100"></div>
@@ -345,7 +345,7 @@
             <div class="h-[10%]"></div>
 
             <!-- 子分頁內容覆蓋於 R03~R10 區域，保持列高 1:1 對齊 -->
-            <div id="right-content" class="absolute inset-x-0 top-[25%] bottom-0 overflow-auto p-6">
+            <div id="right-content" class="absolute inset-x-0 top-[35%] bottom-0 overflow-auto p-6">
                 <!-- 載入指示器 -->
                 <div id="content-loader" class="hidden absolute inset-0 bg-white/50 flex items-center justify-center z-10">
                     <div class="loader"></div>
@@ -2129,15 +2129,20 @@
         
         function renderSubtabs(tabId) {
             const bar = document.getElementById('subtab-bar');
+            const secondaryBar = document.getElementById('secondary-toolbar');
             const content = document.getElementById('right-content');
             if (!bar) return;
+            
+            // Clear secondary toolbar content
+            if (secondaryBar) secondaryBar.innerHTML = '';
+
             const items = SUBTAB_CONFIG[tabId] || [];
             
             if (items.length === 0) {
                 bar.innerHTML = '';
                 bar.classList.add('hidden');
                 if(content) {
-                    content.classList.remove('top-[20%]');
+                    content.classList.remove('top-[20%]', 'top-[35%]');
                     content.classList.add('top-[10%]');
                 }
                 return;
@@ -2146,7 +2151,14 @@
             bar.classList.remove('hidden');
             if(content) {
                 content.classList.remove('top-[10%]');
-                content.classList.add('top-[20%]');
+                // If reports, we use more space due to secondary toolbar
+                if (tabId === 'reports') {
+                     content.classList.remove('top-[20%]');
+                     content.classList.add('top-[35%]');
+                } else {
+                     content.classList.remove('top-[35%]');
+                     content.classList.add('top-[20%]');
+                }
             }
 
             bar.innerHTML = items.map((label, idx) => {
@@ -2154,8 +2166,8 @@
                 return '<a id="' + id + '" href="#" class="subtab-item h-full flex items-center px-3 text-gray-700 hover:text-red-700 border-b-2 border-transparent">' + label + '</a>';
             }).join('');
 
-            if (tabId === 'reports') {
-                bar.innerHTML += `
+            if (tabId === 'reports' && secondaryBar) {
+                secondaryBar.innerHTML = `
                     <div class="flex items-center gap-2">
                         <h2 id="report-title" class="text-xl font-bold text-gray-700 mr-4 hidden md:block">收支日報表</h2>
                         <input type="date" id="toolbar-daily-filter" class="border rounded px-2 py-1 text-sm text-gray-700 bg-white">
