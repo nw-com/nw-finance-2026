@@ -6656,9 +6656,11 @@
 
             try {
                 // Try to write to 'mail' collection (Standard Firebase Trigger Email Extension)
+                // We add 'uid' so we can query/read it back based on our security rules
                 const docRef = await db.collection('mail').add({
                     to: recipients,
-                    message: messageData
+                    message: messageData,
+                    uid: auth.currentUser ? auth.currentUser.uid : null
                 });
                 console.log('Email trigger document created successfully', docRef.id);
                 return docRef;
