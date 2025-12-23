@@ -1339,6 +1339,25 @@
                             上次備份時間：<span id="last-backup-time-display" class="font-bold text-gray-700">尚無紀錄</span>
                         </p>
                     </div>
+
+                    <div class="mt-6 border rounded-lg p-6 bg-red-50">
+                        <div class="flex items-center gap-3 mb-4 text-red-700">
+                            <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
+                            <h4 class="font-bold text-lg">系統資料重置（歸零）</h4>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-4">
+                            此操作將清空目前社區的全部資料（住戶、銀行帳戶、交易紀錄、各項設定）且無法復原。請先備份再執行。
+                        </p>
+                        <div class="flex flex-col md:flex-row md:items-center gap-4">
+                            <div class="flex items-center gap-2">
+                                <span class="text-gray-700">重置密碼：</span>
+                                <input type="password" id="reset-password-input" class="border rounded px-3 py-2 bg-white" autocomplete="off" inputmode="numeric" maxlength="11">
+                            </div>
+                            <button onclick="resetSystemData()" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors">
+                                立即重置
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -6628,6 +6647,36 @@
             reader.readAsText(file);
         }
 
+        function resetSystemData() {
+            const code = getCurrentCommunityCode();
+            const el = document.getElementById('reset-password-input');
+            const pw = el ? (el.value || '').trim() : '';
+            const now = new Date();
+            const y = now.getFullYear();
+            const m = String(now.getMonth()+1).padStart(2,'0');
+            const d = String(now.getDate()).padStart(2,'0');
+            const expected = `${y}${m}${d}168`;
+            if (pw !== expected) {
+                openAlert('密碼錯誤，重置失敗', '重置失敗', '確定');
+                return;
+            }
+            openConfirm('確定要重置目前社區的所有資料？此操作無法復原。', () => {
+                const keys = [
+                    'transactions',
+                    'bank_accounts',
+                    'buildings',
+                    'residents',
+                    'income_fixed','income_other','income_targets',
+                    'expense_fixed','expense_other','expense_targets'
+                ];
+                keys.forEach(k => lsSet(k + '_' + code, []));
+                localStorage.removeItem('lastBackupTime_' + code);
+                refreshAllUI();
+                updateDashboardStats();
+                openAlert('已完成重置', '完成', '確定');
+            }, '確認重置', '確認');
+        }
+
     </script>
-</body>
+ </body>
 </html> 
