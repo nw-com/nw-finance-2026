@@ -334,6 +334,9 @@
             <!-- R02 子分頁按鈕列 -->
             <div id="subtab-bar" class="h-[10%] bg-white border-b border-gray-200 px-6 flex items-center gap-4"></div>
 
+            <!-- New Column below subtab-bar -->
+            <div class="h-[10%] border-b border-gray-100 bg-white"></div>
+
             <!-- R03~R10 10% 列結構，用於與左側對齊 -->
             <div id="secondary-toolbar" class="h-[10%] bg-white border-b border-gray-200 px-6 flex items-center gap-4"></div>
             <div class="h-[10%] border-b border-gray-100"></div>
@@ -345,7 +348,7 @@
             <div class="h-[10%]"></div>
 
             <!-- 子分頁內容覆蓋於 R03~R10 區域，保持列高 1:1 對齊 -->
-            <div id="right-content" class="absolute inset-x-0 top-[35%] bottom-0 overflow-auto p-6">
+            <div id="right-content" class="absolute inset-x-0 top-[45%] bottom-0 overflow-auto p-6">
                 <!-- 載入指示器 -->
                 <div id="content-loader" class="hidden absolute inset-0 bg-white/50 flex items-center justify-center z-10">
                     <div class="loader"></div>
@@ -815,7 +818,6 @@
                                         <tr style="height: 6mm;">
                                             <td colspan="2" class="border border-gray-300 px-2 py-1 bg-white text-center" style="width: 38mm;">本期管理費收入概況</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white text-center" style="width: 20mm;">金額</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white text-center" style="width: 16mm;">收繳率</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white text-center" style="width: 38mm;">未繳金額明細</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white text-center" style="width: 20mm;">未繳金額</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white text-center" style="width: 38mm;">預繳金額明細</td>
@@ -828,6 +830,13 @@
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                        </tr>
+                                        <tr style="height: 6mm;">
+                                            <td colspan="2" class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                         </tr>
                                         <tr style="height: 6mm;">
@@ -837,20 +846,9 @@
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                         </tr>
                                         <tr style="height: 6mm;">
                                             <td colspan="2" class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
-                                        </tr>
-                                        <tr style="height: 6mm;">
-                                            <td colspan="2" class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
@@ -1020,101 +1018,7 @@
                         </div>
             </div>
 
-            <!-- Report Settings View -->
-            <div id="report-settings-view" class="hidden max-w-4xl mx-auto p-6 space-y-6">
-                <!-- Daily Report Email Settings -->
-                <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-                    <div class="flex justify-between items-center border-b mb-4 pb-2">
-                        <h3 class="text-lg font-bold text-gray-800">日報表Email設定</h3>
-                        <div class="flex items-center gap-2 text-sm text-gray-600">
-                            <span>發送時間:</span>
-                            <input type="time" step="1" id="config-daily-time" class="border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500" onchange="saveReportTimeSettings()">
-                        </div>
-                    </div>
-                    <div class="flex gap-2 mb-4">
-                        <input type="email" id="input-daily-email" placeholder="輸入Email地址" class="flex-1 px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <button onclick="addReportEmail('daily')" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">新增</button>
-                    </div>
-                    <div class="bg-gray-50 rounded border border-gray-200 p-2">
-                        <ul id="list-daily-email" class="divide-y divide-gray-200">
-                            <!-- Email List Items -->
-                        </ul>
-                    </div>
-                </div>
 
-                <!-- Monthly Report Email Settings -->
-                <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-                    <div class="flex justify-between items-center border-b mb-4 pb-2">
-                        <h3 class="text-lg font-bold text-gray-800">月報表Email設定</h3>
-                        <div class="flex items-center gap-2 text-sm text-gray-600">
-                            <span>每月</span>
-                            <select id="config-monthly-day" class="border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500" onchange="saveReportTimeSettings()">
-                                <option value="L">最後一天</option>
-                                <option value="1">1日</option>
-                                <option value="2">2日</option>
-                                <option value="3">3日</option>
-                                <option value="4">4日</option>
-                                <option value="5">5日</option>
-                                <option value="10">10日</option>
-                                <option value="15">15日</option>
-                                <option value="20">20日</option>
-                                <option value="25">25日</option>
-                            </select>
-                            <input type="time" step="1" id="config-monthly-time" class="border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500" onchange="saveReportTimeSettings()">
-                        </div>
-                    </div>
-                    <div class="flex gap-2 mb-4">
-                        <input type="email" id="input-monthly-email" placeholder="輸入Email地址" class="flex-1 px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <button onclick="addReportEmail('monthly')" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">新增</button>
-                    </div>
-                    <div class="bg-gray-50 rounded border border-gray-200 p-2">
-                        <ul id="list-monthly-email" class="divide-y divide-gray-200">
-                            <!-- Email List Items -->
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Yearly Report Email Settings -->
-                <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-                    <div class="flex justify-between items-center border-b mb-4 pb-2">
-                        <h3 class="text-lg font-bold text-gray-800">年報表Email設定</h3>
-                        <div class="flex items-center gap-2 text-sm text-gray-600">
-                            <span>每年</span>
-                            <select id="config-yearly-month" class="border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500" onchange="saveReportTimeSettings()">
-                                <option value="1">1月</option>
-                                <option value="2">2月</option>
-                                <option value="3">3月</option>
-                                <option value="4">4月</option>
-                                <option value="5">5月</option>
-                                <option value="6">6月</option>
-                                <option value="7">7月</option>
-                                <option value="8">8月</option>
-                                <option value="9">9月</option>
-                                <option value="10">10月</option>
-                                <option value="11">11月</option>
-                                <option value="12">12月</option>
-                            </select>
-                            <select id="config-yearly-day" class="border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500" onchange="saveReportTimeSettings()">
-                                <option value="L">最後一天</option>
-                                <option value="1">1日</option>
-                                <option value="15">15日</option>
-                                <option value="30">30日</option>
-                                <option value="31">31日</option>
-                            </select>
-                            <input type="time" step="1" id="config-yearly-time" class="border rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500" onchange="saveReportTimeSettings()">
-                        </div>
-                    </div>
-                    <div class="flex gap-2 mb-4">
-                        <input type="email" id="input-yearly-email" placeholder="輸入Email地址" class="flex-1 px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <button onclick="addReportEmail('yearly')" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">新增</button>
-                    </div>
-                    <div class="bg-gray-50 rounded border border-gray-200 p-2">
-                        <ul id="list-yearly-email" class="divide-y divide-gray-200">
-                            <!-- Email List Items -->
-                        </ul>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <div id="view-bank" class="content-view hidden">
@@ -1344,12 +1248,100 @@
                     </div>
 
                 <div id="view-settings" class="content-view hidden">
-                    <div class="bg-white p-8 rounded-lg shadow-sm text-center">
-                        <i class="fa-solid fa-gear text-4xl text-gray-300 mb-4"></i>
-                        <h3 class="text-xl font-bold text-gray-700">系統設定</h3>
-                        <p class="text-gray-500 mt-2">此處將顯示使用者偏好與系統參數。</p>
+                    <!-- General Settings Sub-view -->
+                    <div id="settings-general-view" class="space-y-6">
+                        <div class="bg-white p-8 rounded-lg shadow-sm text-center">
+                            <i class="fa-solid fa-gear text-4xl text-gray-300 mb-4"></i>
+                            <h3 class="text-xl font-bold text-gray-700">系統設定</h3>
+                            <p class="text-gray-500 mt-2">此處將顯示使用者偏好與系統參數。</p>
+                        </div>
+                    </div>
+
+                    <!-- Backup/Restore Sub-view -->
+                    <div id="settings-backup-view" class="space-y-6 hidden">
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                            <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">資料庫備份與還原</h3>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <!-- Backup Section -->
+                                <div class="border rounded-lg p-6 bg-gray-50">
+                                    <div class="flex items-center gap-3 mb-4 text-blue-700">
+                                        <i class="fa-solid fa-download text-2xl"></i>
+                                        <h4 class="font-bold text-lg">備份 (匯出)</h4>
+                                    </div>
+                                    <p class="text-sm text-gray-600 mb-4">
+                                        將目前的系統資料 (包含住戶、交易紀錄、銀行帳戶等) 下載為 JSON 檔案保存至本機。
+                                    </p>
+                                    <button onclick="backupSystem()" class="w-full py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+                                        <i class="fa-solid fa-file-export mr-2"></i> 下載備份檔案
+                                    </button>
+                                </div>
+
+                                <!-- Restore Section -->
+                                <div class="border rounded-lg p-6 bg-gray-50">
+                                    <div class="flex items-center gap-3 mb-4 text-green-700">
+                                        <i class="fa-solid fa-upload text-2xl"></i>
+                                        <h4 class="font-bold text-lg">還原 (匯入)</h4>
+                                    </div>
+                                    <p class="text-sm text-gray-600 mb-4">
+                                        從本機選取先前備份的 JSON 檔案進行還原。
+                                        <span class="text-red-500 font-bold block mt-1">注意：此動作將覆蓋目前的系統資料！</span>
+                                    </p>
+                                    <input type="file" id="backup-file-input" accept=".json" class="hidden" onchange="restoreSystem(this)">
+                            <button onclick="document.getElementById('backup-file-input').click()" class="w-full py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors">
+                                <i class="fa-solid fa-file-import mr-2"></i> 選取備份檔案還原
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Scheduled Backup Settings -->
+                    <div class="mt-6 border rounded-lg p-6 bg-gray-50">
+                        <div class="flex items-center gap-3 mb-4 text-purple-700">
+                            <i class="fa-solid fa-clock text-2xl"></i>
+                            <h4 class="font-bold text-lg">定時自動備份下載</h4>
+                        </div>
+                        <div class="flex flex-col md:flex-row md:items-center gap-4">
+                            <label class="flex items-center gap-2 cursor-pointer select-none">
+                                <input type="checkbox" id="auto-backup-enabled" class="w-5 h-5 text-purple-600" onchange="saveAutoBackupSettings()">
+                                <span class="text-gray-700 font-bold">啟用自動備份</span>
+                            </label>
+                             <div class="flex items-center gap-2">
+                                 <span class="text-gray-600">備份頻率：</span>
+                                 <select id="auto-backup-frequency" class="border rounded px-3 py-2 bg-white" onchange="saveAutoBackupSettings()">
+                                     <option value="daily">每天</option>
+                                     <option value="weekly">每週</option>
+                                     <option value="monthly">每月</option>
+                                 </select>
+                             </div>
+                             <div class="flex items-center gap-2">
+                                 <span class="text-gray-600">執行時間：</span>
+                                 <input type="time" id="auto-backup-time" class="border rounded px-3 py-2 bg-white" step="60" onchange="saveAutoBackupSettings()">
+                             </div>
+                            <div id="auto-backup-weekday-field" class="flex items-center gap-2 hidden">
+                                <span class="text-gray-600">星期：</span>
+                                <select id="auto-backup-weekday" class="border rounded px-3 py-2 bg-white" onchange="saveAutoBackupSettings()">
+                                    <option value="1">週一</option>
+                                    <option value="2">週二</option>
+                                    <option value="3">週三</option>
+                                    <option value="4">週四</option>
+                                    <option value="5">週五</option>
+                                    <option value="6">週六</option>
+                                    <option value="7">週日</option>
+                                </select>
+                            </div>
+                            <div id="auto-backup-monthday-field" class="flex items-center gap-2 hidden">
+                                <span class="text-gray-600">日期：</span>
+                                <select id="auto-backup-monthday" class="border rounded px-3 py-2 bg-white" onchange="saveAutoBackupSettings()"></select>
+                            </div>
+                         </div>
+                        <p class="text-sm text-gray-500 mt-2 leading-relaxed">
+                            啟用後，系統將會在您設定的時間間隔到達時，自動下載備份檔案。<br>
+                            上次備份時間：<span id="last-backup-time-display" class="font-bold text-gray-700">尚無紀錄</span>
+                        </p>
                     </div>
                 </div>
+            </div>
+        </div>
             </div>
         </main>
     </div>
@@ -1939,7 +1931,7 @@
             'expense': ['支出明細','支出設定'],
             'bank': [], // Initial empty, will be populated by updateBankSubtabs
             'residents': ['住戶明細','管理費明細','停車費明細','其他明細','住戶設定'],
-            'reports': ['收支日報表', '收支月報表', '收支年報表', '報表設定'],
+            'reports': ['收支日報表', '收支月報表', '收支年報表'],
             'settings': ['一般設定','備份還原']
         };
 
@@ -2085,6 +2077,11 @@
             // Restore last visited tab
             const lastTab = localStorage.getItem('lastVisitedTab') || 'dashboard';
             switchTab(lastTab);
+            
+            // Check Auto Backup
+            loadAutoBackupSettings(); // Load UI state if settings tab is open
+            checkBackupStatus();
+            setInterval(checkBackupStatus, 60 * 1000);
         }
 
         // 登出/離開主程式
@@ -2473,28 +2470,24 @@
                 const vDaily = document.getElementById('report-daily-view');
                 const vMonthly = document.getElementById('report-monthly-view');
                 const vYearly = document.getElementById('report-yearly-view');
-                const vSettings = document.getElementById('report-settings-view');
                 const tDaily = document.getElementById('toolbar-daily-filter');
                 const tMonthly = document.getElementById('toolbar-monthly-filter');
                 const tYearly = document.getElementById('toolbar-yearly-filter');
                 const reportTitle = document.getElementById('report-title');
-                const btnPrint = document.getElementById('btn-print-report');
                 const secondaryToolbar = document.getElementById('secondary-toolbar');
 
                 if (vDaily && vMonthly && vYearly) {
                     vDaily.classList.toggle('hidden', idx !== 0);
                     vMonthly.classList.toggle('hidden', idx !== 1);
                     vYearly.classList.toggle('hidden', idx !== 2);
-                    if (vSettings) vSettings.classList.toggle('hidden', idx !== 3);
                     
                     if (tDaily) tDaily.classList.toggle('hidden', idx !== 0);
                     if (tMonthly) tMonthly.classList.toggle('hidden', idx !== 1);
                     if (tYearly) tYearly.classList.toggle('hidden', idx !== 2);
-                    if (btnPrint) btnPrint.classList.toggle('hidden', idx === 3);
 
-                    // Toggle secondary toolbar for Report Settings (idx === 3)
+                    // Secondary toolbar always visible for report tabs
                     if (secondaryToolbar) {
-                        secondaryToolbar.classList.toggle('hidden', idx === 3);
+                        secondaryToolbar.classList.remove('hidden');
                     }
 
                     if (idx === 0) {
@@ -2506,10 +2499,16 @@
                     } else if (idx === 2) {
                         if(reportTitle) reportTitle.textContent = '收支年報表';
                         renderYearlyReport();
-                    } else if (idx === 3) {
-                        if(reportTitle) reportTitle.textContent = '報表Email設定';
-                        renderReportEmailSettings();
                     }
+                }
+            } else if (tab === 'settings') {
+                const vGeneral = document.getElementById('settings-general-view');
+                const vBackup = document.getElementById('settings-backup-view');
+                
+                if (vGeneral && vBackup) {
+                    vGeneral.classList.toggle('hidden', idx !== 0);
+                    vBackup.classList.toggle('hidden', idx !== 1);
+                    if (idx === 1) loadAutoBackupSettings();
                 }
             }
         }
@@ -6186,339 +6185,21 @@
         // Report Email Settings Logic
         // ==========================================
 
-        function getReportEmailSettings() {
-            const defaultSettings = {
-                daily: { emails: [], time: '08:00:00' },
-                monthly: { emails: [], day: 'L', time: '08:00:00' },
-                yearly: { emails: [], month: '12', day: 'L', time: '08:00:00' }
-            };
-            try {
-                const communityCode = getCurrentCommunityCode();
-                const saved = localStorage.getItem(`reportEmailSettings_${communityCode}`);
-                if (!saved) return defaultSettings;
 
-                const data = JSON.parse(saved);
-                
-                // Migration check: if old format (arrays directly)
-                if (Array.isArray(data.daily)) {
-                    return {
-                        daily: { emails: data.daily || [], time: '08:00:00' },
-                        monthly: { emails: data.monthly || [], day: 'L', time: '08:00:00' },
-                        yearly: { emails: data.yearly || [], month: '12', day: 'L', time: '08:00:00' }
-                    };
-                }
 
-                // Merge with default to ensure all fields exist
-                return {
-                    daily: { ...defaultSettings.daily, ...data.daily },
-                    monthly: { ...defaultSettings.monthly, ...data.monthly },
-                    yearly: { ...defaultSettings.yearly, ...data.yearly }
-                };
-            } catch (e) {
-                console.error('Error loading report email settings:', e);
-                return defaultSettings;
-            }
-        }
 
-        function saveReportEmailSettings(settings) {
-            try {
-                const communityCode = getCurrentCommunityCode();
-                localStorage.setItem(`reportEmailSettings_${communityCode}`, JSON.stringify(settings));
-            } catch (e) {
-                console.error('Error saving report email settings:', e);
-                alert('儲存設定失敗');
-            }
-        }
+        // --- Email Provider Settings (GAS vs Firebase) ---
 
-        function renderReportEmailSettings() {
-            const settings = getReportEmailSettings();
-            
-            // Render Email Lists
-            renderReportEmailList('daily', settings.daily.emails);
-            renderReportEmailList('monthly', settings.monthly.emails);
-            renderReportEmailList('yearly', settings.yearly.emails);
 
-            // Render Time Settings
-            const dailyTimeEl = document.getElementById('config-daily-time');
-            if (dailyTimeEl) dailyTimeEl.value = settings.daily.time;
 
-            const monthlyDayEl = document.getElementById('config-monthly-day');
-            const monthlyTimeEl = document.getElementById('config-monthly-time');
-            if (monthlyDayEl) monthlyDayEl.value = settings.monthly.day;
-            if (monthlyTimeEl) monthlyTimeEl.value = settings.monthly.time;
 
-            const yearlyMonthEl = document.getElementById('config-yearly-month');
-            const yearlyDayEl = document.getElementById('config-yearly-day');
-            const yearlyTimeEl = document.getElementById('config-yearly-time');
-            if (yearlyMonthEl) yearlyMonthEl.value = settings.yearly.month;
-            if (yearlyDayEl) yearlyDayEl.value = settings.yearly.day;
-            if (yearlyTimeEl) yearlyTimeEl.value = settings.yearly.time;
-        }
 
-        function saveReportTimeSettings() {
-            const settings = getReportEmailSettings();
-            const communityCode = getCurrentCommunityCode();
-            const todayStr = new Date().toISOString().split('T')[0];
 
-            const dailyTimeEl = document.getElementById('config-daily-time');
-            if (dailyTimeEl) {
-                // Check if time changed
-                if (settings.daily.time !== dailyTimeEl.value) {
-                    // Reset sent flag for testing
-                    localStorage.removeItem(`lastSentReport_daily_${communityCode}_${todayStr}`);
-                }
-                settings.daily.time = dailyTimeEl.value;
-            }
 
-            const monthlyDayEl = document.getElementById('config-monthly-day');
-            const monthlyTimeEl = document.getElementById('config-monthly-time');
-            if (monthlyDayEl) settings.monthly.day = monthlyDayEl.value;
-            if (monthlyTimeEl) {
-                if (settings.monthly.time !== monthlyTimeEl.value) {
-                     localStorage.removeItem(`lastSentReport_monthly_${communityCode}_${todayStr}`);
-                }
-                settings.monthly.time = monthlyTimeEl.value;
-            }
 
-            const yearlyMonthEl = document.getElementById('config-yearly-month');
-            const yearlyDayEl = document.getElementById('config-yearly-day');
-            const yearlyTimeEl = document.getElementById('config-yearly-time');
-            if (yearlyMonthEl) settings.yearly.month = yearlyMonthEl.value;
-            if (yearlyDayEl) settings.yearly.day = yearlyDayEl.value;
-            if (yearlyTimeEl) {
-                 if (settings.yearly.time !== yearlyTimeEl.value) {
-                     localStorage.removeItem(`lastSentReport_yearly_${communityCode}_${todayStr}`);
-                }
-                settings.yearly.time = yearlyTimeEl.value;
-            }
-
-            saveReportEmailSettings(settings);
-            
-            // Immediately check if we should send (in case the time matches now)
-            checkAndSendReportEmails();
-
-            // Optional: Show a small toast or log
-            console.log('Report time settings saved');
-            alert('時間設定已儲存 (已重置今日發送狀態，若時間符合將重新發送)');
-        }
-
-        function renderReportEmailList(type, list) {
-            const listEl = document.getElementById(`list-${type}-email`);
-            if (!listEl) return;
-            
-            if (!list || list.length === 0) {
-                listEl.innerHTML = '<li class="px-4 py-2 text-gray-500 text-center text-sm">尚無Email</li>';
-                return;
-            }
-            
-            listEl.innerHTML = list.map((email, index) => `
-                <li class="px-4 py-2 flex justify-between items-center group hover:bg-gray-100">
-                    <span class="text-gray-700">${email}</span>
-                    <div class="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                         <button onclick="triggerSingleReportEmail('${type}', '${email}')" class="text-blue-600 hover:text-blue-800 text-xs border border-blue-600 rounded px-2 py-1 hover:bg-blue-50 transition-colors">
-                            發送
-                        </button>
-                        <button onclick="deleteReportEmail('${type}', ${index})" class="text-red-500 hover:text-red-700">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
-                    </div>
-                </li>
-            `).join('');
-        }
-
-        async function triggerSingleReportEmail(type, email) {
-            if (!confirm(`確定要立即發送 ${type === 'daily' ? '日報表' : type === 'monthly' ? '月報表' : '年報表'} 給 ${email} 嗎？`)) {
-                return;
-            }
-            
-            if (!db) {
-                alert('Firebase Firestore 尚未初始化，無法發送郵件。請確認網路連線或稍後再試。');
-                return;
-            }
-
-            try {
-                // Reuse existing logic but for single recipient
-                alert('正在產生報表並發送，請稍候...');
-                const docRef = await sendReportEmail(type, [email]);
-                
-                // Monitor delivery status
-                // Wait for up to 30 seconds for a result
-                let statusChecked = false;
-                const unsubscribe = docRef.onSnapshot((doc) => {
-                    const data = doc.data();
-                    if (data && data.delivery) {
-                        if (data.delivery.state === 'SUCCESS') {
-                            statusChecked = true;
-                            unsubscribe();
-                            alert('發送成功！(郵件已送達或已轉交給郵件伺服器)');
-                        } else if (data.delivery.state === 'ERROR') {
-                            statusChecked = true;
-                            unsubscribe();
-                            alert('發送失敗: ' + (data.delivery.error || '未知錯誤'));
-                        } else if (data.delivery.state === 'PROCESSING') {
-                            // Still processing
-                            console.log('Email processing...');
-                        }
-                    }
-                });
-
-                // Set a timeout
-                setTimeout(() => {
-                    if (!statusChecked) {
-                        unsubscribe();
-                        alert('發送請求已送出，但系統回應逾時。請稍後檢查收件夾。\n如果持續發生，請確認 Firebase Extension 是否正確安裝。');
-                    }
-                }, 30000);
-
-            } catch (e) {
-                console.error(e);
-                let errorMsg = e.message;
-                if (e.code === 'permission-denied') {
-                    errorMsg = `權限不足 (Permission Denied)。
-可能原因：
-1. Firebase Console 未啟用匿名登入 (Authentication > Sign-in method > Anonymous)。
-2. Firestore Rules 未開放寫入權限 (Firestore Database > Rules)。
-請檢查 Console 設定。`;
-                }
-                alert('發送失敗: ' + errorMsg);
-            }
-        }
-
-        function addReportEmail(type) {
-            const inputEl = document.getElementById(`input-${type}-email`);
-            if (!inputEl) return;
-            
-            const email = inputEl.value.trim();
-            if (!email) {
-                alert('請輸入Email地址');
-                return;
-            }
-            
-            // Simple email validation
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                alert('請輸入有效的Email格式');
-                return;
-            }
-            
-            const settings = getReportEmailSettings();
-            if (settings[type].emails.includes(email)) {
-                alert('此Email已存在');
-                return;
-            }
-            
-            settings[type].emails.push(email);
-            saveReportEmailSettings(settings);
-            
-            inputEl.value = ''; // Clear input
-            renderReportEmailList(type, settings[type].emails);
-        }
-
-        function deleteReportEmail(type, index) {
-            openConfirm('確定要刪除此Email嗎？', () => {
-                const settings = getReportEmailSettings();
-                settings[type].emails.splice(index, 1);
-                saveReportEmailSettings(settings);
-                renderReportEmailList(type, settings[type].emails);
-            });
-        }
-
-        // ==========================================
-        // Automated Email Sending Logic (Client-Side Trigger)
-        // ==========================================
-        
-        async function checkAndSendReportEmails() {
-            if (!db) {
-                 console.log('Skipping report check: Firestore not initialized');
-                 return; 
-            }
-            
-            const settings = getReportEmailSettings();
-            const now = new Date();
-            const timeStr = now.toTimeString().split(' ')[0]; // "HH:MM:SS"
-            const currentDay = now.getDate();
-            const currentMonth = now.getMonth() + 1;
-            const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-            const todayStr = now.toISOString().split('T')[0];
-            const communityCode = getCurrentCommunityCode();
-
-            // Helper to check time (within same minute)
-            const isTimeMatch = (targetTime) => {
-                if (!targetTime) return false;
-                // Compare HH:MM
-                return targetTime.substring(0, 5) === timeStr.substring(0, 5);
-            };
-
-            // 1. Daily Report
-            if (settings.daily.emails.length > 0) {
-                if (isTimeMatch(settings.daily.time)) {
-                    const key = `lastSentReport_daily_${communityCode}_${todayStr}`;
-                    if (!localStorage.getItem(key)) {
-                        try {
-                            console.log('Triggering daily report email...');
-                            await sendReportEmail('daily', settings.daily.emails);
-                            localStorage.setItem(key, 'true');
-                        } catch (e) {
-                            console.error('Failed to send daily report:', e);
-                        }
-                    } else {
-                        console.log('Daily report already sent today');
-                    }
-                }
-            }
-
-            // 2. Monthly Report
-            if (settings.monthly.emails.length > 0) {
-                 if (isTimeMatch(settings.monthly.time)) {
-                    let isDayMatch = false;
-                    if (settings.monthly.day === 'L') {
-                        isDayMatch = (currentDay === lastDayOfMonth);
-                    } else {
-                        isDayMatch = (currentDay === parseInt(settings.monthly.day));
-                    }
-
-                    if (isDayMatch) {
-                        const key = `lastSentReport_monthly_${communityCode}_${todayStr}`;
-                        if (!localStorage.getItem(key)) {
-                            try {
-                                await sendReportEmail('monthly', settings.monthly.emails);
-                                localStorage.setItem(key, 'true');
-                            } catch (e) {
-                                console.error('Failed to send monthly report:', e);
-                            }
-                        }
-                    }
-                }
-            }
-
-            // 3. Yearly Report
-            if (settings.yearly.emails.length > 0) {
-                if (isTimeMatch(settings.yearly.time)) {
-                    let isMonthMatch = (currentMonth === parseInt(settings.yearly.month));
-                    let isDayMatch = false;
-                    if (settings.yearly.day === 'L') {
-                        isDayMatch = (currentDay === lastDayOfMonth);
-                    } else {
-                        isDayMatch = (currentDay === parseInt(settings.yearly.day));
-                    }
-
-                    if (isMonthMatch && isDayMatch) {
-                        const key = `lastSentReport_yearly_${communityCode}_${todayStr}`;
-                        if (!localStorage.getItem(key)) {
-                            try {
-                                await sendReportEmail('yearly', settings.yearly.emails);
-                                localStorage.setItem(key, 'true');
-                            } catch (e) {
-                                console.error('Failed to send yearly report:', e);
-                            }
-                        }
-                    }
-                }
-            }
-        }
 
         async function generateReportPDF(type) {
-            console.log(`Generating PDF for ${type}...`);
+            return null;
             const viewId = 'report-' + type + '-view';
             const originalEl = document.getElementById(viewId);
             if (!originalEl) return null;
@@ -6567,10 +6248,19 @@
         }
 
         async function sendReportEmail(type, recipients) {
-            console.log(`Sending ${type} report to:`, recipients);
+            return null;
 
-            // Ensure Auth (Anonymous) for Firestore Write Permissions
-            if (auth) {
+            const providerSettings = getEmailProviderSettings();
+            const useGas = providerSettings.provider === 'gas';
+            const gasUrl = providerSettings.gasUrl;
+
+            if (useGas && !gasUrl) {
+                alert('您已選擇 Google Apps Script 發送郵件，但尚未設定 Web App URL。請至報表設定中設定。');
+                return;
+            }
+
+            // Ensure Auth (Anonymous) for Firestore Write Permissions (Only needed for Firebase provider)
+            if (!useGas && auth) {
                  if (!auth.currentUser) {
                     try {
                         console.log('Attempting auto-login before sending email...');
@@ -6611,70 +6301,333 @@
                     </div>
                 `;
             } else if (type === 'monthly') {
-                const monthStr = dateStr.substring(0, 7);
-                subject = `${communityName} - 收支月報表 (${monthStr})`;
+                subject = `${communityName} - 收支月報表 (${dateStr.substring(0, 7)})`;
                 htmlContent = `
                     <div style="font-family: 'Noto Sans TC', Arial, sans-serif;">
                         <h2 style="color: #333;">${communityName} - 收支月報表</h2>
-                        <p>月份: ${monthStr}</p>
+                        <p>月份: ${dateStr.substring(0, 7)}</p>
                         <p>請查收本月的財務收支月報表 (如附件)。</p>
                         <p style="color: #666; font-size: 12px;">本郵件由 西北財務系統 自動發送，請勿回覆。</p>
                     </div>
                 `;
             } else if (type === 'yearly') {
-                const yearStr = dateStr.substring(0, 4);
-                subject = `${communityName} - 收支年報表 (${yearStr})`;
+                subject = `${communityName} - 收支年報表 (${dateStr.substring(0, 4)})`;
                 htmlContent = `
                     <div style="font-family: 'Noto Sans TC', Arial, sans-serif;">
                         <h2 style="color: #333;">${communityName} - 收支年報表</h2>
-                        <p>年份: ${yearStr}</p>
+                        <p>年份: ${dateStr.substring(0, 4)}</p>
                         <p>請查收本年度的財務收支年報表 (如附件)。</p>
                         <p style="color: #666; font-size: 12px;">本郵件由 西北財務系統 自動發送，請勿回覆。</p>
                     </div>
                 `;
             }
 
-            const messageData = {
-                subject: subject,
-                html: htmlContent,
-                from: "西北財務系統 <noreply@northwest.com>"
-            };
+            // --- Send via GAS ---
+            if (useGas) {
+                const payload = {
+                    to: recipients.join(','),
+                    subject: subject,
+                    htmlBody: htmlContent,
+                    attachments: pdfBase64 ? [{
+                        fileName: `Report_${type}_${dateStr}.pdf`,
+                        mimeType: 'application/pdf',
+                        contentBase64: pdfBase64
+                    }] : []
+                };
 
-            // Add attachment if PDF was generated
-            if (pdfBase64) {
-                messageData.attachments = [
-                    {
-                        filename: `${communityName}-收支${type === 'daily' ? '日' : type === 'monthly' ? '月' : '年'}報表.pdf`,
-                        content: pdfBase64,
-                        encoding: 'base64'
+                try {
+                    // Using no-cors because GAS Web Apps usually don't support CORS preflight for complex requests
+                    // unless handled very specifically.
+                    // However, for POST with text/plain (which is default for fetch if not specified), it might work.
+                    // But we are sending JSON.
+                    // To make it work reliably cross-origin, we often use the form-submission hack or text/plain.
+                    // Let's try standard POST first. If CORS fails, we might need to advise user or use no-cors.
+                    
+                    // Actually, modern GAS Web Apps DO support CORS if we return ContentService.createTextOutput().
+                    // But we must use 'text/plain' content type for the request to avoid preflight if possible, 
+                    // OR rely on GAS handling OPTIONS (which it doesn't automatically).
+                    // The safest way for GAS is usually:
+                    // method: 'POST', body: JSON.stringify(payload) (content-type will be text/plain by default in some envs or we force it)
+                    
+                    const response = await fetch(gasUrl, {
+                        method: 'POST',
+                        body: JSON.stringify(payload)
+                        // Do NOT set Content-Type: application/json to avoid preflight if possible, 
+                        // but GAS requires us to parse it. 
+                        // The GAS script I wrote uses JSON.parse(e.postData.contents).
+                    });
+
+                    // If opaque response (no-cors), we can't check status.
+                    // If normal response, we check it.
+                    if (response.ok || response.type === 'opaque') {
+                         alert(`報表 (${type}) 發送請求已送出 (GAS)。`);
+                    } else {
+                         const errText = await response.text();
+                         alert('GAS 發送失敗: ' + errText);
                     }
-                ];
-            } else {
-                htmlContent += '<p style="color: red;">(系統提示: PDF報表產生失敗，請登入系統查看)</p>';
-                messageData.html = htmlContent;
+                } catch (e) {
+                    console.error("GAS Send Error:", e);
+                    alert('GAS 發送發生錯誤 (請檢查 URL 或 網路): ' + e.message);
+                }
+                return;
             }
 
+            // --- Send via Firebase Extension ---
             try {
-                // Try to write to 'mail' collection (Standard Firebase Trigger Email Extension)
-                // We add 'uid' so we can query/read it back based on our security rules
-                const docRef = await db.collection('mail').add({
+                const mailCollection = db.collection('mail');
+                const docRef = await mailCollection.add({
                     to: recipients,
-                    message: messageData,
-                    uid: auth.currentUser ? auth.currentUser.uid : null
+                    message: {
+                        subject: subject,
+                        html: htmlContent,
+                        attachments: pdfBase64 ? [{
+                            filename: `Report_${type}_${dateStr}.pdf`,
+                            content: pdfBase64, // Firebase Extension expects base64 string (without header) for 'content'
+                            encoding: 'base64'  // or just 'content' with base64 string works for some versions
+                        }] : []
+                    },
+                    uid: auth.currentUser ? auth.currentUser.uid : 'anonymous',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
-                console.log('Email trigger document created successfully', docRef.id);
+
+                console.log("Email document written with ID: ", docRef.id);
                 return docRef;
-            } catch (e) {
-                console.error('Error sending email:', e);
-                throw e; // Rethrow to let caller handle it (e.g., show alert)
+
+            } catch (error) {
+                console.error("Error adding document: ", error);
+                throw error;
             }
         }
 
-        // Start the scheduler
-        setInterval(checkAndSendReportEmails, 60000); // Check every minute
-        // Initial check
-        setTimeout(checkAndSendReportEmails, 5000);
+
+
+        // ==========================================
+        // 系統備份與還原功能
+        // ==========================================
+        
+        // Auto Backup Settings Logic
+        function saveAutoBackupSettings() {
+            const enabled = document.getElementById('auto-backup-enabled').checked;
+            const freq = document.getElementById('auto-backup-frequency').value;
+            const timeVal = document.getElementById('auto-backup-time') ? document.getElementById('auto-backup-time').value : '';
+            const code = getCurrentCommunityCode();
+            const suffix = code ? '_' + code : '';
+            localStorage.setItem('autoBackupEnabled' + suffix, enabled);
+            localStorage.setItem('autoBackupFrequency' + suffix, freq);
+            if (timeVal) localStorage.setItem('autoBackupTime' + suffix, timeVal);
+            const elWeek = document.getElementById('auto-backup-weekday');
+            const elMonthDay = document.getElementById('auto-backup-monthday');
+            if (elWeek) localStorage.setItem('autoBackupWeekday' + suffix, elWeek.value || '1');
+            if (elMonthDay) localStorage.setItem('autoBackupMonthday' + suffix, elMonthDay.value || '1');
+            updateAutoBackupFieldsVisibility(freq);
+        }
+
+        function loadAutoBackupSettings() {
+            const code = getCurrentCommunityCode();
+            const suffix = code ? '_' + code : '';
+            const enabled = localStorage.getItem('autoBackupEnabled' + suffix) === 'true';
+            const freq = localStorage.getItem('autoBackupFrequency' + suffix) || 'weekly';
+            const last = localStorage.getItem('lastBackupTime' + suffix);
+            const timeVal = localStorage.getItem('autoBackupTime' + suffix) || '02:00';
+            const weekVal = localStorage.getItem('autoBackupWeekday' + suffix) || '1';
+            const monthDayVal = localStorage.getItem('autoBackupMonthday' + suffix) || '1';
+
+            const elEnabled = document.getElementById('auto-backup-enabled');
+            const elFreq = document.getElementById('auto-backup-frequency');
+            const elLast = document.getElementById('last-backup-time-display');
+            const elTime = document.getElementById('auto-backup-time');
+            const elWeek = document.getElementById('auto-backup-weekday');
+            const elMonthDay = document.getElementById('auto-backup-monthday');
+
+            if(elEnabled) elEnabled.checked = enabled;
+            if(elFreq) elFreq.value = freq;
+            if(elTime && !elTime.value) elTime.value = timeVal;
+            if (elWeek) elWeek.value = weekVal;
+            if (elMonthDay) {
+                if (elMonthDay.options.length === 0) {
+                    for (let d=1; d<=31; d++) {
+                        const opt = document.createElement('option');
+                        opt.value = String(d);
+                        opt.textContent = String(d) + ' 日';
+                        elMonthDay.appendChild(opt);
+                    }
+                }
+                elMonthDay.value = monthDayVal;
+            }
+            if(elLast) elLast.textContent = last ? new Date(last).toLocaleString('zh-TW', {
+                year: 'numeric', month: '2-digit', day: '2-digit', 
+                hour: '2-digit', minute: '2-digit', hour12: false
+            }) : '尚無紀錄';
+            updateAutoBackupFieldsVisibility(freq);
+        }
+
+        function updateAutoBackupFieldsVisibility(freq) {
+            const f = freq || (document.getElementById('auto-backup-frequency') ? document.getElementById('auto-backup-frequency').value : 'weekly');
+            const weekField = document.getElementById('auto-backup-weekday-field');
+            const monthField = document.getElementById('auto-backup-monthday-field');
+            if (weekField) weekField.classList.toggle('hidden', f !== 'weekly');
+            if (monthField) monthField.classList.toggle('hidden', f !== 'monthly');
+        }
+
+        function checkBackupStatus() {
+            const code = getCurrentCommunityCode();
+            const suffix = code ? '_' + code : '';
+            const enabled = localStorage.getItem('autoBackupEnabled' + suffix) === 'true';
+            if (!enabled) return;
+
+            const freq = localStorage.getItem('autoBackupFrequency' + suffix) || 'weekly';
+            const last = localStorage.getItem('lastBackupTime' + suffix);
+            const timeStr = localStorage.getItem('autoBackupTime' + suffix) || '02:00';
+            const weekdayStr = localStorage.getItem('autoBackupWeekday' + suffix) || '1';
+            const monthdayStr = localStorage.getItem('autoBackupMonthday' + suffix) || '1';
+            const parts = (timeStr||'02:00').split(':');
+            const hh = parseInt(parts[0]||'2');
+            const mm = parseInt(parts[1]||'0');
+            const now = new Date();
+            const todayScheduled = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hh, mm, 0, 0);
+            const weekday = parseInt(weekdayStr||'1');
+            const monthday = parseInt(monthdayStr||'1');
+            const jsDay = now.getDay(); // 0 Sunday .. 6 Saturday
+            const todayWeekday = (jsDay === 0) ? 7 : jsDay; // 1..7, Monday..Sunday
+
+            if (!last) {
+                if (freq === 'daily') {
+                    if (now >= todayScheduled) backupSystem();
+                } else if (freq === 'weekly') {
+                    if (todayWeekday === weekday && now >= todayScheduled) backupSystem();
+                } else if (freq === 'monthly') {
+                    const daysInMonth = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
+                    const targetDay = Math.min(monthday, daysInMonth);
+                    const monthScheduled = new Date(now.getFullYear(), now.getMonth(), targetDay, hh, mm, 0, 0);
+                    if (now >= monthScheduled) backupSystem();
+                }
+                return;
+            }
+
+            const lastDate = new Date(last);
+            if (freq === 'daily') {
+                if (lastDate < todayScheduled && now >= todayScheduled) backupSystem();
+                return;
+            }
+            if (freq === 'weekly') {
+                if (todayWeekday === weekday && lastDate < todayScheduled && now >= todayScheduled) backupSystem();
+                return;
+            }
+            if (freq === 'monthly') {
+                const daysInMonth = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
+                const targetDay = Math.min(monthday, daysInMonth);
+                const monthScheduled = new Date(now.getFullYear(), now.getMonth(), targetDay, hh, mm, 0, 0);
+                if (lastDate < monthScheduled && now >= monthScheduled) backupSystem();
+                return;
+            }
+        }
+
+        function backupSystem() {
+            try {
+                const code = getCurrentCommunityCode();
+                if (!code) {
+                    alert('無法確認目前的社區代碼，無法備份。');
+                    return;
+                }
+
+                const backupData = {
+                    version: '1.0',
+                    timestamp: new Date().toISOString(),
+                    communityCode: code,
+                    communityName: localStorage.getItem('currentCommunityName') || '',
+                    data: {}
+                };
+
+                const keysToBackup = [
+                    'transactions',
+                    'bank_accounts',
+                    'buildings',
+                    'residents',
+                    'income_fixed', 'income_other', 'income_targets',
+                    'expense_fixed', 'expense_other', 'expense_targets'
+                ];
+
+                keysToBackup.forEach(key => {
+                    const fullKey = key + '_' + code;
+                    const data = lsGet(fullKey); 
+                    backupData.data[key] = data;
+                });
+
+                const jsonString = JSON.stringify(backupData, null, 2);
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `backup_${code}_${new Date().toISOString().slice(0,10)}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                // Update Last Backup Time
+                const nowStr = new Date().toISOString();
+                const suffix = '_' + code;
+                localStorage.setItem('lastBackupTime' + suffix, nowStr);
+                loadAutoBackupSettings();
+
+            } catch (e) {
+                console.error('Backup failed:', e);
+                alert('備份失敗: ' + e.message);
+            }
+        }
+
+        function restoreSystem(input) {
+            if (!input.files || input.files.length === 0) return;
+            
+            const file = input.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const json = JSON.parse(e.target.result);
+                    
+                    if (!json.data || !json.communityCode) {
+                        throw new Error('無效的備份檔案格式 (缺少必要欄位)');
+                    }
+                    
+                    const currentCode = getCurrentCommunityCode();
+                    if (json.communityCode !== currentCode) {
+                        if (!confirm(`警告：備份檔案的社區代碼 (${json.communityCode}) 與目前社區 (${currentCode}) 不符。\n您確定要繼續還原嗎？這可能會導致資料混亂。`)) {
+                            input.value = ''; 
+                            return;
+                        }
+                    }
+
+                    if (!confirm('確定要還原此備份嗎？\n目前的系統資料將被覆蓋且無法復原！')) {
+                        input.value = '';
+                        return;
+                    }
+
+                    const keysToRestore = Object.keys(json.data);
+                    let restoreCount = 0;
+                    
+                    keysToRestore.forEach(key => {
+                        const fullKey = key + '_' + currentCode;
+                        const data = json.data[key];
+                        if (Array.isArray(data)) {
+                            lsSet(fullKey, data);
+                            restoreCount++;
+                        }
+                    });
+
+                    alert(`還原成功！已更新 ${restoreCount} 個資料項目。\n頁面將重新整理以套用變更。`);
+                    location.reload();
+
+                } catch (err) {
+                    console.error('Restore failed:', err);
+                    alert('還原失敗: ' + err.message);
+                    input.value = '';
+                }
+            };
+            
+            reader.readAsText(file);
+        }
 
     </script>
 </body>
-</html>
+</html> 
