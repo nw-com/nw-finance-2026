@@ -844,35 +844,35 @@
                                         </tr>
                                         <tr style="height: 6mm;">
                                             <td colspan="2" class="border border-gray-300 px-2 py-1 bg-white text-left" id="monthly-mgmt-label-receivable">應收管理費</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right" id="monthly-mgmt-val-receivable">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white text-left">前期未繳金額</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right" id="monthly-mgmt-val-prev-unpaid">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white text-left">前期預繳金額</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right" id="monthly-mgmt-val-prev-prepaid">&nbsp;</td>
                                         </tr>
                                         <tr style="height: 6mm;">
                                             <td colspan="2" class="border border-gray-300 px-2 py-1 bg-white text-left" id="monthly-mgmt-label-prev-prepaid">減 : 前期預收MM月管理費</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right" id="monthly-mgmt-val-deduct-prev-prepaid">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white text-left">減 : 補收前期金額</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right" id="monthly-mgmt-val-received-prev-unpaid">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white text-left">減 : 沖銷本期預繳金額</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right" id="monthly-mgmt-val-deduct-current-prepaid">&nbsp;</td>
                                         </tr>
                                         <tr style="height: 6mm;">
                                             <td colspan="2" class="border border-gray-300 px-2 py-1 bg-white text-left" id="monthly-mgmt-label-current-received">減 : 本期已收MM月管理費</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right" id="monthly-mgmt-val-received-current">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white text-left">加 : 本期新增未繳金額</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right" id="monthly-mgmt-val-new-unpaid">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white text-left">加 : 本期新增預繳金額</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right" id="monthly-mgmt-val-new-prepaid">&nbsp;</td>
                                         </tr>
                                         <tr style="height: 6mm;">
                                             <td colspan="2" class="border border-gray-300 px-2 py-1 bg-white text-left text-red-700" id="monthly-mgmt-label-unpaid">MM月未繳管理費</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right text-red-700">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right text-red-700" id="monthly-mgmt-val-current-unpaid">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white text-left text-red-700">本期累計未繳總金額</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right text-red-700" id="monthly-mgmt-val-total-unpaid">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white text-left text-green-700">本期預繳總金額</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right text-green-700" id="monthly-mgmt-val-total-prepaid">&nbsp;</td>
                                         </tr>
                                     </thead>
                                 </table>
@@ -1270,6 +1270,26 @@
                     <!-- General Settings Sub-view -->
                     <div id="settings-general-view" class="space-y-6">
                         <div class="bg-white p-8 rounded-lg shadow-sm text-center">
+                            <div class="text-left mb-6">
+                                <h4 class="text-lg font-bold text-gray-700">社區系統資訊</h4>
+                                <div class="mt-2 border rounded-lg bg-white p-4 flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                                            <i class="fa-solid fa-calendar-check"></i>
+                                        </div>
+                                        <div>
+                                            <div class="font-bold text-gray-700">系統啟用日</div>
+                                            <div class="text-sm text-gray-500">起始月份</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <div class="text-lg font-bold text-gray-800 cursor-pointer hover:text-blue-600 underline decoration-dotted decoration-gray-400 underline-offset-4" id="system-start-date-display" title="點擊編輯啟用日期" onclick="openEditSystemDateModal()">2025年01月</div>
+                                        <button id="btn-edit-system-date" type="button" class="text-gray-400 hover:text-blue-600" title="編輯" onclick="openEditSystemDateModal()">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="mt-4 text-left">
                                 <h4 class="text-lg font-bold text-gray-700">社區使用帳號</h4>
                                 <div id="community-accounts-display" class="mt-2 border rounded-lg bg-white divide-y"></div>
@@ -1441,6 +1461,21 @@
                 </div>
 
 
+            </div>
+        </div>
+
+        <div id="modal-edit-system-date" class="fixed inset-0 hidden z-[70]">
+            <div class="absolute inset-0 bg-black/40"></div>
+            <div class="absolute inset-0 flex items-center justify-center p-6">
+                <div class="bg-white rounded-lg w-full max-w-sm p-6 space-y-4">
+                    <h4 class="text-lg font-bold">設定系統啟用月份</h4>
+                    <p class="text-sm text-gray-500">設定系統開始計算管理費的起始月份。</p>
+                    <input type="month" id="input-system-start-date" class="w-full border rounded px-3 py-2" />
+                    <div class="flex justify-end gap-2">
+                        <button id="cancel-edit-system-date" type="button" class="px-3 py-2 border rounded">取消</button>
+                        <button id="confirm-edit-system-date" type="button" class="px-3 py-2 bg-blue-600 text-white rounded">確認</button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -2656,12 +2691,27 @@
                     // 2. Column 2: Unpaid Details (Arrears)
                     // Prev Unpaid Balance: Iterate past months from Start (e.g. 2025-01) to Current-1
                     let prevUnpaidBalance = 0;
-                    const startY = 2025; // Assuming system start year
+                    
+                    // Get system start date from storage or default to 2025-01
+                    const systemStartMonth = localStorage.getItem('systemStartDate') || '2025-01';
+                    const [startY, startM] = systemStartMonth.split('-').map(Number);
+                    
                     const [currY, currM] = currentPeriod.split('-').map(Number);
                     
                     // Simple iteration for past months
                     for (let y = startY; y <= currY; y++) {
+                        const mStart = (y === startY) ? startM : 1;
+                        const mEnd = (y === currY) ? (currM - 1) : 12; // Iterate until month BEFORE current
+                        
+                        // Fix: if startY == currY, loop from startM to currM-1
+                        // If y < currY, loop from mStart to 12
+                        // If y == currY, loop from 1 to currM-1 (but handled by mEnd logic if we iterate carefully)
+                        
+                        // Better loop structure:
                         for (let m = 1; m <= 12; m++) {
+                            // Skip months before system start
+                            if (y === startY && m < startM) continue;
+                            
                             const mm = String(m).padStart(2, '0');
                             const pm = `${y}-${mm}`;
                             if (pm >= currentPeriod) break;
@@ -2706,40 +2756,40 @@
 
                     // Update UI - Row by Row
                     // Row 1: Receivable | Prev Unpaid | Prev Prepaid
-                    const row1Val1 = document.getElementById('monthly-mgmt-label-receivable')?.nextElementSibling;
-                    const row1Val2 = row1Val1?.nextElementSibling?.nextElementSibling;
-                    const row1Val3 = row1Val2?.nextElementSibling?.nextElementSibling;
+                    const elReceivable = document.getElementById('monthly-mgmt-val-receivable');
+                    const elPrevUnpaid = document.getElementById('monthly-mgmt-val-prev-unpaid');
+                    const elPrevPrepaid = document.getElementById('monthly-mgmt-val-prev-prepaid');
                     
-                    if (row1Val1) row1Val1.textContent = '$' + totalReceivable.toLocaleString();
-                    if (row1Val2) row1Val2.textContent = '$' + prevUnpaidBalance.toLocaleString();
-                    if (row1Val3) row1Val3.textContent = '$' + prevPrepaidBalance.toLocaleString();
+                    if (elReceivable) elReceivable.textContent = '$' + totalReceivable.toLocaleString();
+                    if (elPrevUnpaid) elPrevUnpaid.textContent = '$' + prevUnpaidBalance.toLocaleString();
+                    if (elPrevPrepaid) elPrevPrepaid.textContent = '$' + prevPrepaidBalance.toLocaleString();
 
                     // Row 2: Deduct Prev Prepaid | Rec Prev Unpaid | Deduct Current Prepaid
-                    const row2Val1 = document.getElementById('monthly-mgmt-label-prev-prepaid')?.nextElementSibling;
-                    const row2Val2 = row2Val1?.nextElementSibling?.nextElementSibling;
-                    const row2Val3 = row2Val2?.nextElementSibling?.nextElementSibling;
+                    const elDeductPrevPrepaid = document.getElementById('monthly-mgmt-val-deduct-prev-prepaid');
+                    const elReceivedPrevUnpaid = document.getElementById('monthly-mgmt-val-received-prev-unpaid');
+                    const elDeductCurrentPrepaid = document.getElementById('monthly-mgmt-val-deduct-current-prepaid');
 
-                    if (row2Val1) row2Val1.textContent = '$' + prepaidPrevious.toLocaleString();
-                    if (row2Val2) row2Val2.textContent = '$' + receivedPrevUnpaid.toLocaleString();
-                    if (row2Val3) row2Val3.textContent = '$' + deductPrepaid.toLocaleString();
+                    if (elDeductPrevPrepaid) elDeductPrevPrepaid.textContent = '$' + prepaidPrevious.toLocaleString();
+                    if (elReceivedPrevUnpaid) elReceivedPrevUnpaid.textContent = '$' + receivedPrevUnpaid.toLocaleString();
+                    if (elDeductCurrentPrepaid) elDeductCurrentPrepaid.textContent = '$' + deductPrepaid.toLocaleString();
 
                     // Row 3: Deduct Current Rec | Add New Unpaid | Add New Prepaid
-                    const row3Val1 = document.getElementById('monthly-mgmt-label-current-received')?.nextElementSibling;
-                    const row3Val2 = row3Val1?.nextElementSibling?.nextElementSibling;
-                    const row3Val3 = row3Val2?.nextElementSibling?.nextElementSibling;
+                    const elReceivedCurrent = document.getElementById('monthly-mgmt-val-received-current');
+                    const elNewUnpaid = document.getElementById('monthly-mgmt-val-new-unpaid');
+                    const elNewPrepaid = document.getElementById('monthly-mgmt-val-new-prepaid');
 
-                    if (row3Val1) row3Val1.textContent = '$' + receivedCurrent.toLocaleString();
-                    if (row3Val2) row3Val2.textContent = '$' + newUnpaid.toLocaleString();
-                    if (row3Val3) row3Val3.textContent = '$' + newPrepaid.toLocaleString();
+                    if (elReceivedCurrent) elReceivedCurrent.textContent = '$' + receivedCurrent.toLocaleString();
+                    if (elNewUnpaid) elNewUnpaid.textContent = '$' + newUnpaid.toLocaleString();
+                    if (elNewPrepaid) elNewPrepaid.textContent = '$' + newPrepaid.toLocaleString();
 
                     // Row 4: Current Unpaid | Total Unpaid | Total Prepaid
-                    const row4Val1 = document.getElementById('monthly-mgmt-label-unpaid')?.nextElementSibling;
-                    const row4Val2 = row4Val1?.nextElementSibling?.nextElementSibling;
-                    const row4Val3 = row4Val2?.nextElementSibling?.nextElementSibling;
+                    const elCurrentUnpaid = document.getElementById('monthly-mgmt-val-current-unpaid');
+                    const elTotalUnpaid = document.getElementById('monthly-mgmt-val-total-unpaid');
+                    const elTotalPrepaid = document.getElementById('monthly-mgmt-val-total-prepaid');
 
-                    if (row4Val1) row4Val1.textContent = '$' + newUnpaid.toLocaleString();
-                    if (row4Val2) row4Val2.textContent = '$' + totalUnpaid.toLocaleString();
-                    if (row4Val3) row4Val3.textContent = '$' + totalPrepaid.toLocaleString();
+                    if (elCurrentUnpaid) elCurrentUnpaid.textContent = '$' + newUnpaid.toLocaleString();
+                    if (elTotalUnpaid) elTotalUnpaid.textContent = '$' + totalUnpaid.toLocaleString();
+                    if (elTotalPrepaid) elTotalPrepaid.textContent = '$' + totalPrepaid.toLocaleString();
 
                 } else if (type === 'yearly') {
                     dateText = `${parseInt(currentPeriod) - 1911} 年`;
@@ -3081,7 +3131,17 @@
                     const p = a.phone||'';
                     const id = a.id||'';
                     const info = p ? (e+' · '+p) : e;
-                    return '<div class="px-4 py-3 flex items-center justify-between"><div class="flex items-center gap-3"><i class="fa-solid fa-user text-gray-400"></i><div><div class="font-bold text-gray-700">'+n+'</div><div class="text-sm text-gray-500">'+info+'</div></div></div><div class="text-xs text-gray-400">'+id+'</div></div>';
+
+                    let dateBlock = '';
+                    if (id && id.length >= 6) {
+                        const y = id.substring(0,4);
+                        const m = id.substring(4,6);
+                        if (!isNaN(y) && !isNaN(m)) {
+                            dateBlock = '<div class="text-xs text-gray-500 mb-1">帳戶啟用日：'+y+'年'+m+'月</div>';
+                        }
+                    }
+
+                    return '<div class="px-4 py-3 flex items-center justify-between"><div class="flex items-center gap-3"><i class="fa-solid fa-user text-gray-400"></i><div><div class="font-bold text-gray-700">'+n+'</div><div class="text-sm text-gray-500">'+info+'</div></div></div><div class="text-right">'+dateBlock+'<div class="text-xs text-gray-400">'+id+'</div></div></div>';
                 }).join('');
             } catch(e) {
                 container.innerHTML = '<div class="px-4 py-3 text-red-600">無法載入帳號</div>';
@@ -4334,6 +4394,53 @@
         const inputResNote = document.getElementById('input-res-note');
         const confirmEditResident = document.getElementById('confirm-edit-resident');
         const cancelEditResident = document.getElementById('cancel-edit-resident');
+
+        // Init System Date Display
+        function initSystemDateDisplay() {
+            const stored = localStorage.getItem('systemStartDate') || '2025-01';
+            const [y, m] = stored.split('-');
+            const display = document.getElementById('system-start-date-display');
+            if (display) display.textContent = `${y}年${m}月`;
+        }
+        initSystemDateDisplay();
+
+        window.openEditSystemDateModal = function() {
+            const stored = localStorage.getItem('systemStartDate') || '2025-01';
+            const input = document.getElementById('input-system-start-date');
+            const modal = document.getElementById('modal-edit-system-date');
+            if (input) input.value = stored;
+            if (modal) modal.classList.remove('hidden');
+        };
+
+        const btnEditSystemDate = document.getElementById('btn-edit-system-date');
+        const systemStartDateDisplay = document.getElementById('system-start-date-display');
+
+        if (btnEditSystemDate) btnEditSystemDate.addEventListener('click', window.openEditSystemDateModal);
+        if (systemStartDateDisplay) systemStartDateDisplay.addEventListener('click', window.openEditSystemDateModal);
+
+        const cancelEditSystemDate = document.getElementById('cancel-edit-system-date');
+        if (cancelEditSystemDate) {
+            cancelEditSystemDate.addEventListener('click', () => {
+                const modal = document.getElementById('modal-edit-system-date');
+                if (modal) modal.classList.add('hidden');
+            });
+        }
+        const confirmEditSystemDate = document.getElementById('confirm-edit-system-date');
+        if (confirmEditSystemDate) {
+            confirmEditSystemDate.addEventListener('click', () => {
+                const input = document.getElementById('input-system-start-date');
+                const modal = document.getElementById('modal-edit-system-date');
+                
+                const val = input ? input.value : '';
+                if (!val) { alert('請選擇日期'); return; }
+                localStorage.setItem('systemStartDate', val);
+                initSystemDateDisplay();
+                if (modal) modal.classList.add('hidden');
+                alert('設定已儲存，報表計算將依據新的起始月份重新整理。');
+                // Ideally reload or re-render report if needed, but for now just save.
+                // If user goes to report view, it will re-render.
+            });
+        }
 
         const modalUnpaidDetail = document.getElementById('modal-unpaid-detail');
         const modalUnpaidTitle = document.getElementById('modal-unpaid-title');
