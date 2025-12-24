@@ -147,6 +147,25 @@
                 page-break-after: always;
                 background: white !important;
             }
+
+            /* Fix Daily Report to be strictly one page A4 */
+            #view-reports #report-daily-view {
+                padding: 0 !important;
+                background: none !important;
+                box-shadow: none !important;
+                width: auto !important;
+                min-height: 0 !important;
+            }
+            
+            #view-reports #report-daily-view > div {
+                width: 210mm !important;
+                height: 297mm !important;
+                padding: 10mm !important;
+                overflow: hidden !important;
+                background: white !important;
+                margin: 0 !important;
+                page-break-after: always;
+            }
         }
     </style>
     <script>
@@ -703,7 +722,7 @@
                 <div id="view-reports" class="content-view hidden">
                     <!-- Daily Report View -->
                     <div id="report-daily-view">
-                        <div class="bg-white shadow-sm mx-auto flex flex-col justify-between" style="width: 210mm; min-height: 297mm; padding: 10mm;">
+                        <div class="bg-white shadow-sm mx-auto flex flex-col justify-between" style="width: 210mm; height: 297mm; padding: 10mm; overflow: hidden;">
                             <div class="overflow-x-auto">
                                 <table class="w-full border-collapse text-center text-[10px]">
                                     <thead class="bg-gray-100">
@@ -824,35 +843,35 @@
                                             <td class="border border-gray-300 px-2 py-1 bg-white text-center" style="width: 20mm;">預繳金額</td>
                                         </tr>
                                         <tr style="height: 6mm;">
-                                            <td colspan="2" class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td colspan="2" class="border border-gray-300 px-2 py-1 bg-white text-left" id="monthly-mgmt-label-receivable">應收管理費</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-left">前期未繳金額</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
-                                        </tr>
-                                        <tr style="height: 6mm;">
-                                            <td colspan="2" class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-left">前期預繳金額</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                         </tr>
                                         <tr style="height: 6mm;">
-                                            <td colspan="2" class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td colspan="2" class="border border-gray-300 px-2 py-1 bg-white text-left" id="monthly-mgmt-label-prev-prepaid">減 : 前期預收MM月管理費</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-left">減 : 補收前期金額</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-left">減 : 沖銷本期預繳金額</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                         </tr>
                                         <tr style="height: 6mm;">
-                                            <td colspan="2" class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td colspan="2" class="border border-gray-300 px-2 py-1 bg-white text-left" id="monthly-mgmt-label-current-received">減 : 本期已收MM月管理費</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-left">加 : 本期新增未繳金額</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-left">加 : 本期新增預繳金額</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                        </tr>
+                                        <tr style="height: 6mm;">
+                                            <td colspan="2" class="border border-gray-300 px-2 py-1 bg-white text-left text-red-700" id="monthly-mgmt-label-unpaid">MM月未繳管理費</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right text-red-700">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-left text-red-700">本期累計未繳總金額</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-left text-green-700">本期預繳總金額</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                         </tr>
                                     </thead>
@@ -1251,9 +1270,10 @@
                     <!-- General Settings Sub-view -->
                     <div id="settings-general-view" class="space-y-6">
                         <div class="bg-white p-8 rounded-lg shadow-sm text-center">
-                            <i class="fa-solid fa-gear text-4xl text-gray-300 mb-4"></i>
-                            <h3 class="text-xl font-bold text-gray-700">系統設定</h3>
-                            <p class="text-gray-500 mt-2">此處將顯示使用者偏好與系統參數。</p>
+                            <div class="mt-4 text-left">
+                                <h4 class="text-lg font-bold text-gray-700">社區使用帳號</h4>
+                                <div id="community-accounts-display" class="mt-2 border rounded-lg bg-white divide-y"></div>
+                            </div>
                         </div>
                     </div>
 
@@ -1357,6 +1377,9 @@
                                 立即重置
                             </button>
                         </div>
+                        <p class="text-sm text-gray-500 mt-2">
+                            上次重置時間：<span id="last-reset-time-display" class="font-bold text-gray-700">尚無紀錄</span>
+                        </p>
                     </div>
                 </div>
             </div>
@@ -1814,6 +1837,19 @@
         </div>
 
     <script>
+        (function(){
+            try {
+                const enabled = localStorage.getItem('debugLogs') === 'true';
+                const keepErrors = localStorage.getItem('debugKeepErrors') === 'true';
+                if (!enabled) {
+                    const noop = function(){};
+                    console.log = noop;
+                    console.info = noop;
+                    console.warn = noop;
+                    if (!keepErrors) console.error = noop;
+                }
+            } catch(e){}
+        })();
         // ==========================================
         // Firebase 設定與初始化
         // ==========================================
@@ -2527,6 +2563,7 @@
                 if (vGeneral && vBackup) {
                     vGeneral.classList.toggle('hidden', idx !== 0);
                     vBackup.classList.toggle('hidden', idx !== 1);
+                    if (idx === 0) renderCommunityAccountsDisplay();
                     if (idx === 1) loadAutoBackupSettings();
                 }
             }
@@ -2574,6 +2611,136 @@
                 } else if (type === 'monthly') {
                     const [y, m] = currentPeriod.split('-');
                     dateText = `${parseInt(y) - 1911} 年 ${parseInt(m)} 月 社區收支月報表`;
+                    const elPrev = document.getElementById('monthly-mgmt-label-prev-prepaid');
+                    const elCurr = document.getElementById('monthly-mgmt-label-current-received');
+                    const elUnpaid = document.getElementById('monthly-mgmt-label-unpaid');
+                    if (elPrev) elPrev.textContent = `減 : 前期預收${parseInt(m)}月管理費`;
+                    if (elCurr) elCurr.textContent = `減 : 本期已收${parseInt(m)}月管理費`;
+                    if (elUnpaid) elUnpaid.textContent = `${parseInt(m)}月未繳管理費`;
+
+                    // Calculate Management Fees (Mgmt + Parking + Other)
+                    const residents = getResidents() || [];
+                    const totalReceivable = residents.reduce((sum, r) => {
+                        return sum + parseInt(r.feeMgmt || 0) + parseInt(r.feePark || 0) + parseInt(r.feeOther || 0);
+                    }, 0);
+
+                    // Transaction Analysis
+                    const targetCats = ['管理費', '停車費', '其他費用'];
+                    const getMonth = (t) => t.month || (t.date ? t.date.substring(0, 7) : '');
+                    
+                    const relTrans = transactions.filter(t => {
+                        const isIncome = (t.mode === 'income') || (t.id && t.id.startsWith('I'));
+                        return isIncome && targetCats.includes(t.category);
+                    });
+
+                    // Split by timing relative to currentPeriod
+                    // Note: String comparison works for ISO dates (YYYY-MM-DD)
+                    const transBefore = relTrans.filter(t => t.date < currentPeriod + '-01');
+                    const transIn = relTrans.filter(t => t.date.startsWith(currentPeriod));
+
+                    // 1. Column 1: Current Month Status
+                    // Prepaid Previous: Paid before current month, target IS current month
+                    const prepaidPrevious = transBefore
+                        .filter(t => getMonth(t) === currentPeriod)
+                        .reduce((sum, t) => sum + parseInt(t.amount||0), 0);
+
+                    // Received Current: Paid in current month, target IS current month
+                    const receivedCurrent = transIn
+                        .filter(t => getMonth(t) === currentPeriod)
+                        .reduce((sum, t) => sum + parseInt(t.amount||0), 0);
+
+                    // New Unpaid (Current Month Arrears)
+                    const newUnpaid = Math.max(0, totalReceivable - prepaidPrevious - receivedCurrent);
+
+
+                    // 2. Column 2: Unpaid Details (Arrears)
+                    // Prev Unpaid Balance: Iterate past months from Start (e.g. 2025-01) to Current-1
+                    let prevUnpaidBalance = 0;
+                    const startY = 2025; // Assuming system start year
+                    const [currY, currM] = currentPeriod.split('-').map(Number);
+                    
+                    // Simple iteration for past months
+                    for (let y = startY; y <= currY; y++) {
+                        for (let m = 1; m <= 12; m++) {
+                            const mm = String(m).padStart(2, '0');
+                            const pm = `${y}-${mm}`;
+                            if (pm >= currentPeriod) break;
+                            
+                            // For each past month, Unpaid = Receivable - Paid(Before Current)
+                            // Assumption: Receivable was same as now (limitation of current system)
+                            const rec = totalReceivable;
+                            const paid = transBefore
+                                .filter(t => getMonth(t) === pm)
+                                .reduce((sum, t) => sum + parseInt(t.amount||0), 0);
+                            
+                            prevUnpaidBalance += Math.max(0, rec - paid);
+                        }
+                    }
+
+                    // Received Prev Unpaid: Paid in current month, target < current month
+                    const receivedPrevUnpaid = transIn
+                        .filter(t => getMonth(t) < currentPeriod)
+                        .reduce((sum, t) => sum + parseInt(t.amount||0), 0);
+
+                    // Total Cumulative Unpaid
+                    const totalUnpaid = prevUnpaidBalance - receivedPrevUnpaid + newUnpaid;
+
+
+                    // 3. Column 3: Prepaid Details
+                    // Prev Prepaid Balance: Paid before current month, target >= current month
+                    const prevPrepaidBalance = transBefore
+                        .filter(t => getMonth(t) >= currentPeriod)
+                        .reduce((sum, t) => sum + parseInt(t.amount||0), 0);
+
+                    // Deduct Prepaid for Current: This IS prepaidPrevious
+                    const deductPrepaid = prepaidPrevious;
+
+                    // New Prepaid: Paid in current month, target > current month
+                    const newPrepaid = transIn
+                        .filter(t => getMonth(t) > currentPeriod)
+                        .reduce((sum, t) => sum + parseInt(t.amount||0), 0);
+
+                    // Total Prepaid Balance
+                    const totalPrepaid = prevPrepaidBalance - deductPrepaid + newPrepaid;
+
+
+                    // Update UI - Row by Row
+                    // Row 1: Receivable | Prev Unpaid | Prev Prepaid
+                    const row1Val1 = document.getElementById('monthly-mgmt-label-receivable')?.nextElementSibling;
+                    const row1Val2 = row1Val1?.nextElementSibling?.nextElementSibling;
+                    const row1Val3 = row1Val2?.nextElementSibling?.nextElementSibling;
+                    
+                    if (row1Val1) row1Val1.textContent = '$' + totalReceivable.toLocaleString();
+                    if (row1Val2) row1Val2.textContent = '$' + prevUnpaidBalance.toLocaleString();
+                    if (row1Val3) row1Val3.textContent = '$' + prevPrepaidBalance.toLocaleString();
+
+                    // Row 2: Deduct Prev Prepaid | Rec Prev Unpaid | Deduct Current Prepaid
+                    const row2Val1 = document.getElementById('monthly-mgmt-label-prev-prepaid')?.nextElementSibling;
+                    const row2Val2 = row2Val1?.nextElementSibling?.nextElementSibling;
+                    const row2Val3 = row2Val2?.nextElementSibling?.nextElementSibling;
+
+                    if (row2Val1) row2Val1.textContent = '$' + prepaidPrevious.toLocaleString();
+                    if (row2Val2) row2Val2.textContent = '$' + receivedPrevUnpaid.toLocaleString();
+                    if (row2Val3) row2Val3.textContent = '$' + deductPrepaid.toLocaleString();
+
+                    // Row 3: Deduct Current Rec | Add New Unpaid | Add New Prepaid
+                    const row3Val1 = document.getElementById('monthly-mgmt-label-current-received')?.nextElementSibling;
+                    const row3Val2 = row3Val1?.nextElementSibling?.nextElementSibling;
+                    const row3Val3 = row3Val2?.nextElementSibling?.nextElementSibling;
+
+                    if (row3Val1) row3Val1.textContent = '$' + receivedCurrent.toLocaleString();
+                    if (row3Val2) row3Val2.textContent = '$' + newUnpaid.toLocaleString();
+                    if (row3Val3) row3Val3.textContent = '$' + newPrepaid.toLocaleString();
+
+                    // Row 4: Current Unpaid | Total Unpaid | Total Prepaid
+                    const row4Val1 = document.getElementById('monthly-mgmt-label-unpaid')?.nextElementSibling;
+                    const row4Val2 = row4Val1?.nextElementSibling?.nextElementSibling;
+                    const row4Val3 = row4Val2?.nextElementSibling?.nextElementSibling;
+
+                    if (row4Val1) row4Val1.textContent = '$' + newUnpaid.toLocaleString();
+                    if (row4Val2) row4Val2.textContent = '$' + totalUnpaid.toLocaleString();
+                    if (row4Val3) row4Val3.textContent = '$' + totalPrepaid.toLocaleString();
+
                 } else if (type === 'yearly') {
                     dateText = `${parseInt(currentPeriod) - 1911} 年`;
                 }
@@ -2895,6 +3062,30 @@
 
             const hYearly = document.getElementById('report-yearly-community-header');
             if (hYearly) hYearly.textContent = name + '社區收支年報表';
+        }
+
+        async function renderCommunityAccountsDisplay(){
+            const name = localStorage.getItem('currentCommunityName') || '';
+            const container = document.getElementById('community-accounts-display');
+            if (!container) return;
+            try {
+                const arr = await fetchAccounts();
+                const list = arr.filter(a => (a.community||'') === name);
+                if (list.length === 0) {
+                    container.innerHTML = '<div class="px-4 py-3 text-gray-500">尚無帳號</div>';
+                    return;
+                }
+                container.innerHTML = list.map(a => {
+                    const n = a.name||'';
+                    const e = a.email||'';
+                    const p = a.phone||'';
+                    const id = a.id||'';
+                    const info = p ? (e+' · '+p) : e;
+                    return '<div class="px-4 py-3 flex items-center justify-between"><div class="flex items-center gap-3"><i class="fa-solid fa-user text-gray-400"></i><div><div class="font-bold text-gray-700">'+n+'</div><div class="text-sm text-gray-500">'+info+'</div></div></div><div class="text-xs text-gray-400">'+id+'</div></div>';
+                }).join('');
+            } catch(e) {
+                container.innerHTML = '<div class="px-4 py-3 text-red-600">無法載入帳號</div>';
+            }
         }
 
         const settingsModal = document.getElementById('settings-modal');
@@ -6453,10 +6644,11 @@
 
             const elEnabled = document.getElementById('auto-backup-enabled');
             const elFreq = document.getElementById('auto-backup-frequency');
-            const elLast = document.getElementById('last-backup-time-display');
-            const elTime = document.getElementById('auto-backup-time');
-            const elWeek = document.getElementById('auto-backup-weekday');
-            const elMonthDay = document.getElementById('auto-backup-monthday');
+             const elLast = document.getElementById('last-backup-time-display');
+             const elTime = document.getElementById('auto-backup-time');
+             const elWeek = document.getElementById('auto-backup-weekday');
+             const elMonthDay = document.getElementById('auto-backup-monthday');
+            const elResetLast = document.getElementById('last-reset-time-display');
 
             if(elEnabled) elEnabled.checked = enabled;
             if(elFreq) elFreq.value = freq;
@@ -6473,7 +6665,12 @@
                 }
                 elMonthDay.value = monthDayVal;
             }
-            if(elLast) elLast.textContent = last ? new Date(last).toLocaleString('zh-TW', {
+             if(elLast) elLast.textContent = last ? new Date(last).toLocaleString('zh-TW', {
+                 year: 'numeric', month: '2-digit', day: '2-digit', 
+                 hour: '2-digit', minute: '2-digit', hour12: false
+             }) : '尚無紀錄';
+            const lastReset = localStorage.getItem('lastResetTime' + suffix);
+            if(elResetLast) elResetLast.textContent = lastReset ? new Date(lastReset).toLocaleString('zh-TW', {
                 year: 'numeric', month: '2-digit', day: '2-digit', 
                 hour: '2-digit', minute: '2-digit', hour12: false
             }) : '尚無紀錄';
@@ -6671,6 +6868,14 @@
                 ];
                 keys.forEach(k => lsSet(k + '_' + code, []));
                 localStorage.removeItem('lastBackupTime_' + code);
+                const nowStr = new Date().toISOString();
+                localStorage.setItem('lastResetTime_' + code, nowStr);
+                const elResetLast = document.getElementById('last-reset-time-display');
+                if (elResetLast) elResetLast.textContent = new Date(nowStr).toLocaleString('zh-TW', {
+                    year: 'numeric', month: '2-digit', day: '2-digit', 
+                    hour: '2-digit', minute: '2-digit', hour12: false
+                });
+                if (el) el.value = '';
                 refreshAllUI();
                 updateDashboardStats();
                 openAlert('已完成重置', '完成', '確定');
