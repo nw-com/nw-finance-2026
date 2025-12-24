@@ -880,7 +880,54 @@
                                 <div style="height: 5mm;"></div>
 
                                 <table class="w-full border-collapse text-center text-[10px]">
+                                    <colgroup>
+                                        <col style="width: 10mm;">
+                                        <col style="width: 65mm;">
+                                        <col style="width: 20mm;">
+                                        <col style="width: 10mm;">
+                                        <col style="width: 65mm;">
+                                        <col style="width: 20mm;">
+                                    </colgroup>
                                     <tbody>
+                                        <tr style="height: 6mm;">
+                                            <td colspan="6" class="px-2 py-1 bg-white text-left text-sm font-bold">(二)收支明細</td>
+                                        </tr>
+                                        <tr style="height: 6mm;">
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                        </tr>
+                                        <tr style="height: 6mm;">
+                                            <td colspan="3" class="border border-gray-300 px-2 py-1 bg-white font-bold">收入明細</td>
+                                            <td colspan="3" class="border border-gray-300 px-2 py-1 bg-white font-bold">支出明細</td>
+                                        </tr>
+                                        <tr style="height: 6mm;">
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">序號</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">固定收入</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">收入金額</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">序號</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">固定支出</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">支出金額</td>
+                                        </tr>
+                                        <tr style="height: 6mm;">
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                        </tr>
+                                        <tr style="height: 6mm;">
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                        </tr>
                                         <tr style="height: 6mm;">
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
@@ -1283,8 +1330,8 @@
                                         </div>
                                     </div>
                                     <div class="flex items-center gap-2">
-                                        <div class="text-lg font-bold text-gray-800 cursor-pointer hover:text-blue-600 underline decoration-dotted decoration-gray-400 underline-offset-4" id="system-start-date-display" title="點擊編輯啟用日期" onclick="openEditSystemDateModal()">2025年01月</div>
-                                        <button id="btn-edit-system-date" type="button" class="text-gray-400 hover:text-blue-600" title="編輯" onclick="openEditSystemDateModal()">
+                                        <input type="month" id="system-start-date-display" class="text-lg font-bold text-gray-800 border rounded px-2 py-1 hover:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500" title="選擇系統啟用月份" value="2025-01" />
+                                        <button id="btn-edit-system-date" type="button" class="text-gray-400 hover:text-blue-600" title="編輯" onclick="(function(){var m=document.getElementById('modal-edit-system-date');var i=document.getElementById('input-system-start-date');var code=localStorage.getItem('currentCommunityCode')||'NW001';var s=localStorage.getItem('systemStartDate:'+code)||'2025-01';if(i)i.value=s; if(m)m.classList.remove('hidden');})();">
                                             <i class="fa-solid fa-pen"></i>
                                         </button>
                                     </div>
@@ -1472,8 +1519,8 @@
                     <p class="text-sm text-gray-500">設定系統開始計算管理費的起始月份。</p>
                     <input type="month" id="input-system-start-date" class="w-full border rounded px-3 py-2" />
                     <div class="flex justify-end gap-2">
-                        <button id="cancel-edit-system-date" type="button" class="px-3 py-2 border rounded">取消</button>
-                        <button id="confirm-edit-system-date" type="button" class="px-3 py-2 bg-blue-600 text-white rounded">確認</button>
+                        <button id="cancel-edit-system-date" type="button" class="px-3 py-2 border rounded" onclick="(function(){var m=document.getElementById('modal-edit-system-date'); if(m)m.classList.add('hidden');})();">取消</button>
+                        <button id="confirm-edit-system-date" type="button" class="px-3 py-2 bg-blue-600 text-white rounded" onclick="(function(){var i=document.getElementById('input-system-start-date');var val=i?i.value:'';if(!val){alert('請選擇日期');return;}var code=localStorage.getItem('currentCommunityCode')||'NW001';localStorage.setItem('systemStartDate:'+code,val);var d=document.getElementById('system-start-date-display');if(d && d.tagName==='INPUT'){d.value=val;}var modal=document.getElementById('modal-edit-system-date');if(modal)modal.classList.add('hidden');alert('設定已儲存，報表計算將依據新的起始月份重新整理。');})();">確認</button>
                     </div>
                 </div>
             </div>
@@ -2693,7 +2740,8 @@
                     let prevUnpaidBalance = 0;
                     
                     // Get system start date from storage or default to 2025-01
-                    const systemStartMonth = localStorage.getItem('systemStartDate') || '2025-01';
+                    const codeKey = (localStorage.getItem('currentCommunityCode') || 'NW001');
+                    const systemStartMonth = localStorage.getItem('systemStartDate:' + codeKey) || '2025-01';
                     const [startY, startM] = systemStartMonth.split('-').map(Number);
                     
                     const [currY, currM] = currentPeriod.split('-').map(Number);
@@ -4272,6 +4320,7 @@
             if(typeof renderResidentsDetail === 'function') renderResidentsDetail();
             if(typeof updateBankSubtabs === 'function') updateBankSubtabs();
             if(typeof updateDashboardStats === 'function') updateDashboardStats();
+            if(typeof initSystemDateDisplay === 'function') initSystemDateDisplay();
         }
 
         function lsGet(key){ 
@@ -4395,17 +4444,32 @@
         const confirmEditResident = document.getElementById('confirm-edit-resident');
         const cancelEditResident = document.getElementById('cancel-edit-resident');
 
+        // System Start Month (per community)
+        function getSystemStartMonth() {
+            const code = localStorage.getItem('currentCommunityCode') || 'NW001';
+            return localStorage.getItem('systemStartDate:' + code) || '2025-01';
+        }
+        function setSystemStartMonth(val) {
+            const code = localStorage.getItem('currentCommunityCode') || 'NW001';
+            localStorage.setItem('systemStartDate:' + code, val);
+        }
         // Init System Date Display
         function initSystemDateDisplay() {
-            const stored = localStorage.getItem('systemStartDate') || '2025-01';
+            const stored = getSystemStartMonth();
             const [y, m] = stored.split('-');
             const display = document.getElementById('system-start-date-display');
-            if (display) display.textContent = `${y}年${m}月`;
+            if (display) {
+                if ((display.tagName || '').toUpperCase() === 'INPUT') {
+                    display.value = stored;
+                } else {
+                    display.textContent = `${y}年${m}月`;
+                }
+            }
         }
         initSystemDateDisplay();
 
         window.openEditSystemDateModal = function() {
-            const stored = localStorage.getItem('systemStartDate') || '2025-01';
+            const stored = getSystemStartMonth() || '2025-01';
             const input = document.getElementById('input-system-start-date');
             const modal = document.getElementById('modal-edit-system-date');
             if (input) input.value = stored;
@@ -4416,7 +4480,15 @@
         const systemStartDateDisplay = document.getElementById('system-start-date-display');
 
         if (btnEditSystemDate) btnEditSystemDate.addEventListener('click', window.openEditSystemDateModal);
-        if (systemStartDateDisplay) systemStartDateDisplay.addEventListener('click', window.openEditSystemDateModal);
+        if (systemStartDateDisplay && (systemStartDateDisplay.tagName||'').toUpperCase()==='INPUT') {
+            systemStartDateDisplay.addEventListener('change', ()=>{
+                const val = systemStartDateDisplay.value || '';
+                if (!val) { alert('請選擇日期'); return; }
+                setSystemStartMonth(val);
+                initSystemDateDisplay();
+                alert('已更新系統啟用月份（依社區獨立儲存）');
+            });
+        }
 
         const cancelEditSystemDate = document.getElementById('cancel-edit-system-date');
         if (cancelEditSystemDate) {
@@ -4433,7 +4505,7 @@
                 
                 const val = input ? input.value : '';
                 if (!val) { alert('請選擇日期'); return; }
-                localStorage.setItem('systemStartDate', val);
+                setSystemStartMonth(val);
                 initSystemDateDisplay();
                 if (modal) modal.classList.add('hidden');
                 alert('設定已儲存，報表計算將依據新的起始月份重新整理。');
