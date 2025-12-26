@@ -881,12 +881,10 @@
 
                                 <table class="w-full border-collapse text-center text-[10px]">
                                     <colgroup>
-                                        <col style="width: 10mm;">
-                                        <col style="width: 65mm;">
-                                        <col style="width: 20mm;">
-                                        <col style="width: 10mm;">
-                                        <col style="width: 65mm;">
-                                        <col style="width: 20mm;">
+                                        <col style="width: 60mm;">
+                                        <col style="width: 30mm;">
+                                        <col style="width: 60mm;">
+                                        <col style="width: 30mm;">
                                     </colgroup>
                                     <tbody>
                                         <tr style="height: 6mm;">
@@ -897,18 +895,14 @@
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                         </tr>
                                         <tr style="height: 6mm;">
-                                            <td colspan="3" class="border border-gray-300 px-2 py-1 bg-white font-bold">收入明細</td>
-                                            <td colspan="3" class="border border-gray-300 px-2 py-1 bg-white font-bold">支出明細</td>
+                                            <td colspan="2" class="border border-gray-300 px-2 py-1 bg-white font-bold">收入明細</td>
+                                            <td colspan="2" class="border border-gray-300 px-2 py-1 bg-white font-bold">支出明細</td>
                                         </tr>
                                         <tr style="height: 6mm;">
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">序號</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">固定收入</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">收入金額</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">序號</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">固定支出</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">支出金額</td>
                                         </tr>
@@ -917,20 +911,14 @@
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                         </tr>
                                         <tr style="height: 6mm;">
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                         </tr>
                                         <tr style="height: 6mm;">
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
@@ -987,102 +975,7 @@
                         </div>
                     </div>
 
-                    <!-- Yearly Report View -->
-                    <div id="report-yearly-view" class="hidden">
-                        <div class="bg-white shadow-sm mx-auto flex flex-col justify-between" style="width: 210mm; min-height: 297mm; padding: 10mm;">
-                            <div class="overflow-x-auto">
-                                <table class="w-full border-collapse text-center text-[10px]">
-                                    <thead class="bg-gray-100">
-                                        <tr class="bg-white">
-                                            <th id="report-yearly-community-header" colspan="8" class="px-2 py-3 text-center font-bold text-lg" style="height: 12mm;">&lt;社區名稱&gt;社區收支年報表</th>
-                                        </tr>
-                                        <tr class="bg-white">
-                                            <th id="report-yearly-date-header" colspan="8" class="px-2 py-2 text-center font-normal text-sm" style="height: 10mm;">114 年</th>
-                                        </tr>
-                                        <tr>
-                                            <th colspan="8" class="border border-gray-300 px-2 py-1 text-left font-bold text-[10px] text-green-700">收入明細</th>
-                                        </tr>
-                                        <tr>
-                                            <th class="border border-gray-300 px-2 py-1" style="width: 10mm;">序號</th>
-                                            <th class="border border-gray-300 px-2 py-1" style="width: 20mm;">日期</th>
-                                            <th class="border border-gray-300 px-2 py-1" style="width: 30mm;">對象</th>
-                                            <th class="border border-gray-300 px-2 py-1" style="width: 20mm;">類型</th>
-                                            <th class="border border-gray-300 px-2 py-1" style="width: 20mm;">類別</th>
-                                            <th class="border border-gray-300 px-2 py-1" style="width: 20mm;">月份</th>
-                                            <th class="border border-gray-300 px-2 py-1" style="width: 20mm;">金額</th>
-                                            <th class="border border-gray-300 px-2 py-1" style="width: 30mm;">備註</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="text-[10px]">
-                                        <!-- Rows will be populated by JS -->
-                                        <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-center font-bold bg-green-100 text-green-700">收入合計</td><td class="border border-gray-300 px-2 py-1 bg-green-100 text-green-700">&nbsp;</td><td class="border border-gray-300 px-2 py-1 bg-green-100">&nbsp;</td></tr>
-                                        <tr>
-                                            <td colspan="8" class="border border-gray-300 px-2 py-1 text-left font-bold text-[10px] bg-gray-200 text-red-700">支出明細</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="border border-gray-300 px-2 py-1 bg-gray-200 font-bold text-center">序號</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-gray-200 font-bold text-center">日期</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-gray-200 font-bold text-center">對象</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-gray-200 font-bold text-center">類型</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-gray-200 font-bold text-center">類別</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-gray-200 font-bold text-center">月份</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-gray-200 font-bold text-center">金額</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-gray-200 font-bold text-center">備註</td>
-                                        </tr>
-                                        <!-- Rows will be populated by JS -->
-                                        <tr>
-                                            <td colspan="6" class="border border-gray-300 px-2 py-1 text-center font-bold bg-red-100 text-red-700">支出合計</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-red-100 text-red-700">&nbsp;</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-red-100">&nbsp;</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
 
-                                <table class="w-full border-collapse text-center text-[10px]" style="margin-top: 6mm;">
-                                    <colgroup>
-                                        <col style="width: 10mm;">
-                                        <col style="width: 20mm;">
-                                        <col style="width: 30mm;">
-                                        <col style="width: 20mm;">
-                                        <col style="width: 20mm;">
-                                        <col style="width: 20mm;">
-                                        <col style="width: 20mm;">
-                                        <col style="width: 30mm;">
-                                    </colgroup>
-                                    <tbody>
-                                        <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right">上年銀行結餘</td><td colspan="2" id="summary-yearly-prev-bank-balance" class="border border-gray-300 px-2 py-1 text-right">&nbsp;</td></tr>
-                                        <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right">上年零用金加總結餘</td><td colspan="2" id="summary-yearly-prev-petty-balance" class="border border-gray-300 px-2 py-1 text-right">&nbsp;</td></tr>
-                                        <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right bg-green-100 text-green-700">本年銀行收入總計</td><td colspan="2" id="summary-yearly-today-bank-income" class="border border-gray-300 px-2 py-1 text-right bg-green-100 text-green-700">&nbsp;</td></tr>
-                                        <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right bg-green-100 text-green-700">本年零用金收入總計</td><td colspan="2" id="summary-yearly-today-petty-income" class="border border-gray-300 px-2 py-1 text-right bg-green-100 text-green-700">&nbsp;</td></tr>
-                                        <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right bg-red-100 text-red-700">本年銀行支出總計</td><td colspan="2" id="summary-yearly-today-bank-expense" class="border border-gray-300 px-2 py-1 text-right bg-red-100 text-red-700">&nbsp;</td></tr>
-                                        <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right bg-red-100 text-red-700">本年零用金支出總計</td><td colspan="2" id="summary-yearly-today-petty-expense" class="border border-gray-300 px-2 py-1 text-right bg-red-100 text-red-700">&nbsp;</td></tr>
-                                        <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right">本年銀行結餘</td><td colspan="2" id="summary-yearly-today-bank-balance" class="border border-gray-300 px-2 py-1 text-right">&nbsp;</td></tr>
-                                        <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right">本年零用金加總結餘</td><td colspan="2" id="summary-yearly-today-petty-balance" class="border border-gray-300 px-2 py-1 text-right">&nbsp;</td></tr>
-                                    </tbody>
-                                </table>
-                                <table class="w-full border-collapse text-[10px]">
-                                    <colgroup>
-                                        <col style="width: 25%;">
-                                        <col style="width: 25%;">
-                                        <col style="width: 25%;">
-                                        <col style="width: 25%;">
-                                    </colgroup>
-                                    <tbody>
-                                        <tr style="height: 6mm;">
-                                            <td class="px-2 py-1 text-left">主任委員 : </td>
-                                            <td class="px-2 py-1 text-left">監察委員 : </td>
-                                            <td class="px-2 py-1 text-left">財務委員 : </td>
-                                            <td class="px-2 py-1 text-left">社區主任 : </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="flex justify-between items-end mt-4 text-[12px] font-medium text-gray-600">
-                                <div>列印日期 : <span class="report-print-date"></span></div>
-                                <div>製表人 : <span class="report-print-user"></span></div>
-                            </div>
-                        </div>
-            </div>
 
 
         </div>
@@ -2068,7 +1961,7 @@
             'expense': ['支出明細','支出設定'],
             'bank': [], // Initial empty, will be populated by updateBankSubtabs
             'residents': ['住戶明細','管理費明細','停車費明細','其他明細','住戶設定'],
-            'reports': ['收支日報表', '收支月報表', '收支年報表'],
+            'reports': ['收支日報表', '收支月報表'],
             'settings': ['一般設定','備份還原']
         };
 
@@ -2306,7 +2199,6 @@
                         <h2 id="report-title" class="text-xl font-bold text-gray-700 mr-4 hidden md:block">收支日報表</h2>
                         <input type="date" id="toolbar-daily-filter" class="border rounded px-2 py-1 text-sm text-gray-700 bg-white">
                         <input type="month" id="toolbar-monthly-filter" class="border rounded px-2 py-1 text-sm text-gray-700 bg-white hidden">
-                        <select id="toolbar-yearly-filter" class="border rounded px-2 py-1 text-sm text-gray-700 bg-white hidden"></select>
                         <button id="btn-print-report" onclick="window.print()" class="px-4 py-1 bg-purple-600 text-white rounded hover:bg-purple-700 flex items-center gap-2">
                             <i class="fa-solid fa-print"></i> 列印
                         </button>
@@ -2606,21 +2498,17 @@
             } else if (tab === 'reports') {
                 const vDaily = document.getElementById('report-daily-view');
                 const vMonthly = document.getElementById('report-monthly-view');
-                const vYearly = document.getElementById('report-yearly-view');
                 const tDaily = document.getElementById('toolbar-daily-filter');
                 const tMonthly = document.getElementById('toolbar-monthly-filter');
-                const tYearly = document.getElementById('toolbar-yearly-filter');
                 const reportTitle = document.getElementById('report-title');
                 const secondaryToolbar = document.getElementById('secondary-toolbar');
 
-                if (vDaily && vMonthly && vYearly) {
+                if (vDaily && vMonthly) {
                     vDaily.classList.toggle('hidden', idx !== 0);
                     vMonthly.classList.toggle('hidden', idx !== 1);
-                    vYearly.classList.toggle('hidden', idx !== 2);
                     
                     if (tDaily) tDaily.classList.toggle('hidden', idx !== 0);
                     if (tMonthly) tMonthly.classList.toggle('hidden', idx !== 1);
-                    if (tYearly) tYearly.classList.toggle('hidden', idx !== 2);
 
                     // Secondary toolbar always visible for report tabs
                     if (secondaryToolbar) {
@@ -2633,9 +2521,6 @@
                     } else if (idx === 1) {
                         if(reportTitle) reportTitle.textContent = '收支月報表';
                         renderMonthlyReport();
-                    } else if (idx === 2) {
-                        if(reportTitle) reportTitle.textContent = '收支年報表';
-                        renderYearlyReport();
                     }
                 }
             } else if (tab === 'settings') {
@@ -2655,7 +2540,7 @@
 
         function renderDailyReport() { renderReportCommon('daily'); }
         function renderMonthlyReport() { renderReportCommon('monthly'); }
-        function renderYearlyReport() { renderReportCommon('yearly'); }
+
 
         function renderReportCommon(type) {
             const viewId = 'report-' + type + '-view';
@@ -2678,7 +2563,6 @@
                 
                 if (type === 'daily') currentPeriod = `${year}-${month}-${day}`;
                 else if (type === 'monthly') currentPeriod = `${year}-${month}`;
-                else if (type === 'yearly') currentPeriod = `${year}`;
                 
                 if (dateFilter) dateFilter.value = currentPeriod;
             }
@@ -2839,8 +2723,6 @@
                     if (elTotalUnpaid) elTotalUnpaid.textContent = '$' + totalUnpaid.toLocaleString();
                     if (elTotalPrepaid) elTotalPrepaid.textContent = '$' + totalPrepaid.toLocaleString();
 
-                } else if (type === 'yearly') {
-                    dateText = `${parseInt(currentPeriod) - 1911} 年`;
                 }
                 dateHeader.textContent = dateText;
             }
@@ -3067,27 +2949,12 @@
 
             // Dynamic Toolbar Logic
             if (tabId === 'reports') {
-                // Populate Year Filter if empty
-                const yearSelect = document.getElementById('toolbar-yearly-filter');
-                if (yearSelect && yearSelect.options.length === 0) {
-                    const currentYear = new Date().getFullYear();
-                    for (let y = currentYear + 1; y >= currentYear - 5; y--) {
-                        const opt = document.createElement('option');
-                        opt.value = y;
-                        opt.textContent = (y - 1911) + ' 年';
-                        if (y === currentYear) opt.selected = true;
-                        yearSelect.appendChild(opt);
-                    }
-                }
-
                 // Attach listeners
                 const tDaily = document.getElementById('toolbar-daily-filter');
                 const tMonthly = document.getElementById('toolbar-monthly-filter');
-                const tYearly = document.getElementById('toolbar-yearly-filter');
                 
                 if (tDaily) tDaily.onchange = renderDailyReport;
                 if (tMonthly) tMonthly.onchange = renderMonthlyReport;
-                if (tYearly) tYearly.onchange = renderYearlyReport;
             }
         }
 
@@ -3157,9 +3024,6 @@
 
             const hMonthly = document.getElementById('report-monthly-community-header');
             if (hMonthly) hMonthly.textContent = name + '管理委員會';
-
-            const hYearly = document.getElementById('report-yearly-community-header');
-            if (hYearly) hYearly.textContent = name + '社區收支年報表';
         }
 
         async function renderCommunityAccountsDisplay(){
@@ -6601,7 +6465,6 @@
                 // Ensure data is populated
                 if (type === 'daily') renderDailyReport();
                 else if (type === 'monthly') renderMonthlyReport();
-                else if (type === 'yearly') renderYearlyReport();
                 
                 // Wait for DOM to update
                 await new Promise(r => setTimeout(r, 1000));
@@ -6696,16 +6559,6 @@
                         <h2 style="color: #333;">${communityName} - 收支月報表</h2>
                         <p>月份: ${dateStr.substring(0, 7)}</p>
                         <p>請查收本月的財務收支月報表 (如附件)。</p>
-                        <p style="color: #666; font-size: 12px;">本郵件由 西北財務系統 自動發送，請勿回覆。</p>
-                    </div>
-                `;
-            } else if (type === 'yearly') {
-                subject = `${communityName} - 收支年報表 (${dateStr.substring(0, 4)})`;
-                htmlContent = `
-                    <div style="font-family: 'Noto Sans TC', Arial, sans-serif;">
-                        <h2 style="color: #333;">${communityName} - 收支年報表</h2>
-                        <p>年份: ${dateStr.substring(0, 4)}</p>
-                        <p>請查收本年度的財務收支年報表 (如附件)。</p>
                         <p style="color: #666; font-size: 12px;">本郵件由 西北財務系統 自動發送，請勿回覆。</p>
                     </div>
                 `;
