@@ -605,6 +605,23 @@
                         </div>
                         <div class="bg-white rounded-lg shadow-sm border border-gray-200">
                             <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg">
+                                <h3 class="font-bold text-gray-700">暫收款<span class="text-green-600">收入</span>列表</h3>
+                                <button id="btn-add-income-temp" class="px-3 py-2 bg-red-600 text-white rounded">新增</button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm text-gray-600">
+                                    <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-bold">
+                                        <tr>
+                                            <th class="px-6 py-3">項目</th>
+                                            <th class="px-6 py-3">操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="income-temp-tbody" class="divide-y divide-gray-200"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg">
                                 <h3 class="font-bold text-gray-700"><span class="text-green-600">收入</span>對象列表</h3>
                                 <button id="btn-add-income-target" class="px-3 py-2 bg-red-600 text-white rounded">新增</button>
                             </div>
@@ -700,6 +717,23 @@
                         </div>
                         <div class="bg-white rounded-lg shadow-sm border border-gray-200">
                             <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg">
+                                <h3 class="font-bold text-gray-700">暫收款<span class="text-red-600">支出</span>列表</h3>
+                                <button id="btn-add-expense-temp" class="px-3 py-2 bg-red-600 text-white rounded">新增</button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm text-gray-600">
+                                    <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-bold">
+                                        <tr>
+                                            <th class="px-6 py-3">項目</th>
+                                            <th class="px-6 py-3">操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="expense-temp-tbody" class="divide-y divide-gray-200"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg">
                                 <h3 class="font-bold text-gray-700"><span class="text-red-600">支出</span>對象列表</h3>
                                 <button id="btn-add-expense-target" class="px-3 py-2 bg-red-600 text-white rounded">新增</button>
                             </div>
@@ -748,7 +782,7 @@
                                     </thead>
                                     <tbody class="text-[10px]">
                                         <!-- Rows will be populated by JS -->
-                                        <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-center font-bold bg-green-100 text-green-700">收入合計</td><td class="border border-gray-300 px-2 py-1 bg-green-100 text-green-700">&nbsp;</td><td class="border border-gray-300 px-2 py-1 bg-green-100">&nbsp;</td></tr>
+                                        <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-center font-bold bg-green-100 text-green-700">收入合計</td><td class="border border-gray-300 px-2 py-1 bg-green-100 text-green-700 text-right">&nbsp;</td><td class="border border-gray-300 px-2 py-1 bg-green-100">&nbsp;</td></tr>
                                         <tr>
                                             <td colspan="8" class="border border-gray-300 px-2 py-1 text-left font-bold text-[10px] bg-gray-200 text-red-700">支出明細</td>
                                         </tr>
@@ -765,7 +799,7 @@
                                         <!-- Rows will be populated by JS -->
                                         <tr>
                                             <td colspan="6" class="border border-gray-300 px-2 py-1 text-center font-bold bg-red-100 text-red-700">支出合計</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-red-100 text-red-700">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-red-100 text-red-700 text-right">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-red-100">&nbsp;</td>
                                         </tr>
                                     </tbody>
@@ -881,10 +915,12 @@
                                 <table class="w-full border-collapse text-center text-[10px]">
                                     <colgroup>
                                         <col style="width: 10mm;">
-                                        <col style="width: 65mm;">
+                                        <col style="width: 50mm;">
+                                        <col style="width: 15mm;">
                                         <col style="width: 20mm;">
                                         <col style="width: 10mm;">
-                                        <col style="width: 65mm;">
+                                        <col style="width: 50mm;">
+                                        <col style="width: 15mm;">
                                         <col style="width: 20mm;">
                                     </colgroup>
                                     <tbody>
@@ -892,40 +928,153 @@
                                             <td colspan="6" class="px-2 py-1 bg-white text-left border-0 text-sm font-bold">(二)收支明細</td>
                                         </tr>
                                         <tr style="height: 6mm;">
-                                            <td colspan="3" class="border border-gray-300 px-2 py-1 bg-white font-bold">收入明細</td>
-                                            <td colspan="3" class="border border-gray-300 px-2 py-1 bg-white font-bold">支出明細</td>
+                                            <td colspan="4" class="border border-gray-300 px-2 py-1 bg-white font-bold">收入明細</td>
+                                            <td colspan="4" class="border border-gray-300 px-2 py-1 bg-white font-bold">支出明細</td>
                                         </tr>
                                         <tr style="height: 6mm;">
                                             <td class="border border-gray-300 px-2 py-1 bg-white">序號</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">固定收入</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">月份</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">收入金額</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">序號</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">固定支出</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">月份</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">支出金額</td>
+                                        </tr>
+
+
+
+                                        <tr style="height: 6mm;">
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right">&nbsp;</td>
+                                        </tr>
+                                        <tr style="height: 6mm;">
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right">&nbsp;</td>
+                                        </tr>
+                                        <tr style="height: 6mm;">
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right">&nbsp;</td>
+                                        </tr>
+                                        <tr style="height: 6mm;">
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right">&nbsp;</td>
+                                        </tr>
+                                        <tr style="height: 6mm;">
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right">&nbsp;</td>
+                                        </tr>
+                                        <tr style="height: 6mm;">
+                                            <td class="border border-gray-300 px-2 py-1 bg-yellow-100" colspan="3">固定收入小計</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-yellow-100 text-right">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-yellow-100" colspan="3">固定支出小計</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-yellow-100 text-right">&nbsp;</td>
+                                        </tr>
+                                        <tr style="height: 6mm;">
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">序號</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">其他收入</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">月份</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">收入金額</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">序號</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">其他支出</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">月份</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">支出金額</td>
                                         </tr>
                                         <tr style="height: 6mm;">
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right">&nbsp;</td>
                                         </tr>
                                         <tr style="height: 6mm;">
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right">&nbsp;</td>
                                         </tr>
                                         <tr style="height: 6mm;">
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right">&nbsp;</td>
+                                        </tr>
+                                        <tr style="height: 6mm;">
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right">&nbsp;</td>
+                                        </tr>
+                                        <tr style="height: 6mm;">
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right">&nbsp;</td>
+                                        </tr>
+                                        <tr style="height: 6mm;">
+                                            <td class="border border-gray-300 px-2 py-1 bg-yellow-100" colspan="3">其他收入小計</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-yellow-100 text-right">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-yellow-100" colspan="3">其他支出小計</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-yellow-100 text-right">&nbsp;</td>
+                                        </tr>
+                                        <tr style="height: 6mm;">
+                                            <td class="border border-gray-300 px-2 py-1 bg-white font-bold" colspan="3">收入總計</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right font-bold">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white font-bold" colspan="3">支出總計</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right font-bold">&nbsp;</td>
+                                        </tr>
+                                        <tr style="height: 6mm;">
+                                            <td class="border border-gray-300 px-2 py-1 bg-white font-bold" colspan="6">本期結餘</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right font-bold" colspan="2">&nbsp;</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -937,19 +1086,119 @@
                                 <table class="w-full border-collapse text-center text-[10px]">
                                     <colgroup>
                                         <col style="width: 10mm;">
-                                        <col style="width: 60mm;">
-                                        <col style="width: 30mm;">
-                                        <col style="width: 30mm;">
-                                        <col style="width: 30mm;">
-                                        <col style="width: 30mm;">
+                                        <col style="width: 50mm;">
+                                        <col style="width: 15mm;">
+                                        <col style="width: 20mm;">
+                                        <col style="width: 10mm;">
+                                        <col style="width: 50mm;">
+                                        <col style="width: 15mm;">
+                                        <col style="width: 20mm;">
                                     </colgroup>
                                     <tbody>
-                                        <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right bg-white">&nbsp;</td></tr>
-                                        <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right bg-white">&nbsp;</td></tr>
-                                        <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right bg-white">&nbsp;</td></tr>
-                                        <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right bg-white">&nbsp;</td></tr>
-                                        <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right bg-white">&nbsp;</td></tr>
-                                        <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right bg-white">&nbsp;</td></tr>
+                                        <tr style="height: 6mm;">
+                                            <td colspan="8" class="px-2 py-1 bg-white border-0 text-left text-sm font-bold">(三)暫收款</td>
+                                        </tr>
+                                        <tr style="height: 6mm;">
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">序號</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">暫收款收入</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">月份</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">收入金額</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">序號</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">暫收款支出</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">月份</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">支出金額</td>
+                                        </tr>
+                                        <tr style="height: 6mm;">
+                                            <td class="border border-gray-300 px-2 py-1 bg-yellow-100" colspan="3">暫收款收入小計</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-yellow-100 text-right">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right">&nbsp;</td>
+                                        </tr>
+                                        <tr style="height: 6mm;">
+                                            <td class="border border-gray-300 px-2 py-1 bg-yellow-100" colspan="3">暫收款收入小計</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-yellow-100 text-right">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white text-right">&nbsp;</td>
+                                        </tr>
+                                        <tr style="height: 6mm;">
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div style="height: 5mm;"></div>
+                                <table class="w-full border-collapse text-center text-[10px]">
+                                    <colgroup>
+                                        <col style="width: 10mm;">
+                                        <col style="width: 50mm;">
+                                        <col style="width: 15mm;">
+                                        <col style="width: 20mm;">
+                                        <col style="width: 10mm;">
+                                        <col style="width: 50mm;">
+                                        <col style="width: 15mm;">
+                                        <col style="width: 20mm;">
+                                    </colgroup>
+                                    <tbody>
+                                        <tr style="height: 6mm;">
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                        </tr>
+                                        <tr style="height: 6mm;">
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                        </tr>
+                                        <tr style="height: 6mm;">
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                        </tr>
+                                        <tr style="height: 6mm;">
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                        </tr>
+                                        <tr style="height: 6mm;">
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-white">&nbsp;</td>
+                                        </tr>
                                     </tbody>
                                 </table>
                                 <table class="w-full border-collapse text-[10px]">
@@ -1004,7 +1253,7 @@
                                     </thead>
                                     <tbody class="text-[10px]">
                                         <!-- Rows will be populated by JS -->
-                                        <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-center font-bold bg-green-100 text-green-700">收入合計</td><td class="border border-gray-300 px-2 py-1 bg-green-100 text-green-700">&nbsp;</td><td class="border border-gray-300 px-2 py-1 bg-green-100">&nbsp;</td></tr>
+                                        <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-center font-bold bg-green-100 text-green-700">收入合計</td><td class="border border-gray-300 px-2 py-1 bg-green-100 text-green-700 text-right">&nbsp;</td><td class="border border-gray-300 px-2 py-1 bg-green-100">&nbsp;</td></tr>
                                         <tr>
                                             <td colspan="8" class="border border-gray-300 px-2 py-1 text-left font-bold text-[10px] bg-gray-200 text-red-700">支出明細</td>
                                         </tr>
@@ -1021,7 +1270,7 @@
                                         <!-- Rows will be populated by JS -->
                                         <tr>
                                             <td colspan="6" class="border border-gray-300 px-2 py-1 text-center font-bold bg-red-100 text-red-700">支出合計</td>
-                                            <td class="border border-gray-300 px-2 py-1 bg-red-100 text-red-700">&nbsp;</td>
+                                            <td class="border border-gray-300 px-2 py-1 bg-red-100 text-red-700 text-right">&nbsp;</td>
                                             <td class="border border-gray-300 px-2 py-1 bg-red-100">&nbsp;</td>
                                         </tr>
                                     </tbody>
@@ -1819,6 +2068,7 @@
                             <select id="input-trans-type" class="w-full border rounded px-3 py-2">
                                 <option value="固定">固定</option>
                                 <option value="其他">其他</option>
+                                <option value="暫收款">暫收款</option>
                             </select>
                             <input id="input-trans-type-custom" class="w-full border rounded px-3 py-2 hidden mt-1" placeholder="輸入自定義類型">
                         </div>
@@ -2833,6 +3083,250 @@
                 dateHeader.textContent = dateText;
             }
 
+            if (type === 'monthly') {
+                const fixedCats = getIncomeFixed() || [];
+                const getMonthStr = (t) => t.month || (t.date ? t.date.substring(0, 7) : '');
+                const fixedIncomeThisMonth = (getTransactions() || []).filter(t => {
+                    const isIncome = (t.mode === 'income') || (t.id && t.id.startsWith('I'));
+                    return isIncome && fixedCats.includes(t.category) && (t.date || '').startsWith(currentPeriod);
+                });
+                const aggMap = {};
+                fixedIncomeThisMonth.forEach(t => {
+                    const cat = t.category || '';
+                    const mm = getMonthStr(t) || currentPeriod;
+                    const key = cat + '|' + mm;
+                    const val = parseInt(t.amount || 0);
+                    if (!aggMap[key]) aggMap[key] = { category: cat, month: mm, amount: 0 };
+                    aggMap[key].amount += val;
+                });
+                const aggregated = Object.values(aggMap);
+                const monthlyView = document.getElementById('report-monthly-view');
+                const detailTable = monthlyView ? Array.from(monthlyView.querySelectorAll('table')).find(tbl => {
+                    const tb = tbl.querySelector('tbody');
+                    return tb && tb.innerText.includes('(二)收支明細');
+                }) : null;
+                const detailBody = detailTable ? detailTable.querySelector('tbody') : null;
+                if (detailBody) {
+                    const rows = Array.from(detailBody.querySelectorAll('tr'));
+                    const headerRowIdx = rows.findIndex(tr => tr.innerText.includes('序號') && tr.innerText.includes('固定收入'));
+                    const subtotalRowIdx = rows.findIndex(tr => tr.innerText.includes('固定收入小計'));
+                    if (headerRowIdx >= 0 && subtotalRowIdx > headerRowIdx) {
+                        const writableRows = rows.slice(headerRowIdx + 1, subtotalRowIdx);
+                        const count = Math.min(writableRows.length, aggregated.length);
+                        for (let i = 0; i < count; i++) {
+                            const tr = writableRows[i];
+                            const t = aggregated[i];
+                            const amountText = '$' + parseInt(t.amount || 0).toLocaleString();
+                            const cells = tr.querySelectorAll('td');
+                            if (cells[0]) cells[0].textContent = String(i + 1);
+                            if (cells[1]) cells[1].textContent = t.category || '';
+                            if (cells[2]) cells[2].textContent = t.month || '';
+                            if (cells[3]) { cells[3].textContent = amountText; cells[3].classList.add('text-right'); }
+                        }
+                        for (let j = count; j < writableRows.length; j++) {
+                            const tr = writableRows[j];
+                            const cells = tr.querySelectorAll('td');
+                            Array.from(cells).forEach((c, idx) => { c.textContent = idx === 3 ? '' : ''; });
+                        }
+                        // Fixed Income Subtotal
+                        const subtotalRow = rows[subtotalRowIdx];
+                        const subtotalCells = subtotalRow.querySelectorAll('td');
+                        const fixedIncomeTotal = aggregated.slice(0, count).reduce((sum, item) => sum + item.amount, 0);
+                        if (subtotalCells[1]) {
+                            subtotalCells[1].textContent = '$' + fixedIncomeTotal.toLocaleString();
+                            subtotalCells[1].classList.add('text-green-700');
+                        }
+                    }
+                }
+                const expenseCats = getExpenseFixed() || [];
+                const expenseThisMonth = (getTransactions() || []).filter(t => {
+                    const isIncome = (t.mode === 'income') || (t.id && t.id.startsWith('I'));
+                    return !isIncome && expenseCats.includes(t.category) && (t.date || '').startsWith(currentPeriod);
+                });
+                const aggExpMap = {};
+                expenseThisMonth.forEach(t => {
+                    const cat = t.category || '';
+                    const mm = getMonthStr(t) || currentPeriod;
+                    const key = cat + '|' + mm;
+                    const val = parseInt(t.amount || 0);
+                    if (!aggExpMap[key]) aggExpMap[key] = { category: cat, month: mm, amount: 0 };
+                    aggExpMap[key].amount += val;
+                });
+                const aggregatedExp = Object.values(aggExpMap);
+                if (detailBody) {
+                    const rows = Array.from(detailBody.querySelectorAll('tr'));
+                    const headerRowIdx = rows.findIndex(tr => tr.innerText.includes('序號') && tr.innerText.includes('固定收入'));
+                    const subtotalRowIdx = rows.findIndex(tr => tr.innerText.includes('固定支出小計'));
+                    if (headerRowIdx >= 0 && subtotalRowIdx > headerRowIdx) {
+                        const writableRows = rows.slice(headerRowIdx + 1, subtotalRowIdx);
+                        const countExp = Math.min(writableRows.length, aggregatedExp.length);
+                        for (let i = 0; i < countExp; i++) {
+                            const tr = writableRows[i];
+                            const t = aggregatedExp[i];
+                            const amountText = '$' + parseInt(t.amount || 0).toLocaleString();
+                            const cells = tr.querySelectorAll('td');
+                            if (cells[4]) cells[4].textContent = String(i + 1);
+                            if (cells[5]) cells[5].textContent = t.category || '';
+                            if (cells[6]) cells[6].textContent = t.month || '';
+                            if (cells[7]) { cells[7].textContent = amountText; cells[7].classList.add('text-right'); }
+                        }
+                        for (let j = countExp; j < writableRows.length; j++) {
+                            const tr = writableRows[j];
+                            const cells = tr.querySelectorAll('td');
+                            if (cells[4]) cells[4].textContent = '';
+                            if (cells[5]) cells[5].textContent = '';
+                            if (cells[6]) cells[6].textContent = '';
+                            if (cells[7]) cells[7].textContent = '';
+                        }
+                        // Fixed Expense Subtotal
+                        const subtotalRow = rows[subtotalRowIdx];
+                        const subtotalCells = subtotalRow.querySelectorAll('td');
+                        const fixedExpenseTotal = aggregatedExp.slice(0, countExp).reduce((sum, item) => sum + item.amount, 0);
+                        if (subtotalCells[3]) {
+                            subtotalCells[3].textContent = '$' + fixedExpenseTotal.toLocaleString();
+                            subtotalCells[3].classList.add('text-red-700');
+                        }
+                    }
+                }
+                const otherIncomeCats = getIncomeOther() || [];
+                const otherIncomeThisMonth = (getTransactions() || []).filter(t => {
+                    const isIncome = (t.mode === 'income') || (t.id && t.id.startsWith('I'));
+                    return isIncome && otherIncomeCats.includes(t.category) && (t.date || '').startsWith(currentPeriod);
+                });
+                const aggOtherIncMap = {};
+                otherIncomeThisMonth.forEach(t => {
+                    const cat = t.category || '';
+                    const mm = getMonthStr(t) || currentPeriod;
+                    const key = cat + '|' + mm;
+                    const val = parseInt(t.amount || 0);
+                    if (!aggOtherIncMap[key]) aggOtherIncMap[key] = { category: cat, month: mm, amount: 0 };
+                    aggOtherIncMap[key].amount += val;
+                });
+                const aggregatedOtherInc = Object.values(aggOtherIncMap);
+                if (detailBody) {
+                    const rows = Array.from(detailBody.querySelectorAll('tr'));
+                    const headerOtherIdx = rows.findIndex(tr => tr.innerText.includes('序號') && tr.innerText.includes('其他收入'));
+                    const subtotalOtherIdx = rows.findIndex(tr => tr.innerText.includes('其他支出小計'));
+                    if (headerOtherIdx >= 0 && subtotalOtherIdx > headerOtherIdx) {
+                        const writableRows = rows.slice(headerOtherIdx + 1, subtotalOtherIdx);
+                        const countOtherInc = Math.min(writableRows.length, aggregatedOtherInc.length);
+                        for (let i = 0; i < countOtherInc; i++) {
+                            const tr = writableRows[i];
+                            const t = aggregatedOtherInc[i];
+                            const amountText = '$' + parseInt(t.amount || 0).toLocaleString();
+                            const cells = tr.querySelectorAll('td');
+                            if (cells[0]) cells[0].textContent = String(i + 1);
+                            if (cells[1]) cells[1].textContent = t.category || '';
+                            if (cells[2]) cells[2].textContent = t.month || '';
+                            if (cells[3]) { cells[3].textContent = amountText; cells[3].classList.add('text-right'); }
+                        }
+                        for (let j = countOtherInc; j < writableRows.length; j++) {
+                            const tr = writableRows[j];
+                            const cells = tr.querySelectorAll('td');
+                            if (cells[0]) cells[0].textContent = '';
+                            if (cells[1]) cells[1].textContent = '';
+                            if (cells[2]) cells[2].textContent = '';
+                            if (cells[3]) cells[3].textContent = '';
+                        }
+                        // Other Income Subtotal
+                        const subtotalRow = rows[subtotalOtherIdx];
+                        const subtotalCells = subtotalRow.querySelectorAll('td');
+                        const otherIncomeTotal = aggregatedOtherInc.slice(0, countOtherInc).reduce((sum, item) => sum + item.amount, 0);
+                        if (subtotalCells[1]) {
+                            subtotalCells[1].textContent = '$' + otherIncomeTotal.toLocaleString();
+                            subtotalCells[1].classList.add('text-green-700');
+                        }
+                    }
+                }
+                const otherExpenseCats = getExpenseOther() || [];
+                const otherExpenseThisMonth = (getTransactions() || []).filter(t => {
+                    const isIncome = (t.mode === 'income') || (t.id && t.id.startsWith('I'));
+                    return !isIncome && otherExpenseCats.includes(t.category) && (t.date || '').startsWith(currentPeriod);
+                });
+                const aggOtherExpMap = {};
+                otherExpenseThisMonth.forEach(t => {
+                    const cat = t.category || '';
+                    const mm = getMonthStr(t) || currentPeriod;
+                    const key = cat + '|' + mm;
+                    const val = parseInt(t.amount || 0);
+                    if (!aggOtherExpMap[key]) aggOtherExpMap[key] = { category: cat, month: mm, amount: 0 };
+                    aggOtherExpMap[key].amount += val;
+                });
+                const aggregatedOtherExp = Object.values(aggOtherExpMap);
+                if (detailBody) {
+                    const rows = Array.from(detailBody.querySelectorAll('tr'));
+                    const headerOtherIdx = rows.findIndex(tr => tr.innerText.includes('序號') && tr.innerText.includes('其他收入'));
+                    const subtotalOtherIdx = rows.findIndex(tr => tr.innerText.includes('其他收入小計'));
+                    if (headerOtherIdx >= 0 && subtotalOtherIdx > headerOtherIdx) {
+                        const writableRows = rows.slice(headerOtherIdx + 1, subtotalOtherIdx);
+                        const countOtherExp = Math.min(writableRows.length, aggregatedOtherExp.length);
+                        for (let i = 0; i < countOtherExp; i++) {
+                            const tr = writableRows[i];
+                            const t = aggregatedOtherExp[i];
+                            const amountText = '$' + parseInt(t.amount || 0).toLocaleString();
+                            const cells = tr.querySelectorAll('td');
+                            if (cells[4]) cells[4].textContent = String(i + 1);
+                            if (cells[5]) cells[5].textContent = t.category || '';
+                            if (cells[6]) cells[6].textContent = t.month || '';
+                            if (cells[7]) { cells[7].textContent = amountText; cells[7].classList.add('text-right'); }
+                        }
+                        for (let j = countOtherExp; j < writableRows.length; j++) {
+                            const tr = writableRows[j];
+                            const cells = tr.querySelectorAll('td');
+                            if (cells[4]) cells[4].textContent = '';
+                            if (cells[5]) cells[5].textContent = '';
+                            if (cells[6]) cells[6].textContent = '';
+                            if (cells[7]) cells[7].textContent = '';
+                        }
+                        // Other Expense Subtotal
+                        const subtotalRow = rows[subtotalOtherIdx];
+                        const subtotalCells = subtotalRow.querySelectorAll('td');
+                        const otherExpenseTotal = aggregatedOtherExp.slice(0, countOtherExp).reduce((sum, item) => sum + item.amount, 0);
+                        if (subtotalCells[3]) {
+                            subtotalCells[3].textContent = '$' + otherExpenseTotal.toLocaleString();
+                            subtotalCells[3].classList.add('text-red-700');
+                        }
+
+                        // Grand Totals
+                        const totalRowIdx = rows.findIndex(tr => tr.innerText.includes('收入總計') && tr.innerText.includes('支出總計'));
+                        if (totalRowIdx >= 0) {
+                            const totalRow = rows[totalRowIdx];
+                            const totalCells = totalRow.querySelectorAll('td');
+                            
+                            // Calculate Totals (Limit to 5 items to match visual table)
+                            const fixedIncomeTotal = aggregated.slice(0, 5).reduce((sum, item) => sum + item.amount, 0);
+                            const fixedExpenseTotal = aggregatedExp.slice(0, 5).reduce((sum, item) => sum + item.amount, 0);
+                            const otherIncomeTotal = aggregatedOtherInc.slice(0, 5).reduce((sum, item) => sum + item.amount, 0);
+                            const otherExpenseTotal = aggregatedOtherExp.slice(0, 5).reduce((sum, item) => sum + item.amount, 0);
+
+                            const grandIncome = fixedIncomeTotal + otherIncomeTotal;
+                            const grandExpense = fixedExpenseTotal + otherExpenseTotal;
+
+                            if (totalCells[1]) {
+                                totalCells[1].textContent = '$' + grandIncome.toLocaleString();
+                                totalCells[1].classList.add('text-green-700');
+                            }
+                            if (totalCells[3]) {
+                                totalCells[3].textContent = '$' + grandExpense.toLocaleString();
+                                totalCells[3].classList.add('text-red-700');
+                            }
+
+                            // Balance Row
+                            const balanceRowIdx = rows.findIndex(tr => tr.innerText.includes('本期結餘'));
+                            if (balanceRowIdx >= 0) {
+                                const balanceRow = rows[balanceRowIdx];
+                                const balanceCells = balanceRow.querySelectorAll('td');
+                                const netBalance = grandIncome - grandExpense;
+                                if (balanceCells[1]) {
+                                    balanceCells[1].textContent = '$' + netBalance.toLocaleString();
+                                    balanceCells[1].classList.add(netBalance >= 0 ? 'text-green-700' : 'text-red-700');
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             const isInPeriod = (t) => t.date && t.date.startsWith(currentPeriod);
             const isBeforePeriod = (t) => t.date && t.date < currentPeriod;
             const currentPeriodTransactions = transactions.filter(isInPeriod);
@@ -2895,7 +3389,7 @@
                         row.appendChild(createCell(transaction.type));
                         row.appendChild(createCell(transaction.category));
                         row.appendChild(createCell(transaction.month || (transaction.date ? transaction.date.slice(0, 7) : '')));
-                        row.appendChild(createCell(amount.toLocaleString(), 'text-green-700'));
+                        row.appendChild(createCell(amount.toLocaleString(), 'text-green-700 text-right'));
                         row.appendChild(createCell(transaction.note));
                         
                         tbody.insertBefore(row, incomeTotalRow);
@@ -2905,7 +3399,11 @@
                     while (incomeRowCount < 10) {
                         const row = document.createElement('tr');
                         row.style.height = '6mm';
-                        for(let i=0; i<8; i++) row.appendChild(createCell(''));
+                        for(let i=0; i<8; i++) {
+                            // 7th column (index 6) is Amount, should be right aligned
+                            const className = (i === 6) ? 'text-right' : '';
+                            row.appendChild(createCell('', className));
+                        }
                         tbody.insertBefore(row, incomeTotalRow);
                         incomeRowCount++;
                     }
@@ -2925,7 +3423,7 @@
                         row.appendChild(createCell(transaction.type));
                         row.appendChild(createCell(transaction.category));
                         row.appendChild(createCell(transaction.month || (transaction.date ? transaction.date.slice(0, 7) : '')));
-                        row.appendChild(createCell(amount.toLocaleString(), 'text-red-700'));
+                        row.appendChild(createCell(amount.toLocaleString(), 'text-red-700 text-right'));
                         row.appendChild(createCell(transaction.note));
                         
                         tbody.insertBefore(row, expenseTotalRow);
@@ -2935,7 +3433,11 @@
                     while (expenseRowCount < 10) {
                         const row = document.createElement('tr');
                         row.style.height = '6mm';
-                        for(let i=0; i<8; i++) row.appendChild(createCell(''));
+                        for(let i=0; i<8; i++) {
+                            // 7th column (index 6) is Amount, should be right aligned
+                            const className = (i === 6) ? 'text-right' : '';
+                            row.appendChild(createCell('', className));
+                        }
                         tbody.insertBefore(row, expenseTotalRow);
                         expenseRowCount++;
                     }
@@ -4353,10 +4855,14 @@
         function setIncomeFixed(arr){ lsSet(incomeKey('income_fixed'), arr); }
         function getIncomeOther(){ return lsGet(incomeKey('income_other')); }
         function setIncomeOther(arr){ lsSet(incomeKey('income_other'), arr); }
+        function getIncomeTemp(){ return lsGet(incomeKey('income_temp')); }
+        function setIncomeTemp(arr){ lsSet(incomeKey('income_temp'), arr); }
         function getExpenseFixed(){ return lsGet(expenseKey('expense_fixed')); }
         function setExpenseFixed(arr){ lsSet(expenseKey('expense_fixed'), arr); }
         function getExpenseOther(){ return lsGet(expenseKey('expense_other')); }
         function setExpenseOther(arr){ lsSet(expenseKey('expense_other'), arr); }
+        function getExpenseTemp(){ return lsGet(expenseKey('expense_temp')); }
+        function setExpenseTemp(arr){ lsSet(expenseKey('expense_temp'), arr); }
         function getIncomeTargets(){ return lsGet(incomeKey('income_targets')); }
         function setIncomeTargets(arr){ lsSet(incomeKey('income_targets'), arr); }
         function getExpenseTargets(){ return lsGet(expenseKey('expense_targets')); }
@@ -4372,15 +4878,19 @@
 
         const incomeFixedTbody = document.getElementById('income-fixed-tbody');
         const incomeOtherTbody = document.getElementById('income-other-tbody');
+        const incomeTempTbody = document.getElementById('income-temp-tbody');
         const incomeTargetsTbody = document.getElementById('income-targets-tbody');
         const expenseFixedTbody = document.getElementById('expense-fixed-tbody');
         const expenseOtherTbody = document.getElementById('expense-other-tbody');
+        const expenseTempTbody = document.getElementById('expense-temp-tbody');
         const expenseTargetsTbody = document.getElementById('expense-targets-tbody');
         const btnAddIncomeFixed = document.getElementById('btn-add-income-fixed');
         const btnAddIncomeOther = document.getElementById('btn-add-income-other');
+        const btnAddIncomeTemp = document.getElementById('btn-add-income-temp');
         const btnAddIncomeTarget = document.getElementById('btn-add-income-target');
         const btnAddExpenseFixed = document.getElementById('btn-add-expense-fixed');
         const btnAddExpenseOther = document.getElementById('btn-add-expense-other');
+        const btnAddExpenseTemp = document.getElementById('btn-add-expense-temp');
         const btnAddExpenseTarget = document.getElementById('btn-add-expense-target');
         const bankTbody = document.getElementById('bank-tbody');
         const btnAddBank = document.getElementById('btn-add-bank');
@@ -5157,6 +5667,20 @@
                 });
                 Array.from(incomeOtherTbody.querySelectorAll('.edit-io')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getIncomeOther(); openEditItem({kind:'income_other', index:i, value:arr2[i]}); }); });
             }
+            if (incomeTempTbody){ const arr = getIncomeTemp(); incomeTempTbody.innerHTML = arr.map((x,i)=> '<tr><td class="px-6 py-3">'+x+'</td><td class="px-6 py-3"><button data-i="'+i+'" class="edit-itmp text-blue-600 mr-2">編輯</button><button data-i="'+i+'" class="del-itmp text-red-600">刪除</button></td></tr>').join('');
+                Array.from(incomeTempTbody.querySelectorAll('.del-itmp')).forEach(btn=>{ 
+                    btn.addEventListener('click', ()=>{ 
+                        openConfirm('確定要刪除此收入項目嗎？', () => {
+                            const i = parseInt(btn.getAttribute('data-i')); 
+                            const arr2 = getIncomeTemp(); 
+                            arr2.splice(i,1); 
+                            setIncomeTemp(arr2); 
+                            renderIncomeSettings(); 
+                        });
+                    }); 
+                });
+                Array.from(incomeTempTbody.querySelectorAll('.edit-itmp')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getIncomeTemp(); openEditItem({kind:'income_temp', index:i, value:arr2[i]}); }); });
+            }
             if (incomeTargetsTbody){ const arr = getIncomeTargets() || []; incomeTargetsTbody.innerHTML = arr.map((x,i)=> '<tr><td class="px-6 py-3">'+x+'</td><td class="px-6 py-3"><button data-i="'+i+'" class="edit-it text-blue-600 mr-2">編輯</button><button data-i="'+i+'" class="del-it text-red-600">刪除</button></td></tr>').join('');
                 Array.from(incomeTargetsTbody.querySelectorAll('.del-it')).forEach(btn=>{ 
                     btn.addEventListener('click', ()=>{ 
@@ -5200,6 +5724,20 @@
                     }); 
                 });
                 Array.from(expenseOtherTbody.querySelectorAll('.edit-eo')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getExpenseOther(); openEditItem({kind:'expense_other', index:i, value:arr2[i]}); }); });
+            }
+            if (expenseTempTbody){ const arr = getExpenseTemp(); expenseTempTbody.innerHTML = arr.map((x,i)=> '<tr><td class="px-6 py-3">'+x+'</td><td class="px-6 py-3"><button data-i="'+i+'" class="edit-etmp text-blue-600 mr-2">編輯</button><button data-i="'+i+'" class="del-etmp text-red-600">刪除</button></td></tr>').join('');
+                Array.from(expenseTempTbody.querySelectorAll('.del-etmp')).forEach(btn=>{ 
+                    btn.addEventListener('click', ()=>{ 
+                        openConfirm('確定要刪除此支出項目嗎？', () => {
+                            const i = parseInt(btn.getAttribute('data-i')); 
+                            const arr2 = getExpenseTemp(); 
+                            arr2.splice(i,1); 
+                            setExpenseTemp(arr2); 
+                            renderExpenseSettings(); 
+                        });
+                    }); 
+                });
+                Array.from(expenseTempTbody.querySelectorAll('.edit-etmp')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getExpenseTemp(); openEditItem({kind:'expense_temp', index:i, value:arr2[i]}); }); });
             }
             if (expenseTargetsTbody){ const arr = getExpenseTargets() || []; expenseTargetsTbody.innerHTML = arr.map((x,i)=> '<tr><td class="px-6 py-3">'+x+'</td><td class="px-6 py-3"><button data-i="'+i+'" class="edit-et text-blue-600 mr-2">編輯</button><button data-i="'+i+'" class="del-et text-red-600">刪除</button></td></tr>').join('');
                 Array.from(expenseTargetsTbody.querySelectorAll('.del-et')).forEach(btn=>{ 
@@ -5298,15 +5836,19 @@
         ensureDefaultsIncomeExpense();
         if (btnAddIncomeFixed){ btnAddIncomeFixed.addEventListener('click', ()=> openEditItem({kind:'income_fixed', index:-1, value:''})); }
         if (btnAddIncomeOther){ btnAddIncomeOther.addEventListener('click', ()=> openEditItem({kind:'income_other', index:-1, value:''})); }
+        if (btnAddIncomeTemp){ btnAddIncomeTemp.addEventListener('click', ()=> openEditItem({kind:'income_temp', index:-1, value:''})); }
         if (btnAddIncomeTarget){ btnAddIncomeTarget.addEventListener('click', ()=> openEditItem({kind:'income_targets', index:-1, value:''})); }
         if (btnAddExpenseFixed){ btnAddExpenseFixed.addEventListener('click', ()=> openEditItem({kind:'expense_fixed', index:-1, value:''})); }
         if (btnAddExpenseOther){ btnAddExpenseOther.addEventListener('click', ()=> openEditItem({kind:'expense_other', index:-1, value:''})); }
+        if (btnAddExpenseTemp){ btnAddExpenseTemp.addEventListener('click', ()=> openEditItem({kind:'expense_temp', index:-1, value:''})); }
         if (btnAddExpenseTarget){ btnAddExpenseTarget.addEventListener('click', ()=> openEditItem({kind:'expense_targets', index:-1, value:''})); }
         if (confirmEditItem){ confirmEditItem.addEventListener('click', ()=>{ if(!editCtx) return; const name = (inputItemName.value||'').trim(); if(!name){ closeEditItem(); return; } if (editCtx.kind==='income_fixed'){ const arr = getIncomeFixed(); if (editCtx.index>=0) arr[editCtx.index]=name; else arr.push(name); setIncomeFixed(arr); renderIncomeSettings(); }
             else if (editCtx.kind==='income_other'){ const arr = getIncomeOther(); if (editCtx.index>=0) arr[editCtx.index]=name; else arr.push(name); setIncomeOther(arr); renderIncomeSettings(); }
+            else if (editCtx.kind==='income_temp'){ const arr = getIncomeTemp(); if (editCtx.index>=0) arr[editCtx.index]=name; else arr.push(name); setIncomeTemp(arr); renderIncomeSettings(); }
             else if (editCtx.kind==='income_targets'){ const arr = getIncomeTargets() || []; if (editCtx.index>=0) arr[editCtx.index]=name; else arr.push(name); setIncomeTargets(arr); renderIncomeSettings(); }
             else if (editCtx.kind==='expense_fixed'){ const arr = getExpenseFixed(); if (editCtx.index>=0) arr[editCtx.index]=name; else arr.push(name); setExpenseFixed(arr); renderExpenseSettings(); }
             else if (editCtx.kind==='expense_other'){ const arr = getExpenseOther(); if (editCtx.index>=0) arr[editCtx.index]=name; else arr.push(name); setExpenseOther(arr); renderExpenseSettings(); }
+            else if (editCtx.kind==='expense_temp'){ const arr = getExpenseTemp(); if (editCtx.index>=0) arr[editCtx.index]=name; else arr.push(name); setExpenseTemp(arr); renderExpenseSettings(); }
             else if (editCtx.kind==='expense_targets'){ const arr = getExpenseTargets() || []; if (editCtx.index>=0) arr[editCtx.index]=name; else arr.push(name); setExpenseTargets(arr); renderExpenseSettings(); }
             closeEditItem(); }); }
         if (cancelEditItem){ cancelEditItem.addEventListener('click', closeEditItem); }
@@ -5556,9 +6098,21 @@
             const type = inputTransType.value;
             let categories = [];
             if (mode === 'income') {
-                categories = (type === '固定') ? getIncomeFixed() : getIncomeOther();
+                if (type === '固定') {
+                    categories = getIncomeFixed();
+                } else if (type === '暫收款') {
+                    categories = getIncomeTemp();
+                } else {
+                    categories = getIncomeOther();
+                }
             } else {
-                categories = (type === '固定') ? getExpenseFixed() : getExpenseOther();
+                if (type === '固定') {
+                    categories = getExpenseFixed();
+                } else if (type === '暫收款') {
+                    categories = getExpenseTemp();
+                } else {
+                    categories = getExpenseOther();
+                }
             }
             let html = categories.map(c => `<option value="${c}">${c}</option>`).join('');
             html += '<option value="自定義">自定義</option>';
@@ -5621,16 +6175,9 @@
                 if (editCtx && editCtx.mode) {
                     updateTransactionModalDropdowns(editCtx.mode);
                 }
-                // Handle custom type visibility
-                if (inputTransType.value === '其他') {
-                    if (inputTransTypeCustom) {
-                        inputTransTypeCustom.classList.remove('hidden');
-                        inputTransTypeCustom.focus();
-                    }
-                } else {
-                    if (inputTransTypeCustom) {
-                        inputTransTypeCustom.classList.add('hidden');
-                    }
+                if (inputTransTypeCustom) {
+                    inputTransTypeCustom.classList.add('hidden');
+                    inputTransTypeCustom.value = '';
                 }
             });
         }
@@ -5664,18 +6211,18 @@
             if (ctx.item) {
                 // Determine if type is custom or standard
                 const typeVal = ctx.item.type || '固定';
-                if (typeVal === '固定' || typeVal === '其他') {
+                if (typeVal === '固定' || typeVal === '暫收款' || typeVal === '其他') {
                     inputTransType.value = typeVal;
                     if (inputTransTypeCustom) {
                         inputTransTypeCustom.classList.add('hidden');
                         inputTransTypeCustom.value = '';
                     }
                 } else {
-                    // It's a custom type, set select to '其他' and show custom input with value
+                    // Custom type: map to '其他' without showing custom input
                     inputTransType.value = '其他';
                     if (inputTransTypeCustom) {
-                        inputTransTypeCustom.classList.remove('hidden');
-                        inputTransTypeCustom.value = typeVal;
+                        inputTransTypeCustom.classList.add('hidden');
+                        inputTransTypeCustom.value = '';
                     }
                 }
             } else {
@@ -5800,6 +6347,12 @@
                             arr.push(category);
                             setIncomeFixed(arr);
                         }
+                    } else if (type === '暫收款') {
+                        const arr = getIncomeTemp();
+                        if (!arr.includes(category)) {
+                            arr.push(category);
+                            setIncomeTemp(arr);
+                        }
                     } else {
                         const arr = getIncomeOther();
                         if (!arr.includes(category)) {
@@ -5814,6 +6367,12 @@
                             arr.push(category);
                             setExpenseFixed(arr);
                         }
+                    } else if (type === '暫收款') {
+                        const arr = getExpenseTemp();
+                        if (!arr.includes(category)) {
+                            arr.push(category);
+                            setExpenseTemp(arr);
+                        }
                     } else {
                         const arr = getExpenseOther();
                         if (!arr.includes(category)) {
@@ -5824,14 +6383,7 @@
                 }
             }
 
-            // Handle custom type logic
             let finalType = inputTransType.value;
-            if (finalType === '其他' && inputTransTypeCustom && !inputTransTypeCustom.classList.contains('hidden')) {
-                const customTypeVal = inputTransTypeCustom.value.trim();
-                if (customTypeVal) {
-                    finalType = customTypeVal;
-                }
-            }
 
             let target = inputTransTarget.value;
             if (selectTransTarget.value !== '自定義') {
