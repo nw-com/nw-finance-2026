@@ -187,6 +187,31 @@
         </div>
 
         <!-- Mobile View Container -->
+        <div id="modal-logout-confirm" class="fixed inset-0 hidden z-[90]">
+            <div class="absolute inset-0 bg-black/40" onclick="closeLogoutModal()"></div>
+            <div class="absolute inset-0 flex items-center justify-center p-4">
+                <div class="bg-white rounded-lg shadow-xl w-full max-w-sm overflow-hidden transform transition-all">
+                    <div class="bg-red-50 p-4 border-b border-red-100 flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600 flex-shrink-0">
+                            <i class="fa-solid fa-right-from-bracket text-lg"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800">確認登出</h3>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-gray-600">您確定要登出系統嗎？</p>
+                    </div>
+                    <div class="p-4 bg-gray-50 flex justify-end gap-3">
+                        <button onclick="closeLogoutModal()" class="px-4 py-2 bg-white border border-gray-300 rounded text-gray-700 hover:bg-gray-50 font-medium">
+                            取消
+                        </button>
+                        <button onclick="logout()" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 font-medium shadow-sm">
+                            確定登出
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="mobile-view-container" class="hidden fixed inset-0 z-[200] bg-gray-50 overflow-auto">
             <div class="sticky top-0 bg-white shadow-sm p-3 flex items-center gap-3 z-[220]">
                 <h1 id="mobile-title" class="text-lg font-bold text-gray-800 flex-1">收支日報表</h1>
@@ -359,7 +384,7 @@
                     </a>
                 </div>
                 <div class="h-[10%] border-t border-red-800">
-                    <button onclick="logout()" class="w-full h-full flex flex-row items-center justify-center gap-2 text-red-100 hover:bg-red-800 hover:text-white transition-colors border-l-4 border-transparent">
+                    <button onclick="confirmLogout()" class="w-full h-full flex flex-row items-center justify-center gap-2 text-red-100 hover:bg-red-800 hover:text-white transition-colors border-l-4 border-transparent">
                         <i class="fa-solid fa-right-from-bracket text-[20px]"></i>
                         <span class="text-[20px]">登出</span>
                     </button>
@@ -2488,6 +2513,8 @@
              const urlParams = new URLSearchParams(window.location.search);
              if (urlParams.get('view') === 'mobile') {
                  initMobileView();
+             } else if (urlParams.get('view') === 'public') {
+                 initPublicReportView();
              }
         }
 
@@ -2586,6 +2613,81 @@
             }
 
             await loadMobileReport(today);
+        }
+
+        async function initPublicReportView() {
+            // Hide loader and login
+            const loader = document.getElementById('app-loader');
+            if (loader) loader.classList.add('hidden');
+            if (loginView) loginView.classList.add('hidden');
+            if (mainApp) {
+                mainApp.classList.remove('hidden');
+                // Expand main area
+                const main = mainApp.querySelector('main');
+                if (main) { main.style.width = '100%'; }
+                const aside = mainApp.querySelector('aside');
+                if (aside) aside.classList.add('hidden');
+            }
+            // Show only Reports content
+            const header = document.querySelector('#main-app header');
+            if (header) header.classList.add('hidden');
+            const subtabBar = document.getElementById('subtab-bar');
+            const secondaryBar = document.getElementById('secondary-toolbar');
+            if (subtabBar) subtabBar.classList.remove('hidden');
+            if (secondaryBar) secondaryBar.classList.remove('hidden');
+            const rightContent = document.getElementById('right-content');
+            if (rightContent) { rightContent.style.top = '0'; }
+            const views = Array.from(document.querySelectorAll('.content-view'));
+            views.forEach(v => v.classList.add('hidden'));
+            const reportsView = document.getElementById('view-reports');
+            if (reportsView) reportsView.classList.remove('hidden');
+
+            // Set community from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('community') || localStorage.getItem('currentCommunityCode') || 'NW001';
+            localStorage.setItem('currentCommunityCode', code);
+            // Try set community name from cloud; fallback to code
+            let name = localStorage.getItem('currentCommunityName') || code;
+            try {
+                if (db) {
+                    const doc = await db.collection('communities').doc(code).get();
+                    if (doc.exists) {
+                        const data = doc.data();
+                        name = data.name || code;
+                    }
+                }
+            } catch(e) {}
+            localStorage.setItem('currentCommunityName', name);
+            applyCommunityToUI();
+
+            // Render reports
+            renderSubtabs('reports');
+            const mode = urlParams.get('mode') || 'daily';
+            if (mode === 'monthly') {
+                const anchors = Array.from(document.getElementById('subtab-bar').children);
+                if (anchors[1]) anchors[1].click();
+                const reportTitle = document.getElementById('report-title');
+                if (reportTitle) reportTitle.textContent = '收支月報表';
+                const tDaily = document.getElementById('toolbar-daily-filter');
+                const tMonthly = document.getElementById('toolbar-monthly-filter');
+                if (tDaily && tMonthly) {
+                    tDaily.classList.add('hidden');
+                    tMonthly.classList.remove('hidden');
+                }
+                renderMonthlyReport();
+            } else {
+                const anchors = Array.from(document.getElementById('subtab-bar').children);
+                if (anchors[0]) anchors[0].click();
+                const reportTitle = document.getElementById('report-title');
+                if (reportTitle) reportTitle.textContent = '收支日報表';
+                const tDaily = document.getElementById('toolbar-daily-filter');
+                const tMonthly = document.getElementById('toolbar-monthly-filter');
+                if (tDaily && tMonthly) {
+                    tDaily.classList.remove('hidden');
+                    tMonthly.classList.add('hidden');
+                }
+                renderDailyReport();
+            }
         }
 
         async function loadMobileReport(date) {
@@ -2951,6 +3053,7 @@
 
         // 登出功能
         async function logout() {
+            closeLogoutModal();
             try {
                 if (!isDemoMode && auth && auth.currentUser) {
                     await auth.signOut();
@@ -2959,6 +3062,16 @@
                 console.warn('Logout error:', e);
             }
             exitApp();
+        }
+
+        function confirmLogout() {
+            const modal = document.getElementById('modal-logout-confirm');
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function closeLogoutModal() {
+            const modal = document.getElementById('modal-logout-confirm');
+            if (modal) modal.classList.add('hidden');
         }
 
         // ==========================================
