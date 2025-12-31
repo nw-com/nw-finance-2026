@@ -2493,11 +2493,37 @@
         
 
         // 3. 監聽認證狀態 (僅在 Firebase 初始化成功時有效)
-        if (!isDemoMode && auth) {
+        
+        // Helper to parse params from search or hash
+        function getUrlParams() {
+            const searchParams = new URLSearchParams(window.location.search);
+            const hash = window.location.hash;
+            let hashParams = new URLSearchParams();
+            if (hash.includes('?')) {
+                const query = hash.split('?')[1];
+                hashParams = new URLSearchParams(query);
+            }
+            return {
+                get: (key) => searchParams.get(key) || hashParams.get(key)
+            };
+        }
+
+        const params = getUrlParams();
+        if (params.get('view') === 'mobile') {
+            // Priority Check: Mobile View
+            initMobileView();
+        } else if (params.get('view') === 'public') {
+            // Priority Check: Public View
+            initPublicReportView();
+        } else if (!isDemoMode && auth) {
             auth.onAuthStateChanged((user) => {
-                const urlParams = new URLSearchParams(window.location.search);
-                if (urlParams.get('view') === 'mobile') {
+                const p = getUrlParams();
+                if (p.get('view') === 'mobile') {
                     initMobileView();
+                    return;
+                }
+                if (p.get('view') === 'public') {
+                    initPublicReportView();
                     return;
                 }
 
@@ -2510,20 +2536,27 @@
                 }
             });
         } else {
-             const urlParams = new URLSearchParams(window.location.search);
-             if (urlParams.get('view') === 'mobile') {
+             // Demo Mode or no auth
+             const p = getUrlParams();
+             if (p.get('view') === 'mobile') {
                  initMobileView();
-             } else if (urlParams.get('view') === 'public') {
+             } else if (p.get('view') === 'public') {
                  initPublicReportView();
              }
         }
 
         // Mobile View & Share Logic
         async function initMobileView() {
+            // Hide everything first
             if (loginView) loginView.classList.add('hidden');
             if (mainApp) mainApp.classList.add('hidden');
+            // Ensure no other views are active
             const container = document.getElementById('mobile-view-container');
             if (container) container.classList.remove('hidden');
+
+            // Force hide login view style just in case
+            if (loginView) loginView.style.display = 'none';
+            if (mainApp) mainApp.style.display = 'none';
 
             // Try anonymous login if needed to ensure data access
             if (auth && !auth.currentUser) {
@@ -2534,8 +2567,8 @@
                 }
             }
 
-            const urlParams = new URLSearchParams(window.location.search);
-            const code = urlParams.get('community') || 'NW001';
+            const params = getUrlParams();
+            const code = params.get('community') || 'NW001';
             // Set global for helpers if needed
             currentCommunityCode = code; 
 
