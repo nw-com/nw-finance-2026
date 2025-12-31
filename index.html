@@ -13,6 +13,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <!-- html2pdf.js (PDF Generation) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- QRCode.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <!-- Google Fonts (Noto Sans TC) -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 
@@ -168,6 +170,43 @@
             }
         }
     </style>
+        <div id="modal-share-report" class="fixed inset-0 hidden z-[80]">
+            <div class="absolute inset-0 bg-black/40" onclick="closeShareModal()"></div>
+            <div class="absolute inset-0 flex items-center justify-center p-6">
+                <div class="bg-white rounded-lg w-full max-w-sm p-6 space-y-4 flex flex-col items-center">
+                    <h4 class="text-lg font-bold">分享報表</h4>
+                    <p class="text-sm text-gray-500 text-center">請使用手機掃描下方 QR Code<br>即可在手機上檢視報表</p>
+                    <div id="share-qrcode" class="p-2 bg-white border rounded"></div>
+                    <div class="w-full">
+                        <label class="block text-xs text-gray-500 mb-1">分享連結</label>
+                        <input id="share-url-input" class="w-full border rounded px-2 py-1 text-sm bg-gray-50" readonly onclick="copyShareUrl()">
+                    </div>
+                    <button onclick="closeShareModal()" class="w-full px-3 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">關閉</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile View Container -->
+        <div id="mobile-view-container" class="hidden fixed inset-0 z-[200] bg-gray-50 overflow-auto">
+            <div class="sticky top-0 bg-white shadow-sm p-3 flex items-center gap-3 z-[220]">
+                <h1 id="mobile-title" class="text-lg font-bold text-gray-800 flex-1">收支日報表</h1>
+                <div class="flex items-center rounded border overflow-hidden">
+                    <button id="mobile-mode-daily" class="px-3 py-1 bg-red-600 text-white">日報</button>
+                    <button id="mobile-mode-monthly" class="px-3 py-1 bg-white text-gray-700">月報</button>
+                </div>
+                <input type="date" id="mobile-date-picker" class="border rounded px-3 py-2">
+                <div class="text-xs text-gray-500" id="mobile-date-display"></div>
+            </div>
+            <div class="p-4 space-y-4">
+                <div id="mobile-report-content" class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="p-8 text-center text-gray-400">
+                        <i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i>
+                        <p>載入中...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     <script>
         // Global Error Suppression for cleaner console
         (function() {
@@ -2431,6 +2470,12 @@
         // 3. 監聽認證狀態 (僅在 Firebase 初始化成功時有效)
         if (!isDemoMode && auth) {
             auth.onAuthStateChanged((user) => {
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('view') === 'mobile') {
+                    initMobileView();
+                    return;
+                }
+
                 if (user) {
                     const email = user.email || '';
                     localStorage.setItem('currentUserEmail', email);
@@ -2439,6 +2484,422 @@
                     exitApp();
                 }
             });
+        } else {
+             const urlParams = new URLSearchParams(window.location.search);
+             if (urlParams.get('view') === 'mobile') {
+                 initMobileView();
+             }
+        }
+
+        // Mobile View & Share Logic
+        async function initMobileView() {
+            if (loginView) loginView.classList.add('hidden');
+            if (mainApp) mainApp.classList.add('hidden');
+            const container = document.getElementById('mobile-view-container');
+            if (container) container.classList.remove('hidden');
+
+            // Try anonymous login if needed to ensure data access
+            if (auth && !auth.currentUser) {
+                try {
+                    await auth.signInAnonymously();
+                } catch(e) {
+                    console.warn("Anonymous login failed", e);
+                }
+            }
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('community') || 'NW001';
+            // Set global for helpers if needed
+            currentCommunityCode = code; 
+
+            // Fetch Community Name
+            let communityName = '收支日報表';
+            try {
+                if (!db) throw new Error("Database not initialized");
+                const doc = await db.collection('communities').doc(code).get();
+                if (doc.exists) {
+                     const data = doc.data();
+                     communityName = (data.name || code) + ' 收支日報表';
+                }
+            } catch (e) {
+                console.warn("Failed to fetch community name", e);
+            }
+
+            const titleEl = document.querySelector('#mobile-view-container #mobile-title');
+            if (titleEl) titleEl.textContent = communityName;
+
+            const datePicker = document.getElementById('mobile-date-picker');
+            const dateDisplay = document.getElementById('mobile-date-display');
+            const btnDaily = document.getElementById('mobile-mode-daily');
+            const btnMonthly = document.getElementById('mobile-mode-monthly');
+            window.mobileReportMode = 'daily';
+            
+            const today = new Date().toISOString().split('T')[0];
+            if (datePicker) {
+                datePicker.type = 'date';
+                datePicker.value = today;
+                datePicker.addEventListener('change', () => {
+                    if(dateDisplay) dateDisplay.textContent = datePicker.value;
+                    if (window.mobileReportMode === 'monthly') {
+                        const m = (datePicker.value || '').slice(0,7);
+                        if(dateDisplay) dateDisplay.textContent = m;
+                        loadMobileMonthlyReport(m);
+                    } else {
+                        loadMobileReport(datePicker.value);
+                    }
+                });
+            }
+            if (dateDisplay) dateDisplay.textContent = today;
+
+            if (btnDaily && btnMonthly) {
+                btnDaily.onclick = () => {
+                    window.mobileReportMode = 'daily';
+                    btnDaily.classList.add('bg-red-600','text-white');
+                    btnMonthly.classList.remove('bg-red-600','text-white');
+                    btnMonthly.classList.add('bg-white','text-gray-700');
+                    if (datePicker) {
+                        datePicker.type = 'date';
+                        if (!datePicker.value) datePicker.value = today;
+                        if (dateDisplay) dateDisplay.textContent = datePicker.value;
+                        loadMobileReport(datePicker.value);
+                    }
+                    const name = localStorage.getItem('currentCommunityName') || '';
+                    const t = document.getElementById('mobile-title');
+                    if (t) t.textContent = (name ? name + ' ' : '') + '收支日報表';
+                };
+                btnMonthly.onclick = () => {
+                    window.mobileReportMode = 'monthly';
+                    btnMonthly.classList.add('bg-red-600','text-white');
+                    btnDaily.classList.remove('bg-red-600','text-white');
+                    btnDaily.classList.add('bg-white','text-gray-700');
+                    if (datePicker) {
+                        datePicker.type = 'month';
+                        const m = (datePicker.value || today).slice(0,7);
+                        datePicker.value = m;
+                        if (dateDisplay) dateDisplay.textContent = m;
+                        loadMobileMonthlyReport(m);
+                    }
+                    const name = localStorage.getItem('currentCommunityName') || '';
+                    const t = document.getElementById('mobile-title');
+                    if (t) t.textContent = (name ? name + ' ' : '') + '收支月報表';
+                };
+            }
+
+            await loadMobileReport(today);
+        }
+
+        async function loadMobileReport(date) {
+            const container = document.getElementById('mobile-report-content');
+            if (!container) return;
+            container.innerHTML = '<div class="p-8 text-center text-gray-400"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i><p>載入中...</p></div>';
+
+            try {
+                 const [y, m, d] = date.split('-');
+                 const monthStr = `${y}-${m}`;
+                 
+                 let trans = getTransactions() || [];
+                 if ((!trans || trans.length === 0) && db) {
+                     const snapshot = await db.collection('communities')
+                                              .doc(currentCommunityCode)
+                                              .collection('transactions')
+                                              .get();
+                     trans = [];
+                     snapshot.forEach(doc => {
+                         trans.push({ id: doc.id, ...doc.data() });
+                     });
+                 }
+
+                 const dayTrans = trans.filter(t => {
+                     let tDate = t.date ? (t.date.includes('T') ? t.date.split('T')[0] : t.date) : '';
+                     if (tDate.includes('/')) {
+                         const parts = tDate.split('/');
+                         if (parts.length === 3) {
+                             const yy = parts[0];
+                             const mm = parts[1].padStart(2,'0');
+                             const dd = parts[2].padStart(2,'0');
+                             tDate = `${yy}-${mm}-${dd}`;
+                         }
+                     }
+                     return tDate === date;
+                 });
+
+                 const norm = (v) => {
+                     if (!v) return '';
+                     let s = v.includes('T') ? v.split('T')[0] : v;
+                     if (s.includes('/')) {
+                         const p = s.split('/');
+                         if (p.length === 3) s = `${p[0]}-${p[1].padStart(2,'0')}-${p[2].padStart(2,'0')}`;
+                     }
+                     return s;
+                 };
+                 const getVal = (t) => parseInt(t.amount || 0);
+                 const isPetty = (t) => (t.method || '').includes('零用金');
+                 const prevTrans = trans.filter(t => {
+                     const td = norm(t.date);
+                     return td && td < date;
+                 });
+                 let prevBankBal = 0, prevPettyBal = 0;
+                 prevTrans.forEach(t => {
+                     const val = getVal(t);
+                     if (t.mode === 'income' || (t.id && t.id.startsWith('I'))) {
+                         if (isPetty(t)) prevPettyBal += val; else prevBankBal += val;
+                     } else {
+                         if (isPetty(t)) prevPettyBal -= val; else prevBankBal -= val;
+                     }
+                 });
+                 let todayBankInc = 0, todayPettyInc = 0, todayBankExp = 0, todayPettyExp = 0;
+                 const todayTrans = trans.filter(t => norm(t.date) === date);
+                 todayTrans.forEach(t => {
+                     const val = getVal(t);
+                     if (t.mode === 'income' || (t.id && t.id.startsWith('I'))) {
+                         if (isPetty(t)) todayPettyInc += val; else todayBankInc += val;
+                     } else {
+                         if (isPetty(t)) todayPettyExp += val; else todayBankExp += val;
+                     }
+                 });
+                 const todayBankBal = prevBankBal + todayBankInc - todayBankExp;
+                 const todayPettyBal = prevPettyBal + todayPettyInc - todayPettyExp;
+                 const summary = {
+                     prevBankBal, prevPettyBal,
+                     todayBankInc, todayPettyInc,
+                     todayBankExp, todayPettyExp,
+                     todayBankBal, todayPettyBal
+                 };
+
+                 renderMobileReportTable(container, dayTrans, summary);
+
+            } catch (e) {
+                console.error(e);
+                let msg = e.message;
+                if (e.code === 'permission-denied' || msg.includes('permission')) {
+                    msg = '權限不足 (Permission Denied)<br><br>請確認：<br>1. Firestore Rules 已包含 transactions 讀取權限<br>2. Firebase Console 已啟用「匿名登入」';
+                }
+                container.innerHTML = `<div class="p-8 text-center text-red-500"><p class="font-bold text-lg mb-2">載入失敗</p><p class="text-xs text-gray-600">${msg}</p></div>`;
+            }
+        }
+
+        function renderMobileReportTable(container, transactions, summary) {
+             const incomeTrans = transactions.filter(t => (t.mode === 'income') || (t.id && t.id.startsWith('I')));
+             const expenseTrans = transactions.filter(t => !((t.mode === 'income') || (t.id && t.id.startsWith('I'))));
+             let incomeTotal = incomeTrans.reduce((s,t)=> s + parseInt(t.amount||0), 0);
+             let expenseTotal = expenseTrans.reduce((s,t)=> s + parseInt(t.amount||0), 0);
+
+             const formatDate = (v) => {
+                 if (!v) return '';
+                 const s = v.includes('T') ? v.split('T')[0] : v;
+                 if (s.includes('/')) {
+                     const p = s.split('/');
+                     if (p.length === 3) return `${p[0]}-${p[1].padStart(2,'0')}-${p[2].padStart(2,'0')}`;
+                 }
+                 return s;
+             };
+
+             const makeRow = (cells) => `<tr style="height: 6mm;">${cells.map(c=>`<td class="border border-gray-300 px-2 py-1 ${c.class||''}">${c.text||'&nbsp;'}</td>`).join('')}</tr>`;
+             const makeHeaderCell = (text, className='') => `<th class="border border-gray-300 px-2 py-1 ${className}">${text}</th>`;
+
+             let html = `<table class="w-full border-collapse text-center text-[12px]">
+                 <tbody>
+                     <tr>
+                         <th colspan="8" class="border border-gray-300 px-2 py-1 text-left font-bold text-[12px] text-green-700">收入明細</th>
+                     </tr>
+                     <tr>
+                         ${makeHeaderCell('序號')}
+                         ${makeHeaderCell('日期')}
+                         ${makeHeaderCell('對象')}
+                         ${makeHeaderCell('類型')}
+                         ${makeHeaderCell('類別')}
+                         ${makeHeaderCell('月份')}
+                         ${makeHeaderCell('金額')}
+                         ${makeHeaderCell('備註')}
+                     </tr>
+             `;
+
+             let incCount = 0;
+             incomeTrans.forEach(t => {
+                 incCount++;
+                 const amount = parseInt(t.amount||0).toLocaleString();
+                 html += makeRow([
+                     {text:String(incCount)},
+                     {text:formatDate(t.date)},
+                     {text:t.target||''},
+                     {text:t.type||''},
+                     {text:t.category||''},
+                     {text:(t.month|| (t.date ? formatDate(t.date).slice(0,7) : ''))},
+                     {text:amount, class:'text-green-700 text-right'},
+                     {text:t.note||''}
+                 ]);
+             });
+             while (incCount < 10) {
+                 html += makeRow([{},{},{},{},{},{},{class:'text-right'},{ }]);
+                 incCount++;
+             }
+             html += `<tr>
+                 <td colspan="6" class="border border-gray-300 px-2 py-1 text-center font-bold bg-green-100 text-green-700">收入合計</td>
+                 <td class="border border-gray-300 px-2 py-1 bg-green-100 text-green-700 text-right">$${incomeTotal.toLocaleString()}</td>
+                 <td class="border border-gray-300 px-2 py-1 bg-green-100">&nbsp;</td>
+             </tr>
+             <tr>
+                 <td colspan="8" class="border border-gray-300 px-2 py-1 text-left font-bold text-[12px] bg-gray-200 text-red-700">支出明細</td>
+             </tr>
+             <tr>
+                 ${makeHeaderCell('序號','bg-gray-200 font-bold text-center')}
+                 ${makeHeaderCell('日期','bg-gray-200 font-bold text-center')}
+                 ${makeHeaderCell('對象','bg-gray-200 font-bold text-center')}
+                 ${makeHeaderCell('類型','bg-gray-200 font-bold text-center')}
+                 ${makeHeaderCell('類別','bg-gray-200 font-bold text-center')}
+                 ${makeHeaderCell('月份','bg-gray-200 font-bold text-center')}
+                 ${makeHeaderCell('金額','bg-gray-200 font-bold text-center')}
+                 ${makeHeaderCell('備註','bg-gray-200 font-bold text-center')}
+             </tr>`;
+
+             let expCount = 0;
+             expenseTrans.forEach(t => {
+                 expCount++;
+                 const amount = parseInt(t.amount||0).toLocaleString();
+                 html += makeRow([
+                     {text:String(expCount)},
+                     {text:formatDate(t.date)},
+                     {text:t.target||''},
+                     {text:t.type||''},
+                     {text:t.category||''},
+                     {text:(t.month|| (t.date ? formatDate(t.date).slice(0,7) : ''))},
+                     {text:amount, class:'text-red-700 text-right'},
+                     {text:t.note||''}
+                 ]);
+             });
+             while (expCount < 10) {
+                 html += makeRow([{},{},{},{},{},{},{class:'text-right'},{ }]);
+                 expCount++;
+             }
+             html += `<tr>
+                 <td colspan="6" class="border border-gray-300 px-2 py-1 text-center font-bold bg-red-100 text-red-700">支出合計</td>
+                 <td class="border border-gray-300 px-2 py-1 bg-red-100 text-red-700 text-right">$${expenseTotal.toLocaleString()}</td>
+                 <td class="border border-gray-300 px-2 py-1 bg-red-100">&nbsp;</td>
+             </tr>
+             </tbody>
+             </table>`;
+
+             if (summary) {
+                 html += `<table class="w-full border-collapse text-center text-[12px]" style="margin-top: 6mm;">
+                     <colgroup>
+                         <col style="width: 10mm;">
+                         <col style="width: 20mm;">
+                         <col style="width: 30mm;">
+                         <col style="width: 20mm;">
+                         <col style="width: 20mm;">
+                         <col style="width: 20mm;">
+                         <col style="width: 20mm;">
+                         <col style="width: 30mm;">
+                     </colgroup>
+                     <tbody>
+                         <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right">前日銀行結餘</td><td colspan="2" class="border border-gray-300 px-2 py-1 text-right">$${summary.prevBankBal.toLocaleString()}</td></tr>
+                         <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right">前日零用金加總結餘</td><td colspan="2" class="border border-gray-300 px-2 py-1 text-right">$${summary.prevPettyBal.toLocaleString()}</td></tr>
+                         <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right bg-green-100 text-green-700">本日銀行收入總計</td><td colspan="2" class="border border-gray-300 px-2 py-1 text-right bg-green-100 text-green-700">$${summary.todayBankInc.toLocaleString()}</td></tr>
+                         <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right bg-green-100 text-green-700">本日零用金收入總計</td><td colspan="2" class="border border-gray-300 px-2 py-1 text-right bg-green-100 text-green-700">$${summary.todayPettyInc.toLocaleString()}</td></tr>
+                         <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right bg-red-100 text-red-700">本日銀行支出總計</td><td colspan="2" class="border border-gray-300 px-2 py-1 text-right bg-red-100 text-red-700">$${summary.todayBankExp.toLocaleString()}</td></tr>
+                         <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right bg-red-100 text-red-700">本日零用金支出總計</td><td colspan="2" class="border border-gray-300 px-2 py-1 text-right bg-red-100 text-red-700">$${summary.todayPettyExp.toLocaleString()}</td></tr>
+                         <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right">本日銀行結餘</td><td colspan="2" class="border border-gray-300 px-2 py-1 text-right">$${summary.todayBankBal.toLocaleString()}</td></tr>
+                         <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right">本日零用金加總結餘</td><td colspan="2" class="border border-gray-300 px-2 py-1 text-right">$${summary.todayPettyBal.toLocaleString()}</td></tr>
+                     </tbody>
+                 </table>`;
+             }
+
+             container.innerHTML = html;
+        }
+
+        async function loadMobileMonthlyReport(monthStr) {
+            const container = document.getElementById('mobile-report-content');
+            if (!container) return;
+            container.innerHTML = '<div class="p-8 text-center text-gray-400"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i><p>載入中...</p></div>';
+
+            try {
+                let trans = getTransactions() || [];
+                if ((!trans || trans.length === 0) && db) {
+                    const snapshot = await db.collection('communities')
+                                             .doc(currentCommunityCode)
+                                             .collection('transactions')
+                                             .get();
+                    trans = [];
+                    snapshot.forEach(doc => {
+                        trans.push({ id: doc.id, ...doc.data() });
+                    });
+                }
+                const normalize = (v) => {
+                    if (!v) return '';
+                    let s = v.includes('T') ? v.split('T')[0] : v;
+                    if (s.includes('/')) {
+                        const p = s.split('/');
+                        if (p.length === 3) s = `${p[0]}-${p[1].padStart(2,'0')}-${p[2].padStart(2,'0')}`;
+                    }
+                    return s;
+                };
+                const list = trans.filter(t => {
+                    const m = t.month || (normalize(t.date).slice(0,7));
+                    return m === monthStr;
+                });
+                renderMobileReportTable(container, list);
+            } catch (e) {
+                console.error(e);
+                container.innerHTML = `<div class="p-8 text-center text-red-500"><p class="font-bold text-lg mb-2">載入失敗</p><p class="text-xs text-gray-600">${e.message}</p></div>`;
+            }
+        }
+
+        function openShareModal() {
+            const modal = document.getElementById('modal-share-report');
+            if (!modal) return;
+            modal.classList.remove('hidden');
+
+            // Set Title
+            const communityName = localStorage.getItem('currentCommunityName') || '';
+            const titleEl = modal.querySelector('h4');
+            if (titleEl) titleEl.textContent = communityName ? `${communityName} 分享報表` : '分享報表';
+            
+            const qrContainer = document.getElementById('share-qrcode');
+            if (qrContainer) {
+                qrContainer.innerHTML = '';
+                const baseUrl = window.location.href.split('?')[0];
+                const code = localStorage.getItem('currentCommunityCode') || 'NW001';
+                const shareUrl = `${baseUrl}?view=mobile&community=${code}`;
+                
+                const input = document.getElementById('share-url-input');
+                if (input) input.value = shareUrl;
+
+                // Make QR clickable
+                qrContainer.onclick = () => window.open(shareUrl, '_blank');
+                qrContainer.title = "點擊開啟連結";
+                qrContainer.classList.add('cursor-pointer', 'hover:opacity-90', 'transition');
+                
+                new QRCode(qrContainer, {
+                    text: shareUrl,
+                    width: 200,
+                    height: 200
+                });
+            }
+        }
+
+        function copyShareUrl() {
+            const input = document.getElementById('share-url-input');
+            if (input) {
+                input.select();
+                input.setSelectionRange(0, 99999); // For mobile
+                navigator.clipboard.writeText(input.value).then(() => {
+                    const label = input.previousElementSibling;
+                    if (label) {
+                        const originalText = label.innerText;
+                        label.innerText = '已複製連結！';
+                        label.classList.add('text-green-600', 'font-bold');
+                        setTimeout(() => {
+                            label.innerText = originalText;
+                            label.classList.remove('text-green-600', 'font-bold');
+                        }, 2000);
+                    }
+                });
+            }
+        }
+
+        function closeShareModal() {
+             const modal = document.getElementById('modal-share-report');
+             if (modal) modal.classList.add('hidden');
         }
 
         // 進入主程式
@@ -2551,6 +3012,9 @@
                         <input type="month" id="toolbar-monthly-filter" class="border rounded px-2 py-1 text-sm text-gray-700 bg-white hidden">
                         <button id="btn-print-report" onclick="window.print()" class="px-4 py-1 bg-purple-600 text-white rounded hover:bg-purple-700 flex items-center gap-2">
                             <i class="fa-solid fa-print"></i> 列印
+                        </button>
+                        <button id="btn-share-report" onclick="openShareModal()" class="px-4 py-1 bg-green-600 text-white rounded hover:bg-green-700 flex items-center gap-2">
+                            <i class="fa-solid fa-share-nodes"></i> 分享
                         </button>
                     </div>
                 `;
