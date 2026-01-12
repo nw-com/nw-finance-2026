@@ -237,8 +237,9 @@
                 <h1 id="mobile-title" class="text-lg font-bold text-gray-800">收支日報表</h1>
                 <div class="flex items-center justify-between gap-2">
                     <div class="flex items-center gap-2 shrink-0">
-                        <button id="mobile-mode-daily" class="px-4 py-1.5 rounded-full bg-red-600 text-white text-sm shadow-sm transition-colors duration-200">日報</button>
-                        <button id="mobile-mode-monthly" class="px-4 py-1.5 rounded-full bg-white text-gray-600 border border-gray-200 text-sm shadow-sm transition-colors duration-200 hover:bg-gray-50">月報</button>
+                        <button id="mobile-mode-daily" class="px-3 py-1.5 rounded-full bg-red-600 text-white text-sm shadow-sm transition-colors duration-200">日報</button>
+                        <button id="mobile-mode-monthly" class="px-3 py-1.5 rounded-full bg-white text-gray-600 border border-gray-200 text-sm shadow-sm transition-colors duration-200 hover:bg-gray-50">月報</button>
+                        <button id="mobile-mode-yearly" class="px-3 py-1.5 rounded-full bg-white text-gray-600 border border-gray-200 text-sm shadow-sm transition-colors duration-200 hover:bg-gray-50">年報</button>
                     </div>
                     <div class="flex items-center gap-2 flex-1 justify-end">
                         <input type="date" id="mobile-date-picker" class="border rounded px-2 py-1 text-sm w-full max-w-[150px]">
@@ -2834,18 +2835,26 @@
             const dateDisplay = document.getElementById('mobile-date-display');
             const btnDaily = document.getElementById('mobile-mode-daily');
             const btnMonthly = document.getElementById('mobile-mode-monthly');
+            const btnYearly = document.getElementById('mobile-mode-yearly');
             window.mobileReportMode = 'daily';
             
             const today = new Date().toISOString().split('T')[0];
+            const currentYear = new Date().getFullYear().toString();
+
             if (datePicker) {
                 datePicker.type = 'date';
                 datePicker.value = today;
                 datePicker.addEventListener('change', () => {
                     if(dateDisplay) dateDisplay.textContent = datePicker.value;
+                    
                     if (window.mobileReportMode === 'monthly') {
                         const m = (datePicker.value || '').slice(0,7);
                         if(dateDisplay) dateDisplay.textContent = m;
                         loadMobileMonthlyReport(m);
+                    } else if (window.mobileReportMode === 'yearly') {
+                        const y = datePicker.value;
+                        if(dateDisplay) dateDisplay.textContent = y;
+                        loadMobileYearlyReport(y);
                     } else {
                         loadMobileReport(datePicker.value);
                     }
@@ -2853,22 +2862,24 @@
             }
             if (dateDisplay) dateDisplay.textContent = today;
 
-            if (btnDaily && btnMonthly) {
+            if (btnDaily && btnMonthly && btnYearly) {
                 // Update helper function for button styling
-                const updateButtonStyles = (activeBtn, inactiveBtn) => {
+                const updateButtonStyles = (activeBtn, others) => {
                     activeBtn.classList.remove('bg-white', 'text-gray-600', 'border', 'border-gray-200', 'hover:bg-gray-50');
                     activeBtn.classList.add('bg-red-600', 'text-white', 'shadow-sm');
                     
-                    inactiveBtn.classList.remove('bg-red-600', 'text-white', 'shadow-sm');
-                    inactiveBtn.classList.add('bg-white', 'text-gray-600', 'border', 'border-gray-200', 'hover:bg-gray-50');
+                    others.forEach(btn => {
+                        btn.classList.remove('bg-red-600', 'text-white', 'shadow-sm');
+                        btn.classList.add('bg-white', 'text-gray-600', 'border', 'border-gray-200', 'hover:bg-gray-50');
+                    });
                 };
 
                 btnDaily.onclick = () => {
                     window.mobileReportMode = 'daily';
-                    updateButtonStyles(btnDaily, btnMonthly);
+                    updateButtonStyles(btnDaily, [btnMonthly, btnYearly]);
                     if (datePicker) {
                         datePicker.type = 'date';
-                        if (!datePicker.value) datePicker.value = today;
+                        if (!datePicker.value || datePicker.value.length < 8) datePicker.value = today;
                         if (dateDisplay) dateDisplay.textContent = datePicker.value;
                         loadMobileReport(datePicker.value);
                     }
@@ -2878,10 +2889,12 @@
                 };
                 btnMonthly.onclick = () => {
                     window.mobileReportMode = 'monthly';
-                    updateButtonStyles(btnMonthly, btnDaily);
+                    updateButtonStyles(btnMonthly, [btnDaily, btnYearly]);
                     if (datePicker) {
                         datePicker.type = 'month';
-                        const m = (datePicker.value || today).slice(0,7);
+                        let val = datePicker.value;
+                        if (!val || !val.includes('-')) val = today;
+                        const m = val.slice(0,7);
                         datePicker.value = m;
                         if (dateDisplay) dateDisplay.textContent = m;
                         loadMobileMonthlyReport(m);
@@ -2889,6 +2902,21 @@
                     const name = localStorage.getItem('currentCommunityName') || '';
                     const t = document.getElementById('mobile-title');
                     if (t) t.textContent = (name ? name + ' ' : '') + '收支月報表';
+                };
+                btnYearly.onclick = () => {
+                    window.mobileReportMode = 'yearly';
+                    updateButtonStyles(btnYearly, [btnDaily, btnMonthly]);
+                    if (datePicker) {
+                        datePicker.type = 'number';
+                        datePicker.min = '2020';
+                        datePicker.max = '2035';
+                        datePicker.value = currentYear;
+                        if (dateDisplay) dateDisplay.textContent = currentYear;
+                        loadMobileYearlyReport(currentYear);
+                    }
+                    const name = localStorage.getItem('currentCommunityName') || '';
+                    const t = document.getElementById('mobile-title');
+                    if (t) t.textContent = (name ? name + ' ' : '') + '收支年報表';
                 };
             }
 
@@ -2976,9 +3004,7 @@
             container.innerHTML = '<div class="p-8 text-center text-gray-400"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i><p>載入中...</p></div>';
 
             try {
-                 const [y, m, d] = date.split('-');
-                 const monthStr = `${y}-${m}`;
-                 
+                 // 1. Ensure Transactions Data
                  let trans = getTransactions() || [];
                  if ((!trans || trans.length === 0) && db) {
                      const snapshot = await db.collection('communities')
@@ -2989,66 +3015,41 @@
                      snapshot.forEach(doc => {
                          trans.push({ id: doc.id, ...doc.data() });
                      });
+                     if (typeof setTransactions === 'function') {
+                         setTransactions(trans);
+                     }
                  }
 
-                 const dayTrans = trans.filter(t => {
-                     let tDate = t.date ? (t.date.includes('T') ? t.date.split('T')[0] : t.date) : '';
-                     if (tDate.includes('/')) {
-                         const parts = tDate.split('/');
-                         if (parts.length === 3) {
-                             const yy = parts[0];
-                             const mm = parts[1].padStart(2,'0');
-                             const dd = parts[2].padStart(2,'0');
-                             tDate = `${yy}-${mm}-${dd}`;
-                         }
-                     }
-                     return tDate === date;
-                 });
+                 // 2. Ensure Residents Data (Just in case)
+                 let residents = getResidents() || [];
+                 if ((!residents || residents.length === 0) && db) {
+                    try {
+                        const snapRes = await db.collection('communities').doc(currentCommunityCode).collection('residents').get();
+                        if (!snapRes.empty) {
+                            residents = [];
+                            snapRes.forEach(doc => { residents.push({ id: doc.id, ...doc.data() }); });
+                            if (typeof setResidents === 'function') setResidents(residents);
+                        }
+                    } catch(e) {}
+                 }
 
-                 const norm = (v) => {
-                     if (!v) return '';
-                     let s = v.includes('T') ? v.split('T')[0] : v;
-                     if (s.includes('/')) {
-                         const p = s.split('/');
-                         if (p.length === 3) s = `${p[0]}-${p[1].padStart(2,'0')}-${p[2].padStart(2,'0')}`;
-                     }
-                     return s;
-                 };
-                 const getVal = (t) => parseInt(t.amount || 0);
-                 const isPetty = (t) => (t.method || '').includes('零用金');
-                 const prevTrans = trans.filter(t => {
-                     const td = norm(t.date);
-                     return td && td < date;
-                 });
-                 let prevBankBal = 0, prevPettyBal = 0;
-                 prevTrans.forEach(t => {
-                     const val = getVal(t);
-                     if (t.mode === 'income' || (t.id && t.id.startsWith('I'))) {
-                         if (isPetty(t)) prevPettyBal += val; else prevBankBal += val;
-                     } else {
-                         if (isPetty(t)) prevPettyBal -= val; else prevBankBal -= val;
-                     }
-                 });
-                 let todayBankInc = 0, todayPettyInc = 0, todayBankExp = 0, todayPettyExp = 0;
-                 const todayTrans = trans.filter(t => norm(t.date) === date);
-                 todayTrans.forEach(t => {
-                     const val = getVal(t);
-                     if (t.mode === 'income' || (t.id && t.id.startsWith('I'))) {
-                         if (isPetty(t)) todayPettyInc += val; else todayBankInc += val;
-                     } else {
-                         if (isPetty(t)) todayPettyExp += val; else todayBankExp += val;
-                     }
-                 });
-                 const todayBankBal = prevBankBal + todayBankInc - todayBankExp;
-                 const todayPettyBal = prevPettyBal + todayPettyInc - todayPettyExp;
-                 const summary = {
-                     prevBankBal, prevPettyBal,
-                     todayBankInc, todayPettyInc,
-                     todayBankExp, todayPettyExp,
-                     todayBankBal, todayPettyBal
-                 };
+                 // 3. Trigger Desktop Report Render Logic
+                 const filter = document.getElementById('toolbar-daily-filter');
+                 if (filter) filter.value = date;
+                 
+                 if (typeof renderDailyReport === 'function') {
+                     renderDailyReport();
+                 }
 
-                 renderMobileReportTable(container, dayTrans, summary);
+                 // 4. Clone Content
+                 const desktopView = document.getElementById('report-daily-view');
+                 if (desktopView) {
+                     const content = desktopView.innerHTML;
+                     container.innerHTML = content;
+                     container.classList.add('overflow-x-auto');
+                 } else {
+                     throw new Error("Desktop report view not found");
+                 }
 
             } catch (e) {
                 console.error(e);
@@ -3060,134 +3061,73 @@
             }
         }
 
-        function renderMobileReportTable(container, transactions, summary) {
-             const incomeTrans = transactions.filter(t => (t.mode === 'income') || (t.id && t.id.startsWith('I')));
-             const expenseTrans = transactions.filter(t => !((t.mode === 'income') || (t.id && t.id.startsWith('I'))));
-             let incomeTotal = incomeTrans.reduce((s,t)=> s + parseInt(t.amount||0), 0);
-             let expenseTotal = expenseTrans.reduce((s,t)=> s + parseInt(t.amount||0), 0);
+        async function loadMobileYearlyReport(yearStr) {
+            const container = document.getElementById('mobile-report-content');
+            if (!container) return;
+            container.innerHTML = '<div class="p-8 text-center text-gray-400"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i><p>載入中...</p></div>';
 
-             const formatDate = (v) => {
-                 if (!v) return '';
-                 const s = v.includes('T') ? v.split('T')[0] : v;
-                 if (s.includes('/')) {
-                     const p = s.split('/');
-                     if (p.length === 3) return `${p[0]}-${p[1].padStart(2,'0')}-${p[2].padStart(2,'0')}`;
-                 }
-                 return s;
-             };
+            try {
+                // 1. Ensure Data
+                let trans = getTransactions() || [];
+                if ((!trans || trans.length === 0) && db) {
+                     const snapshot = await db.collection('communities')
+                                              .doc(currentCommunityCode)
+                                              .collection('transactions')
+                                              .get();
+                     trans = [];
+                     snapshot.forEach(doc => {
+                         trans.push({ id: doc.id, ...doc.data() });
+                     });
+                     if (typeof setTransactions === 'function') setTransactions(trans);
+                }
+                
+                let residents = getResidents() || [];
+                if ((!residents || residents.length === 0) && db) {
+                    try {
+                        const snapRes = await db.collection('communities').doc(currentCommunityCode).collection('residents').get();
+                        if (!snapRes.empty) {
+                            residents = [];
+                            snapRes.forEach(doc => { residents.push({ id: doc.id, ...doc.data() }); });
+                            if (typeof setResidents === 'function') setResidents(residents);
+                        }
+                    } catch(e) {}
+                }
 
-             const makeRow = (cells) => `<tr style="height: 6mm;">${cells.map(c=>`<td class="border border-gray-300 px-2 py-1 ${c.class||''}">${c.text||'&nbsp;'}</td>`).join('')}</tr>`;
-             const makeHeaderCell = (text, className='') => `<th class="border border-gray-300 px-2 py-1 ${className}">${text}</th>`;
+                // 2. Trigger Desktop Logic
+                const filter = document.getElementById('toolbar-yearly-filter');
+                if (filter) {
+                    // Force options if needed
+                    if (filter.options.length === 0) {
+                         const currentYear = new Date().getFullYear();
+                         for(let y=currentYear-5; y<=currentYear+5; y++){
+                             const opt = document.createElement('option');
+                             opt.value = y;
+                             opt.textContent = y + '年';
+                             filter.appendChild(opt);
+                         }
+                    }
+                    filter.value = yearStr;
+                }
 
-             let html = `<table class="w-full border-collapse text-center text-[12px]">
-                 <tbody>
-                     <tr>
-                         <th colspan="8" class="border border-gray-300 px-2 py-1 text-left font-bold text-[12px] text-green-700">收入明細</th>
-                     </tr>
-                     <tr>
-                         ${makeHeaderCell('序號')}
-                         ${makeHeaderCell('日期')}
-                         ${makeHeaderCell('對象')}
-                         ${makeHeaderCell('類型')}
-                         ${makeHeaderCell('類別')}
-                         ${makeHeaderCell('月份')}
-                         ${makeHeaderCell('金額')}
-                         ${makeHeaderCell('備註')}
-                     </tr>
-             `;
+                if (typeof renderYearlyReport === 'function') {
+                    renderYearlyReport();
+                }
 
-             let incCount = 0;
-             incomeTrans.forEach(t => {
-                 incCount++;
-                 const amount = parseInt(t.amount||0).toLocaleString();
-                 html += makeRow([
-                     {text:String(incCount)},
-                     {text:formatDate(t.date)},
-                     {text:t.target||''},
-                     {text:t.type||''},
-                     {text:t.category||''},
-                     {text:(t.month|| (t.date ? formatDate(t.date).slice(0,7) : ''))},
-                     {text:amount, class:'text-green-700 text-right'},
-                     {text:t.note||''}
-                 ]);
-             });
-             while (incCount < 10) {
-                 html += makeRow([{},{},{},{},{},{},{class:'text-right'},{ }]);
-                 incCount++;
-             }
-             html += `<tr>
-                 <td colspan="6" class="border border-gray-300 px-2 py-1 text-center font-bold bg-green-100 text-green-700">收入合計</td>
-                 <td class="border border-gray-300 px-2 py-1 bg-green-100 text-green-700 text-right">$${incomeTotal.toLocaleString()}</td>
-                 <td class="border border-gray-300 px-2 py-1 bg-green-100">&nbsp;</td>
-             </tr>
-             <tr>
-                 <td colspan="8" class="border border-gray-300 px-2 py-1 text-left font-bold text-[12px] bg-gray-200 text-red-700">支出明細</td>
-             </tr>
-             <tr>
-                 ${makeHeaderCell('序號','bg-gray-200 font-bold text-center')}
-                 ${makeHeaderCell('日期','bg-gray-200 font-bold text-center')}
-                 ${makeHeaderCell('對象','bg-gray-200 font-bold text-center')}
-                 ${makeHeaderCell('類型','bg-gray-200 font-bold text-center')}
-                 ${makeHeaderCell('類別','bg-gray-200 font-bold text-center')}
-                 ${makeHeaderCell('月份','bg-gray-200 font-bold text-center')}
-                 ${makeHeaderCell('金額','bg-gray-200 font-bold text-center')}
-                 ${makeHeaderCell('備註','bg-gray-200 font-bold text-center')}
-             </tr>`;
+                // 3. Clone Content
+                const desktopView = document.getElementById('report-yearly-view');
+                if (desktopView) {
+                    container.innerHTML = desktopView.innerHTML;
+                    container.classList.add('overflow-x-auto');
+                } else {
+                    throw new Error("Desktop report view not found");
+                }
 
-             let expCount = 0;
-             expenseTrans.forEach(t => {
-                 expCount++;
-                 const amount = parseInt(t.amount||0).toLocaleString();
-                 html += makeRow([
-                     {text:String(expCount)},
-                     {text:formatDate(t.date)},
-                     {text:t.target||''},
-                     {text:t.type||''},
-                     {text:t.category||''},
-                     {text:(t.month|| (t.date ? formatDate(t.date).slice(0,7) : ''))},
-                     {text:amount, class:'text-red-700 text-right'},
-                     {text:t.note||''}
-                 ]);
-             });
-             while (expCount < 10) {
-                 html += makeRow([{},{},{},{},{},{},{class:'text-right'},{ }]);
-                 expCount++;
-             }
-             html += `<tr>
-                 <td colspan="6" class="border border-gray-300 px-2 py-1 text-center font-bold bg-red-100 text-red-700">支出合計</td>
-                 <td class="border border-gray-300 px-2 py-1 bg-red-100 text-red-700 text-right">$${expenseTotal.toLocaleString()}</td>
-                 <td class="border border-gray-300 px-2 py-1 bg-red-100">&nbsp;</td>
-             </tr>
-             </tbody>
-             </table>`;
-
-             if (summary) {
-                 html += `<table class="w-full border-collapse text-center text-[12px]" style="margin-top: 6mm;">
-                     <colgroup>
-                         <col style="width: 10mm;">
-                         <col style="width: 20mm;">
-                         <col style="width: 30mm;">
-                         <col style="width: 20mm;">
-                         <col style="width: 20mm;">
-                         <col style="width: 20mm;">
-                         <col style="width: 20mm;">
-                         <col style="width: 30mm;">
-                     </colgroup>
-                     <tbody>
-                         <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right">前日銀行結餘</td><td colspan="2" class="border border-gray-300 px-2 py-1 text-right">$${summary.prevBankBal.toLocaleString()}</td></tr>
-                         <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right">前日零用金加總結餘</td><td colspan="2" class="border border-gray-300 px-2 py-1 text-right">$${summary.prevPettyBal.toLocaleString()}</td></tr>
-                         <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right bg-green-100 text-green-700">本日銀行收入總計</td><td colspan="2" class="border border-gray-300 px-2 py-1 text-right bg-green-100 text-green-700">$${summary.todayBankInc.toLocaleString()}</td></tr>
-                         <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right bg-green-100 text-green-700">本日零用金收入總計</td><td colspan="2" class="border border-gray-300 px-2 py-1 text-right bg-green-100 text-green-700">$${summary.todayPettyInc.toLocaleString()}</td></tr>
-                         <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right bg-red-100 text-red-700">本日銀行支出總計</td><td colspan="2" class="border border-gray-300 px-2 py-1 text-right bg-red-100 text-red-700">$${summary.todayBankExp.toLocaleString()}</td></tr>
-                         <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right bg-red-100 text-red-700">本日零用金支出總計</td><td colspan="2" class="border border-gray-300 px-2 py-1 text-right bg-red-100 text-red-700">$${summary.todayPettyExp.toLocaleString()}</td></tr>
-                         <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right">本日銀行結餘</td><td colspan="2" class="border border-gray-300 px-2 py-1 text-right">$${summary.todayBankBal.toLocaleString()}</td></tr>
-                         <tr style="height: 6mm;"><td colspan="6" class="border border-gray-300 px-2 py-1 text-right">本日零用金加總結餘</td><td colspan="2" class="border border-gray-300 px-2 py-1 text-right">$${summary.todayPettyBal.toLocaleString()}</td></tr>
-                     </tbody>
-                 </table>`;
-             }
-
-             container.innerHTML = html;
+            } catch (e) {
+                console.error(e);
+                container.innerHTML = `<div class="p-8 text-center text-red-500"><p class="font-bold text-lg mb-2">載入失敗</p><p class="text-xs text-gray-600">${e.message}</p></div>`;
+            }
         }
+
 
         async function loadMobileMonthlyReport(monthStr) {
             const container = document.getElementById('mobile-report-content');
@@ -3195,6 +3135,7 @@
             container.innerHTML = '<div class="p-8 text-center text-gray-400"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i><p>載入中...</p></div>';
 
             try {
+                // 1. Ensure Transactions Data
                 let trans = getTransactions() || [];
                 if ((!trans || trans.length === 0) && db) {
                     const snapshot = await db.collection('communities')
@@ -3205,21 +3146,61 @@
                     snapshot.forEach(doc => {
                         trans.push({ id: doc.id, ...doc.data() });
                     });
-                }
-                const normalize = (v) => {
-                    if (!v) return '';
-                    let s = v.includes('T') ? v.split('T')[0] : v;
-                    if (s.includes('/')) {
-                        const p = s.split('/');
-                        if (p.length === 3) s = `${p[0]}-${p[1].padStart(2,'0')}-${p[2].padStart(2,'0')}`;
+                    if (typeof setTransactions === 'function') {
+                        setTransactions(trans);
                     }
-                    return s;
-                };
-                const list = trans.filter(t => {
-                    const m = t.month || (normalize(t.date).slice(0,7));
-                    return m === monthStr;
-                });
-                renderMobileReportTable(container, list);
+                }
+
+                // 2. Ensure Residents Data (For Management Fee Stats)
+                let residents = getResidents() || [];
+                if ((!residents || residents.length === 0) && db) {
+                    // Try fetching residents from subcollection
+                    // Note: If your data structure differs, adjust here. 
+                    // Based on typical pattern: communities/{code}/residents
+                    try {
+                        const snapRes = await db.collection('communities')
+                                                .doc(currentCommunityCode)
+                                                .collection('residents')
+                                                .get();
+                        if (!snapRes.empty) {
+                            residents = [];
+                            snapRes.forEach(doc => {
+                                residents.push({ id: doc.id, ...doc.data() });
+                            });
+                            if (typeof setResidents === 'function') {
+                                setResidents(residents);
+                            }
+                        }
+                    } catch (e) {
+                        console.warn("Fetch residents failed:", e);
+                    }
+                }
+
+                // 3. Trigger Desktop Report Render Logic
+                // Set the filter value so renderMonthlyReport picks it up
+                const filter = document.getElementById('toolbar-monthly-filter');
+                if (filter) filter.value = monthStr;
+
+                // Render into the hidden desktop view
+                if (typeof renderMonthlyReport === 'function') {
+                    renderMonthlyReport();
+                }
+
+                // 4. Clone Content to Mobile View
+                const desktopView = document.getElementById('report-monthly-view');
+                if (desktopView) {
+                    // Clone the content
+                    const content = desktopView.innerHTML;
+                    container.innerHTML = content;
+                    
+                    // Add mobile-friendly styling
+                    container.classList.add('overflow-x-auto');
+                    // Optional: Scale down if needed, or let user scroll
+                    // Prevent duplicate ID issues if any scripts run, but for display it's fine.
+                } else {
+                    throw new Error("Desktop report view not found");
+                }
+
             } catch (e) {
                 console.error(e);
                 container.innerHTML = `<div class="p-8 text-center text-red-500"><p class="font-bold text-lg mb-2">載入失敗</p><p class="text-xs text-gray-600">${e.message}</p></div>`;
