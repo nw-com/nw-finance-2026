@@ -2861,7 +2861,18 @@
                 const doc = await db.collection('communities').doc(code).get();
                 if (doc.exists) {
                      const data = doc.data();
-                     communityName = (data.name || code) + ' 收支日報表';
+                     const realName = data.name || code;
+                     
+                     // Save to localStorage and update UI helpers
+                     localStorage.setItem('currentCommunityName', realName);
+                     localStorage.setItem('currentCommunityCode', code);
+                     
+                     // Apply to desktop views (hidden) so cloned reports have correct headers
+                     if (typeof applyCommunityToUI === 'function') {
+                         applyCommunityToUI();
+                     }
+                     
+                     communityName = realName + ' 收支日報表';
                 }
             } catch (e) {
                 console.warn("Failed to fetch community name", e);
