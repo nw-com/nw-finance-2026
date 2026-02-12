@@ -28,6 +28,8 @@
         body {
             font-family: 'Noto Sans TC', sans-serif;
         }
+
+        }
         /* 自定義滾動條樣式 */
         ::-webkit-scrollbar {
             width: 8px;
@@ -285,6 +287,181 @@
                 if (!shouldIgnore(args)) originalError.apply(console, args);
             };
         })();
+        // ==========================================
+        //  Global Helper: Transaction Amount Hint & Month Picker
+        // ==========================================
+
+        function updateTransAmountHint() {
+            const inputTransType = document.getElementById('input-trans-type');
+            const inputTransCategory = document.getElementById('input-trans-category');
+            const selectTransTarget = document.getElementById('select-trans-target');
+            const inputTransMonth = document.getElementById('input-trans-month');
+            
+            const type = inputTransType ? inputTransType.value : '';
+            const category = inputTransCategory ? inputTransCategory.value : '';
+            const targetUnit = selectTransTarget ? selectTransTarget.value : '';
+            const monthVal = inputTransMonth ? inputTransMonth.value : '';
+            const hintEl = document.getElementById('trans-amount-hint');
+            
+            if (!hintEl) return;
+
+            if (type === '固定' && category === '管理費' && targetUnit && monthVal) {
+                const residents = getResidents();
+                const resident = residents.find(r => r.unit === targetUnit);
+                if (resident && resident.feeMgmt) {
+                    const months = monthVal.split(',').filter(m => m.trim());
+                    const count = months.length || 1;
+                    const singleFee = parseInt(resident.feeMgmt);
+                    
+                    if (count === 12) {
+                        // Annual Fee Discount: Pay 10 get 2 free
+                        const total = singleFee * 10;
+                        hintEl.textContent = `應繳金額 : ${total.toLocaleString()} (年繳優惠：繳10個月，2個月免費)`;
+                    } else if (count > 1) {
+                        const total = singleFee * count;
+                        hintEl.textContent = `應繳金額 : ${total.toLocaleString()} (單月 ${singleFee.toLocaleString()} x ${count} 個月)`;
+                    } else {
+                        const total = singleFee * count;
+                        hintEl.textContent = `應繳金額 : ${total.toLocaleString()}`;
+                    }
+                    hintEl.classList.remove('hidden');
+                } else {
+                    hintEl.classList.add('hidden');
+                }
+            } else {
+                hintEl.classList.add('hidden');
+            }
+        }
+
+        // Month Picker Logic
+        let pickerYear = new Date().getFullYear();
+        let selectedMonths = new Set();
+        
+        function renderMonthPickerGrid() {
+            const grid = document.getElementById('month-picker-grid');
+            const yearSpan = document.getElementById('month-picker-year');
+            if (!grid || !yearSpan) return;
+            
+            yearSpan.textContent = pickerYear;
+            grid.innerHTML = '';
+            
+            for (let i = 1; i <= 12; i++) {
+                const mStr = String(i).padStart(2, '0');
+                const val = `${pickerYear}-${mStr}`;
+                const isSelected = selectedMonths.has(val);
+                
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = `p-2 text-sm rounded border ${isSelected ? 'bg-red-100 border-red-500 text-red-700 font-bold' : 'bg-gray-50 hover:bg-gray-100 text-gray-700'}`;
+                btn.textContent = `${i}月`;
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    if (selectedMonths.has(val)) {
+                        selectedMonths.delete(val);
+                    } else {
+                        selectedMonths.add(val);
+                    }
+                    renderMonthPickerGrid();
+                };
+                grid.appendChild(btn);
+            }
+        }
+        
+        function initMonthPicker() {
+            const input = document.getElementById('input-trans-month');
+            const dropdown = document.getElementById('month-picker-dropdown');
+            const btnPrev = document.getElementById('month-picker-prev-year');
+            const btnNext = document.getElementById('month-picker-next-year');
+            const btnClear = document.getElementById('month-picker-clear');
+            const btnConfirm = document.getElementById('month-picker-confirm');
+            const btnSelectAll = document.getElementById('month-picker-select-all');
+            
+            if (!input || !dropdown) return;
+            
+            input.addEventListener('click', (e) => {
+                e.stopPropagation();
+                // Parse current value to init selection
+                selectedMonths.clear();
+                const current = input.value.split(',');
+                current.forEach(c => {
+                    const t = c.trim();
+                    if (t) selectedMonths.add(t);
+                });
+                
+                // Set picker year to first selected or current
+                if (selectedMonths.size > 0) {
+                    const first = Array.from(selectedMonths)[0];
+                    pickerYear = parseInt(first.split('-')[0]);
+                } else {
+                    pickerYear = new Date().getFullYear();
+                }
+                
+                renderMonthPickerGrid();
+                dropdown.classList.remove('hidden');
+            });
+            
+            btnPrev.addEventListener('click', (e) => {
+                e.stopPropagation();
+                pickerYear--;
+                renderMonthPickerGrid();
+            });
+            
+            btnNext.addEventListener('click', (e) => {
+                e.stopPropagation();
+                pickerYear++;
+                renderMonthPickerGrid();
+            });
+            
+            btnClear.addEventListener('click', (e) => {
+                e.stopPropagation();
+                selectedMonths.clear();
+                renderMonthPickerGrid();
+            });
+
+            if (btnSelectAll) {
+                btnSelectAll.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    for (let i = 1; i <= 12; i++) {
+                        const mStr = String(i).padStart(2, '0');
+                        const val = `${pickerYear}-${mStr}`;
+                        selectedMonths.add(val);
+                    }
+                    renderMonthPickerGrid();
+                });
+            }
+            
+            btnConfirm.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const sorted = Array.from(selectedMonths).sort();
+                input.value = sorted.join(', ');
+                dropdown.classList.add('hidden');
+                updateTransAmountHint(); // Trigger hint update
+            });
+            
+            // Click outside to close
+            document.addEventListener('click', (e) => {
+                if (!dropdown.contains(e.target) && e.target !== input) {
+                    dropdown.classList.add('hidden');
+                }
+            });
+        }
+        
+        // Initialize picker and helpers
+        function initGlobalHelpers() {
+            initMonthPicker();
+            
+            const ids = ['input-trans-type', 'input-trans-category', 'select-trans-target', 'input-trans-month'];
+            ids.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('change', updateTransAmountHint);
+            });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initGlobalHelpers);
+        } else {
+            initGlobalHelpers();
+        }
     </script>
 </head>
 <body class="bg-gray-100 text-gray-800 overflow-hidden h-screen">
@@ -1715,7 +1892,10 @@
                         <div class="bg-white rounded-lg shadow-sm border border-gray-200">
                             <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg">
                                 <h3 class="font-bold text-gray-700">銀行列表</h3>
-                                <button id="btn-add-bank" class="px-3 py-2 bg-red-600 text-white rounded">新增</button>
+                                <div>
+                                    <button id="btn-del-all-bank" class="px-3 py-2 bg-gray-600 text-white rounded mr-2 hover:bg-gray-700">全部刪除</button>
+                                    <button id="btn-add-bank" class="px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700">新增</button>
+                                </div>
                             </div>
                             <div class="overflow-x-auto">
                                 <table class="w-full text-left text-sm text-gray-600">
@@ -1743,6 +1923,8 @@
                             <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 rounded-t-lg">
                                 <h3 class="font-bold text-gray-700">住戶列表</h3>
                                 <div class="flex gap-2">
+                                    <button id="btn-del-sel-resident" class="px-3 py-1 bg-gray-600 text-white rounded text-sm hover:bg-gray-700 hidden">刪除選取</button>
+                                    <button id="btn-del-all-resident" class="px-3 py-1 bg-gray-600 text-white rounded text-sm hover:bg-gray-700">全部刪除</button>
                                     <button id="btn-import-resident" class="px-3 py-1 bg-green-600 text-white rounded text-sm">匯入Excel</button>
                                     <button id="btn-export-resident" class="px-3 py-1 bg-blue-600 text-white rounded text-sm">匯出Excel</button>
                                     <button id="btn-add-resident" class="px-3 py-1 bg-red-600 text-white rounded text-sm">新增</button>
@@ -1753,6 +1935,9 @@
                                 <table class="w-full text-left text-sm text-gray-600 whitespace-nowrap">
                                     <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-bold">
                                         <tr>
+                                            <th class="px-6 py-3 sticky top-0 bg-gray-100 z-10 w-10">
+                                                <input type="checkbox" id="chk-all-residents" class="rounded border-gray-300 text-red-600 focus:ring-red-500">
+                                            </th>
                                             <th class="px-6 py-3 sticky top-0 bg-gray-100 z-10">編號</th>
                                             <th class="px-6 py-3 sticky top-0 bg-gray-100 z-10">戶號</th>
                                             <th class="px-6 py-3 sticky top-0 bg-gray-100 z-10">姓名</th>
@@ -2083,7 +2268,7 @@
                     </div>
                     <div>
                         <label class="block text-sm mb-1">姓名</label>
-                        <input id="input-account-name" class="w-full border rounded px-3 py-2" />
+                        <input id="input-account-name" lang="zh-TW" class="w-full border rounded px-3 py-2" />
                     </div>
                     <div>
                         <label class="block text-sm mb-1">電子郵件 (預設帳號)</label>
@@ -2112,7 +2297,7 @@
                     </div>
                     <div>
                         <label class="block text-sm mb-1">社區名稱</label>
-                        <input id="input-community-name" class="w-full border rounded px-3 py-2" />
+                        <input id="input-community-name" lang="zh-TW" class="w-full border rounded px-3 py-2" />
                     </div>
                     <div class="flex justify-end gap-2">
                         <button id="cancel-add-community" class="px-3 py-2 border rounded">取消</button>
@@ -2158,7 +2343,7 @@
             <div class="absolute inset-0 flex items-center justify-center p-6">
                 <div class="bg-white rounded-lg w-full max-w-sm p-6 space-y-4">
                     <h4 class="text-lg font-bold">輸入項目</h4>
-                    <input id="input-item-name" class="w-full border rounded px-3 py-2" placeholder="項目" />
+                    <input id="input-item-name" lang="zh-TW" class="w-full border rounded px-3 py-2" placeholder="項目" />
                     <div class="flex justify-end gap-2">
                         <button id="cancel-edit-item" class="px-3 py-2 border rounded">取消</button>
                         <button id="confirm-edit-item" class="px-3 py-2 bg-red-600 text-white rounded">確認</button>
@@ -2170,7 +2355,7 @@
         <div id="modal-edit-bank" class="fixed inset-0 hidden z-[70]">
             <div class="absolute inset-0 bg-black/40"></div>
             <div class="absolute inset-0 flex items-center justify-center p-6">
-                <div class="bg-white rounded-lg w-full max-w-lg p-6 space-y-4">
+                <div class="bg-white rounded-lg w-full max-w-lg p-6 space-y-4 max-h-[90vh] overflow-y-auto">
                     <h4 class="text-lg font-bold">輸入銀行資料</h4>
                     <div>
                         <label class="block text-sm mb-1">項目</label>
@@ -2182,19 +2367,19 @@
                     </div>
                     <div id="field-petty-name" class="hidden">
                         <label class="block text-sm mb-1">零用金名稱</label>
-                        <input id="input-bank-petty-name" class="w-full border rounded px-3 py-2" />
+                        <input id="input-bank-petty-name" lang="zh-TW" class="w-full border rounded px-3 py-2" />
                     </div>
                     <div id="field-bank-name">
                         <label class="block text-sm mb-1">銀行名稱</label>
-                        <input id="input-bank-name" class="w-full border rounded px-3 py-2" />
+                        <input id="input-bank-name" lang="zh-TW" class="w-full border rounded px-3 py-2" />
                     </div>
                     <div id="field-bank-branch">
                         <label class="block text-sm mb-1">分行名稱</label>
-                        <input id="input-bank-branch" class="w-full border rounded px-3 py-2" />
+                        <input id="input-bank-branch" lang="zh-TW" class="w-full border rounded px-3 py-2" />
                     </div>
                     <div id="field-bank-holder">
                         <label class="block text-sm mb-1">戶名</label>
-                        <input id="input-bank-holder" class="w-full border rounded px-3 py-2" />
+                        <input id="input-bank-holder" lang="zh-TW" class="w-full border rounded px-3 py-2" />
                     </div>
                     <div id="field-bank-account">
                         <label class="block text-sm mb-1" id="label-bank-account">帳號</label>
@@ -2214,7 +2399,7 @@
                     </div>
                     <div id="field-bank-note" class="hidden">
                         <label class="block text-sm mb-1">備註</label>
-                        <input id="input-bank-note" class="w-full border rounded px-3 py-2" />
+                        <input id="input-bank-note" lang="zh-TW" class="w-full border rounded px-3 py-2" />
                     </div>
                     <div class="flex justify-end gap-2">
                         <button id="cancel-edit-bank" class="px-3 py-2 border rounded">取消</button>
@@ -2229,7 +2414,7 @@
             <div class="absolute inset-0 flex items-center justify-center p-6">
                 <div class="bg-white rounded-lg w-full max-w-sm p-6 space-y-4">
                     <h4 class="text-lg font-bold">輸入分棟名稱</h4>
-                    <input id="input-building-name" class="w-full border rounded px-3 py-2" placeholder="分棟名稱" />
+                    <input id="input-building-name" lang="zh-TW" class="w-full border rounded px-3 py-2" placeholder="分棟名稱" />
                     <div class="flex justify-end gap-2">
                         <button id="cancel-edit-building" class="px-3 py-2 border rounded">取消</button>
                         <button id="confirm-edit-building" class="px-3 py-2 bg-red-600 text-white rounded">確認</button>
@@ -2250,11 +2435,11 @@
                         </div>
                         <div>
                             <label class="block text-sm mb-1">姓名</label>
-                            <input id="input-res-name" class="w-full border rounded px-3 py-2" />
+                            <input id="input-res-name" lang="zh-TW" class="w-full border rounded px-3 py-2" />
                         </div>
                         <div class="col-span-2">
                             <label class="block text-sm mb-1">地址</label>
-                            <input id="input-res-addr" class="w-full border rounded px-3 py-2" />
+                            <input id="input-res-addr" lang="zh-TW" class="w-full border rounded px-3 py-2" />
                         </div>
                         <div>
                             <label class="block text-sm mb-1">棟別</label>
@@ -2275,7 +2460,7 @@
                         </div>
                         <div class="col-span-2">
                             <label class="block text-sm mb-1">備註</label>
-                            <input id="input-res-note" class="w-full border rounded px-3 py-2" />
+                            <input id="input-res-note" lang="zh-TW" class="w-full border rounded px-3 py-2" />
                         </div>
                     </div>
                     <div class="flex justify-end gap-2">
@@ -2365,11 +2550,32 @@
                         <div>
                             <label class="block text-sm mb-1">對象</label>
                             <select id="select-trans-target" class="w-full border rounded px-3 py-2 mb-1"></select>
-                            <input id="input-trans-target" class="w-full border rounded px-3 py-2 hidden" />
+                            <input id="input-trans-target" lang="zh-TW" class="w-full border rounded px-3 py-2 hidden" />
                         </div>
-                        <div>
+                        <div class="relative">
                             <label class="block text-sm mb-1">月份</label>
-                            <input id="input-trans-month" type="month" class="w-full border rounded px-3 py-2" />
+                            <div class="flex gap-2">
+                                <input id="input-trans-month" type="text" class="w-full border rounded px-3 py-2 bg-white cursor-pointer" readonly placeholder="點擊選擇月份 (可多選)" />
+                                <!-- Hidden input to store standard format values if needed, but we can parse the text -->
+                            </div>
+                            <!-- Month Picker Dropdown -->
+                            <div id="month-picker-dropdown" class="absolute z-50 mt-1 w-64 bg-white border rounded shadow-lg hidden p-4 top-full left-0">
+                                <div class="flex justify-between items-center mb-3">
+                                    <button id="month-picker-prev-year" type="button" class="text-gray-500 hover:text-red-600 p-1"><i class="fa-solid fa-chevron-left"></i></button>
+                                    <span id="month-picker-year" class="font-bold text-lg">2025</span>
+                                    <button id="month-picker-next-year" type="button" class="text-gray-500 hover:text-red-600 p-1"><i class="fa-solid fa-chevron-right"></i></button>
+                                </div>
+                                <div id="month-picker-grid" class="grid grid-cols-4 gap-2 mb-3">
+                                    <!-- Generated by JS -->
+                                </div>
+                                <div class="flex justify-between border-t pt-2">
+                                    <div class="flex gap-2">
+                                        <button id="month-picker-clear" type="button" class="text-sm text-gray-500 hover:text-red-600">清除</button>
+                                        <button id="month-picker-select-all" type="button" class="text-sm text-blue-600 hover:text-blue-800">全選</button>
+                                    </div>
+                                    <button id="month-picker-confirm" type="button" class="text-sm bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">確定</button>
+                                </div>
+                            </div>
                         </div>
                         <div>
                             <label class="block text-sm mb-1">類型</label>
@@ -2378,16 +2584,17 @@
                                 <option value="其他">其他</option>
                                 <option value="暫收款">暫收款</option>
                             </select>
-                            <input id="input-trans-type-custom" class="w-full border rounded px-3 py-2 hidden mt-1" placeholder="輸入自定義類型">
+                            <input id="input-trans-type-custom" lang="zh-TW" class="w-full border rounded px-3 py-2 hidden mt-1" placeholder="輸入自定義類型">
                         </div>
                         <div>
                             <label class="block text-sm mb-1">類別</label>
                             <select id="input-trans-category" class="w-full border rounded px-3 py-2 mb-1"></select>
-                            <input id="input-trans-category-custom" class="w-full border rounded px-3 py-2 hidden" placeholder="輸入自定義類別" />
+                            <input id="input-trans-category-custom" lang="zh-TW" class="w-full border rounded px-3 py-2 hidden" placeholder="輸入自定義類別" />
                         </div>
                         <div>
                             <label class="block text-sm mb-1">金額</label>
                             <input id="input-trans-amount" type="number" class="w-full border rounded px-3 py-2" />
+                            <p id="trans-amount-hint" class="text-sm text-red-600 mt-1 hidden"></p>
                         </div>
                         <div>
                             <label class="block text-sm mb-1">收支方式</label>
@@ -2395,7 +2602,7 @@
                         </div>
                         <div class="col-span-2">
                             <label class="block text-sm mb-1">備註</label>
-                            <input id="input-trans-note" class="w-full border rounded px-3 py-2" />
+                            <input id="input-trans-note" lang="zh-TW" class="w-full border rounded px-3 py-2" />
                         </div>
                     </div>
                     <div class="flex justify-end gap-2">
@@ -5210,12 +5417,26 @@
             let name = '西北保全社區';
             let code = 'NW001';
             if (useCloud()){
-                const q = await db.collection('accounts').where('email','==',email).limit(1).get();
-                if (!q.empty){
-                    const acc = q.docs[0].data();
-                    name = acc.community || name;
-                    const c = await db.collection('communities').where('name','==',name).limit(1).get();
-                    if (!c.empty){ code = (c.docs[0].data().code || c.docs[0].id); }
+                // User Request: All accounts should read the same Community data from Cloud
+                // Prioritize fetching the single global community over individual account settings
+                try {
+                    const c = await db.collection('communities').limit(1).get();
+                    if (!c.empty){ 
+                        const doc = c.docs[0];
+                        code = (doc.data().code || doc.id); 
+                        name = doc.data().name || name;
+                    } else {
+                        // Fallback: if no global community, try account-bound community
+                        const q = await db.collection('accounts').where('email','==',email).limit(1).get();
+                        if (!q.empty){
+                            const acc = q.docs[0].data();
+                            name = acc.community || name;
+                            const c2 = await db.collection('communities').where('name','==',name).limit(1).get();
+                            if (!c2.empty){ code = (c2.docs[0].data().code || c2.docs[0].id); }
+                        }
+                    }
+                } catch(e) {
+                    console.error("Error syncing community:", e);
                 }
             } else {
                 setCurrentCommunityByEmail(email);
@@ -7163,30 +7384,18 @@
                         }
                     });
                     
+                    let statusHtml = '';
                     if (unpaidMgmt.length > 0 || unpaidPark.length > 0 || unpaidOther.length > 0) {
                         unpaidInfoMap[x.unit] = { mgmt: unpaidMgmt, park: unpaidPark, other: unpaidOther };
-                        return `<tr>
-                            <td class="px-6 py-3">${i + 1}</td>
-                            <td class="px-6 py-3">${x.unit}</td>
-                            <td class="px-6 py-3">${x.name}</td>
-                            <td class="px-6 py-3">${x.addr || ''}</td>
-                            <td class="px-6 py-3">${x.building}</td>
-                            <td class="px-6 py-3">${x.feeMgmt}</td>
-                            <td class="px-6 py-3">${x.feePark}</td>
-                            <td class="px-6 py-3">${x.feeOther}</td>
-                            <td class="px-6 py-3">
-                                <button class="btn-show-unpaid bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-bold hover:bg-red-200 transition-colors" data-unit="${x.unit}">
-                                    未繳
-                                </button>
-                            </td>
-                            <td class="px-6 py-3 text-gray-500 text-sm">${x.note}</td>
-                            <td class="px-6 py-3">
-                                <button data-i="${i}" class="edit-resident text-blue-600 mr-2">編輯</button>
-                                <button data-i="${i}" class="del-resident text-red-600">刪除</button>
-                            </td>
-                        </tr>`;
+                        statusHtml = `<button class="btn-show-unpaid bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-bold hover:bg-red-200 transition-colors" data-unit="${x.unit}">未繳</button>`;
                     } else {
-                        return `<tr>
+                        statusHtml = `<span class="text-green-600 font-bold bg-green-50 px-3 py-1 rounded-full text-sm">正常</span>`;
+                    }
+
+                    return `<tr>
+                            <td class="px-6 py-3">
+                                <input type="checkbox" class="chk-resident-item rounded border-gray-300 text-red-600 focus:ring-red-500" data-i="${i}">
+                            </td>
                             <td class="px-6 py-3">${i + 1}</td>
                             <td class="px-6 py-3">${x.unit}</td>
                             <td class="px-6 py-3">${x.name}</td>
@@ -7195,17 +7404,104 @@
                             <td class="px-6 py-3">${x.feeMgmt}</td>
                             <td class="px-6 py-3">${x.feePark}</td>
                             <td class="px-6 py-3">${x.feeOther}</td>
-                            <td class="px-6 py-3">
-                                <span class="text-green-600 font-bold bg-green-50 px-3 py-1 rounded-full text-sm">正常</span>
-                            </td>
+                            <td class="px-6 py-3">${statusHtml}</td>
                             <td class="px-6 py-3 text-gray-500 text-sm">${x.note}</td>
                             <td class="px-6 py-3">
                                 <button data-i="${i}" class="edit-resident text-blue-600 mr-2">編輯</button>
                                 <button data-i="${i}" class="del-resident text-red-600">刪除</button>
                             </td>
                         </tr>`;
-                    }
                 }).join('');
+                
+                // --- Multi-Select Logic ---
+                const chkAll = document.getElementById('chk-all-residents');
+                const btnDelSel = document.getElementById('btn-del-sel-resident');
+                const btnDelAll = document.getElementById('btn-del-all-resident');
+                const chkItems = residentsDetailTbody.querySelectorAll('.chk-resident-item');
+
+                function updateSelState() {
+                    const checkedCount = residentsDetailTbody.querySelectorAll('.chk-resident-item:checked').length;
+                    if (btnDelSel) {
+                        if (checkedCount > 0) {
+                            btnDelSel.classList.remove('hidden');
+                            btnDelSel.textContent = `刪除選取 (${checkedCount})`;
+                        } else {
+                            btnDelSel.classList.add('hidden');
+                        }
+                    }
+                    if (chkAll) {
+                        chkAll.checked = (checkedCount > 0 && checkedCount === chkItems.length);
+                        chkAll.indeterminate = (checkedCount > 0 && checkedCount < chkItems.length);
+                    }
+                }
+
+                if (chkAll) {
+                    // Remove old listener to avoid duplicates if any (though simple assignment overwrites property, addEventListener stacks)
+                    // Better to clone or handle cleanly. Here we assume renderResidentsDetail is full re-render.
+                    // But chkAll is outside tbody, so we need to be careful not to stack listeners.
+                    // A simple way is to assign onclick or cloneNode.
+                    const newChkAll = chkAll.cloneNode(true);
+                    chkAll.parentNode.replaceChild(newChkAll, chkAll);
+                    
+                    newChkAll.addEventListener('change', (e) => {
+                        const isChecked = e.target.checked;
+                        chkItems.forEach(chk => chk.checked = isChecked);
+                        updateSelState();
+                    });
+                }
+
+                chkItems.forEach(chk => {
+                    chk.addEventListener('change', updateSelState);
+                });
+
+                if (btnDelSel) {
+                    const newBtn = btnDelSel.cloneNode(true);
+                    btnDelSel.parentNode.replaceChild(newBtn, btnDelSel);
+                    
+                    newBtn.addEventListener('click', () => {
+                        const checkedIndices = Array.from(residentsDetailTbody.querySelectorAll('.chk-resident-item:checked'))
+                            .map(chk => parseInt(chk.getAttribute('data-i')))
+                            .sort((a, b) => b - a); // Sort descending to splice correctly
+
+                        if (checkedIndices.length === 0) return;
+
+                        openConfirm(`確定要刪除選取的 ${checkedIndices.length} 筆住戶資料嗎？`, () => {
+                            const currentResidents = getResidents();
+                            checkedIndices.forEach(idx => {
+                                if (idx >= 0 && idx < currentResidents.length) {
+                                    currentResidents.splice(idx, 1);
+                                }
+                            });
+                            setResidents(currentResidents);
+                            renderResidentsDetail();
+                            updateDashboardStats();
+                            // Reset select all checkbox
+                            const ca = document.getElementById('chk-all-residents');
+                            if(ca) { ca.checked = false; ca.indeterminate = false; }
+                        });
+                    });
+                }
+
+                if (btnDelAll) {
+                    // Use cloneNode to clear previous listeners
+                    const newBtnAll = btnDelAll.cloneNode(true);
+                    btnDelAll.parentNode.replaceChild(newBtnAll, btnDelAll);
+
+                    newBtnAll.addEventListener('click', () => {
+                         const currentResidents = getResidents();
+                         if (!currentResidents || currentResidents.length === 0) {
+                             alert('目前沒有住戶資料可刪除');
+                             return;
+                         }
+                         openConfirm('確定要刪除所有住戶資料嗎？此動作無法復原！', () => {
+                             setResidents([]);
+                             renderResidentsDetail();
+                             updateDashboardStats();
+                             const ca = document.getElementById('chk-all-residents');
+                             if(ca) { ca.checked = false; ca.indeterminate = false; }
+                         });
+                    });
+                }
                 
                 // Add Event Listeners for Unpaid Buttons
                 Array.from(residentsDetailTbody.querySelectorAll('.btn-show-unpaid')).forEach(btn => {
@@ -7240,6 +7536,7 @@
                         if (modalUnpaidDetail) modalUnpaidDetail.classList.remove('hidden');
                     });
                 });
+
 
                 Array.from(residentsDetailTbody.querySelectorAll('.del-resident')).forEach(btn=>{ 
                     btn.addEventListener('click', ()=>{ 
@@ -7481,6 +7778,22 @@
             else if (editCtx.kind==='expense_targets'){ const arr = getExpenseTargets() || []; if (editCtx.index>=0) arr[editCtx.index]=name; else arr.push(name); setExpenseTargets(arr); renderExpenseSettings(); }
             closeEditItem(); }); }
         if (cancelEditItem){ cancelEditItem.addEventListener('click', closeEditItem); }
+        const btnDelAllBank = document.getElementById('btn-del-all-bank');
+        if (btnDelAllBank) {
+            btnDelAllBank.addEventListener('click', () => {
+                const arr = getBankAccounts();
+                if (!arr || arr.length === 0) {
+                    alert('目前沒有銀行帳號可刪除');
+                    return;
+                }
+                openConfirm('確定要刪除所有銀行帳號嗎？此動作無法復原！', () => {
+                    setBankAccounts([]);
+                    updateBankSubtabs();
+                    renderBankSettings();
+                    updateDashboardStats();
+                });
+            });
+        }
         if (btnAddBank){ btnAddBank.addEventListener('click', ()=> openEditBank({kind:'bank', index:-1, item:{type:'活存'}})); }
         if (confirmEditBank){ confirmEditBank.addEventListener('click', ()=>{ 
             if(!editCtx) return; 
@@ -7941,6 +8254,10 @@
             }
             
             modalEditTransaction.classList.remove('hidden');
+            // Trigger amount hint update
+            if (typeof updateTransAmountHint === 'function') {
+                updateTransAmountHint();
+            }
         }
 
         function closeEditTransaction() {
@@ -7955,7 +8272,10 @@
         if (confirmEditTransaction) confirmEditTransaction.addEventListener('click', () => {
             if (!editCtx) return;
             
+            // 1. Validate & Prepare Category
             let category = inputTransCategory.value;
+            let type = inputTransType.value;
+            
             if (category === '自定義') {
                 category = (inputTransCategoryCustom.value || '').trim();
                 if (!category) {
@@ -7964,199 +8284,274 @@
                 }
                 
                 // Save custom category to settings
-                let type = inputTransType.value;
                 if (type === '其他' && inputTransTypeCustom && !inputTransTypeCustom.classList.contains('hidden')) {
                     type = inputTransTypeCustom.value.trim() || '其他';
                 }
-
+                
                 if (editCtx.mode === 'income') {
                     if (type === '固定') {
                         const arr = getIncomeFixed();
-                        if (!arr.includes(category)) {
-                            arr.push(category);
-                            setIncomeFixed(arr);
-                        }
+                        if (!arr.includes(category)) { arr.push(category); setIncomeFixed(arr); }
                     } else if (type === '暫收款') {
                         const arr = getIncomeTemp();
-                        if (!arr.includes(category)) {
-                            arr.push(category);
-                            setIncomeTemp(arr);
-                        }
+                        if (!arr.includes(category)) { arr.push(category); setIncomeTemp(arr); }
                     } else {
                         const arr = getIncomeOther();
-                        if (!arr.includes(category)) {
-                            arr.push(category);
-                            setIncomeOther(arr);
-                        }
+                        if (!arr.includes(category)) { arr.push(category); setIncomeOther(arr); }
                     }
                 } else {
                     if (type === '固定') {
                         const arr = getExpenseFixed();
-                        if (!arr.includes(category)) {
-                            arr.push(category);
-                            setExpenseFixed(arr);
-                        }
+                        if (!arr.includes(category)) { arr.push(category); setExpenseFixed(arr); }
                     } else if (type === '暫收款') {
                         const arr = getExpenseTemp();
-                        if (!arr.includes(category)) {
-                            arr.push(category);
-                            setExpenseTemp(arr);
-                        }
+                        if (!arr.includes(category)) { arr.push(category); setExpenseTemp(arr); }
                     } else {
                         const arr = getExpenseOther();
-                        if (!arr.includes(category)) {
-                            arr.push(category);
-                            setExpenseOther(arr);
-                        }
+                        if (!arr.includes(category)) { arr.push(category); setExpenseOther(arr); }
                     }
                 }
             }
             
             let finalType = inputTransType.value;
-
-            let target = inputTransTarget.value;
-            if (selectTransTarget.value !== '自定義') {
-                target = selectTransTarget.value;
-            } else {
-                // If custom target, save to settings
+            
+            // 2. Validate & Prepare Target
+            let target = selectTransTarget.value;
+            if (target === '自定義') {
                 target = (inputTransTarget.value || '').trim();
                 if (target) {
                     if (editCtx.mode === 'income') {
                         const arr = getIncomeTargets() || [];
-                        if (!arr.includes(target)) {
-                            arr.push(target);
-                            setIncomeTargets(arr);
-                            renderIncomeSettings(); // Update settings view if open
-                        }
+                        if (!arr.includes(target)) { arr.push(target); setIncomeTargets(arr); renderIncomeSettings(); }
                     } else {
                         const arr = getExpenseTargets() || [];
-                        if (!arr.includes(target)) {
-                            arr.push(target);
-                            setExpenseTargets(arr);
-                            renderExpenseSettings(); // Update settings view if open
-                        }
+                        if (!arr.includes(target)) { arr.push(target); setExpenseTargets(arr); renderExpenseSettings(); }
                     }
                 }
+            } else {
+                 target = selectTransTarget.value;
             }
 
-            const item = {
-                id: inputTransId.value,
-                date: inputTransDate.value,
-                target: target,
-                month: inputTransMonth.value,
-                type: finalType,
-                category: category,
-                amount: inputTransAmount.value,
-                method: inputTransMethod.value,
-                note: inputTransNote.value,
-                mode: editCtx.mode
-            };
+            // 3. Validate & Prepare Month (New Logic)
+            const monthVal = inputTransMonth.value.trim();
+            if (!monthVal) { alert('請選擇月份'); return; }
+            const months = monthVal.split(',').map(m => m.trim()).filter(m => m);
+            if (months.length === 0) { alert('請選擇月份'); return; }
+            
+            // 4. Other Fields
+            const date = inputTransDate.value;
+            const amountStr = inputTransAmount.value;
+            if (!amountStr) { alert('請輸入金額'); return; }
+            
+            const method = inputTransMethod.value;
+            const note = inputTransNote.value;
 
-            const executeSave = (finalItem, sideEffects = null) => {
-                const allTrans = getTransactions();
-                if (sideEffects) sideEffects(allTrans);
-                
-                if (editCtx.index >= 0) {
-                    const realIndex = allTrans.findIndex(t => t.id === finalItem.id);
-                    if (realIndex >= 0) {
-                        allTrans[realIndex] = finalItem;
+            // ---------------------------------------------------------
+            // CASE 1: Single Month (Preserve existing complex logic)
+            // ---------------------------------------------------------
+            if (months.length === 1) {
+                const singleMonth = months[0];
+                const item = {
+                    id: inputTransId.value,
+                    date: date,
+                    target: target,
+                    month: singleMonth,
+                    type: finalType,
+                    category: category,
+                    amount: amountStr,
+                    method: method,
+                    note: note,
+                    mode: editCtx.mode
+                };
+
+                const executeSave = (finalItem, sideEffects = null) => {
+                    const allTrans = getTransactions();
+                    if (sideEffects) sideEffects(allTrans);
+                    
+                    if (editCtx.index >= 0) {
+                        const realIndex = allTrans.findIndex(t => t.id === finalItem.id);
+                        if (realIndex >= 0) {
+                            allTrans[realIndex] = finalItem;
+                        } else {
+                            allTrans.push(finalItem);
+                        }
                     } else {
                         allTrans.push(finalItem);
                     }
-                } else {
-                    allTrans.push(finalItem);
-                }
-                
-                setTransactions(allTrans);
-                // Save to cloud subcollection
-                saveTransactionToCloud(finalItem);
-                
-                const currentMode = editCtx.mode;
-                closeEditTransaction();
-                if (currentMode === 'income') renderIncomeDetail();
-                else renderExpenseDetail();
-                updateDashboardStats();
-            };
-
-            if (item.mode === 'income') {
-                const residents = getResidents();
-                const resident = residents.find(r => r.unit === item.target || r.name === item.target);
-                
-                if (resident) {
-                    let defaultAmount = 0;
-                    if (item.category === '管理費') defaultAmount = parseInt(resident.feeMgmt || 0);
-                    else if (item.category === '停車費') defaultAmount = parseInt(resident.feePark || 0);
-                    else if (item.category === '其他費用') defaultAmount = parseInt(resident.feeOther || 0);
                     
-                    if (defaultAmount > 0) {
-                        const currentAmount = parseInt(item.amount || 0);
-                        const allTrans = getTransactions();
-                        const relatedTrans = allTrans.filter(t => 
-                            t.target === item.target && 
-                            t.category === item.category && 
-                            t.month === item.month && 
-                            t.mode === 'income' &&
-                            t.id !== item.id
-                        );
-                        
-                        const paidSoFar = relatedTrans.reduce((sum, t) => sum + parseInt(t.amount || 0), 0);
-                        const totalAfterThis = paidSoFar + currentAmount;
-                        
-                        // Catch-up Helper
-                        const doCatchUpAndSave = () => {
-                            if (relatedTrans.length > 0 && paidSoFar < defaultAmount) {
-                                // Linking Logic
-                                // Calculate prevIds immediately from relatedTrans
-                                const prevIds = relatedTrans.map(rt => rt.id);
-                                
-                                const sideEffects = (transList) => {
-                                    relatedTrans.forEach(rt => {
-                                        const found = transList.find(t => t.id === rt.id);
-                                        if (found) {
-                                            // Remove "未繳足額"
-                                            if (found.note && found.note.includes('未繳足額')) {
-                                                found.note = found.note.replace('未繳足額', '').trim();
-                                            }
-                                            // Add "補足編號:..."
-                                            if (!found.note.includes(`(補足編號:${item.id})`)) {
-                                                found.note = (found.note + ` (補足編號:${item.id})`).trim();
-                                            }
-                                            // Save side-effect updates to cloud
-                                            saveTransactionToCloud(found);
-                                        }
-                                    });
-                                };
-                                // Update current note
-                                if (prevIds.length > 0) {
-                                    item.note = (item.note + ` (補足編號:${prevIds.join(',')})`).trim();
-                                }
-                                executeSave(item, sideEffects);
-                            } else {
-                                executeSave(item);
-                            }
-                        };
+                    setTransactions(allTrans);
+                    // Save to cloud subcollection
+                    saveTransactionToCloud(finalItem);
+                    
+                    const currentMode = editCtx.mode;
+                    closeEditTransaction();
+                    if (currentMode === 'income') renderIncomeDetail();
+                    else renderExpenseDetail();
+                    updateDashboardStats();
+                };
 
-                        if (totalAfterThis < defaultAmount) {
-                            openConfirm('低於此筆應繳費用', () => {
-                                if (!item.note.includes('未繳足額')) {
-                                    item.note = (item.note + ' 未繳足額').trim();
+                if (item.mode === 'income') {
+                    const residents = getResidents();
+                    const resident = residents.find(r => r.unit === item.target || r.name === item.target);
+                    
+                    if (resident) {
+                        let defaultAmount = 0;
+                        if (item.category === '管理費') defaultAmount = parseInt(resident.feeMgmt || 0);
+                        else if (item.category === '停車費') defaultAmount = parseInt(resident.feePark || 0);
+                        else if (item.category === '其他費用') defaultAmount = parseInt(resident.feeOther || 0);
+                        
+                        if (defaultAmount > 0) {
+                            const currentAmount = parseInt(item.amount || 0);
+                            const allTrans = getTransactions();
+                            const relatedTrans = allTrans.filter(t => 
+                                t.target === item.target && 
+                                t.category === item.category && 
+                                t.month === item.month && 
+                                t.mode === 'income' &&
+                                t.id !== item.id
+                            );
+                            
+                            const paidSoFar = relatedTrans.reduce((sum, t) => sum + parseInt(t.amount || 0), 0);
+                            const totalAfterThis = paidSoFar + currentAmount;
+                            
+                            // Catch-up Helper
+                            const doCatchUpAndSave = () => {
+                                if (relatedTrans.length > 0 && paidSoFar < defaultAmount) {
+                                    // Linking Logic
+                                    const prevIds = relatedTrans.map(rt => rt.id);
+                                    
+                                    const sideEffects = (transList) => {
+                                        relatedTrans.forEach(rt => {
+                                            const found = transList.find(t => t.id === rt.id);
+                                            if (found) {
+                                                if (found.note && found.note.includes('未繳足額')) {
+                                                    found.note = found.note.replace('未繳足額', '').trim();
+                                                }
+                                                if (!found.note.includes(`(補足編號:${item.id})`)) {
+                                                    found.note = (found.note + ` (補足編號:${item.id})`).trim();
+                                                }
+                                                saveTransactionToCloud(found);
+                                            }
+                                        });
+                                    };
+                                    if (prevIds.length > 0) {
+                                        item.note = (item.note + ` (補足編號:${prevIds.join(',')})`).trim();
+                                    }
+                                    executeSave(item, sideEffects);
+                                } else {
+                                    executeSave(item);
                                 }
-                                executeSave(item);
-                            }, '提醒', '確認繳費');
-                            return;
-                        } else if (totalAfterThis > defaultAmount) {
-                            openAlert('不可超過設定金額');
-                            return;
-                        } else {
-                            // Exact match
-                            doCatchUpAndSave();
-                            return;
+                            };
+
+                            if (totalAfterThis < defaultAmount) {
+                                openConfirm('低於此筆應繳費用', () => {
+                                    if (!item.note.includes('未繳足額')) {
+                                        item.note = (item.note + ' 未繳足額').trim();
+                                    }
+                                    executeSave(item);
+                                }, '提醒', '確認繳費');
+                                return;
+                            } else if (totalAfterThis > defaultAmount) {
+                                openAlert('不可超過設定金額');
+                                return;
+                            } else {
+                                doCatchUpAndSave();
+                                return;
+                            }
                         }
                     }
                 }
+
+                executeSave(item);
+                return;
             }
 
-            executeSave(item);
+            // ---------------------------------------------------------
+            // CASE 2: Multiple Months (Simplified Batch Creation)
+            // ---------------------------------------------------------
+            
+            const allTrans = getTransactions();
+            
+            // If editing, remove original
+            if (editCtx.index !== -1 && editCtx.item) {
+                 const idx = allTrans.findIndex(t => t.id === editCtx.item.id);
+                 if (idx !== -1) allTrans.splice(idx, 1);
+            }
+            
+            // Loop create
+            // Logic for Amount Distribution:
+            // 1. Annual Fee (Fixed + Mgmt + 12 Months): Pay 10 get 2 free.
+            //    - Calculate single month fee from Total / 10.
+            //    - First 10 months get fee, last 2 months get 0.
+            // 2. Normal Batch: Distribute Total / Count.
+            
+            let perMonthAmount = 0;
+            const totalAmount = parseInt(amountStr);
+            const isAnnualFee = (months.length === 12 && finalType === '固定' && category === '管理費');
+            
+            // Sort months to ensure chronological order for Annual Fee logic
+            months.sort();
+
+            if (isAnnualFee) {
+                // Annual Fee: Total covers 10 months
+                perMonthAmount = Math.floor(totalAmount / 10);
+            } else {
+                // Normal: Distribute evenly
+                perMonthAmount = Math.floor(totalAmount / months.length);
+            }
+
+            months.forEach((m, index) => {
+                const prefix = (editCtx.mode === 'income') ? 'I' : 'O';
+                const dateOnly = date.split('T')[0];
+                const datePart = dateOnly.replace(/-/g, '');
+                const baseId = prefix + datePart;
+                
+                // Find max seq in *current* allTrans
+                const existing = allTrans.filter(t => t.id && t.id.startsWith(baseId));
+                let maxSeq = 0;
+                existing.forEach(t => {
+                    const seqStr = t.id.substring(baseId.length);
+                    const seq = parseInt(seqStr);
+                    if (!isNaN(seq) && seq > maxSeq) maxSeq = seq;
+                });
+                const newId = baseId + String(maxSeq + 1).padStart(3, '0');
+                
+                let currentAmount = perMonthAmount;
+                let currentNote = note;
+
+                if (isAnnualFee) {
+                    // Last 2 months are free
+                    if (index >= 10) {
+                        currentAmount = 0;
+                        currentNote = (currentNote + ' (年繳贈送)').trim();
+                    } else {
+                        currentNote = (currentNote + ' (年繳優惠)').trim();
+                    }
+                }
+
+                const newItem = {
+                    id: newId,
+                    date: date,
+                    target: target,
+                    month: m,
+                    type: finalType,
+                    category: category,
+                    amount: String(currentAmount), 
+                    method: method,
+                    note: currentNote,
+                    mode: editCtx.mode,
+                    updatedAt: new Date().toISOString()
+                };
+                
+                allTrans.push(newItem);
+                saveTransactionToCloud(newItem);
+            });
+            
+            setTransactions(allTrans);
+            closeEditTransaction();
+            if (editCtx.mode === 'income') renderIncomeDetail();
+            else renderExpenseDetail();
+            updateDashboardStats();
         });
 
         function renderIncomeDetail() {
