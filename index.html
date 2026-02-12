@@ -3455,6 +3455,17 @@
             const content = document.getElementById('right-content');
             if (!bar) return;
             
+            // Capture currently active tab state to preserve selection after re-render
+            let activeText = null;
+            let activeIndex = 0;
+            const currentActive = bar.querySelector('.subtab-item.text-red-700');
+            // Only preserve if we are staying on the same main tab
+            if (currentActive && currentActive.id && currentActive.id.startsWith('subtab-' + tabId + '-')) {
+                activeText = currentActive.textContent.trim();
+                const parts = currentActive.id.split('-');
+                activeIndex = parseInt(parts[2] || '0');
+            }
+
             // Clear secondary toolbar content
             if (secondaryBar) secondaryBar.innerHTML = '';
 
@@ -3530,7 +3541,24 @@
                     setActiveSubtab(a);
                 });
             });
-            setActiveSubtab(anchors[0]);
+            
+            // Restore active tab
+            let target = anchors[0];
+            if (activeText) {
+                // Try to find by text content first
+                const found = anchors.find(a => a.textContent.trim() === activeText);
+                if (found) {
+                    target = found;
+                } else {
+                    // Fallback to index if text not found (e.g. renamed)
+                    if (activeIndex < anchors.length) {
+                        target = anchors[activeIndex];
+                    } else if (anchors.length > 0) {
+                        target = anchors[anchors.length - 1];
+                    }
+                }
+            }
+            setActiveSubtab(target);
         }
 
         function setActiveSubtab(el) {
@@ -5946,6 +5974,7 @@
             transactions: []
         };
         let unsubscribeSnapshot = null;
+        let unsubscribeTransactions = null;
 
         // Initialize Firebase
         function initFirebase() {
@@ -5991,7 +6020,7 @@
                     APP_STATE.bank_accounts = data.bank_accounts || [];
                     APP_STATE.buildings = data.buildings || [];
                     APP_STATE.residents = data.residents || [];
-                    APP_STATE.transactions = data.transactions || [];
+                    // APP_STATE.transactions = data.transactions || []; // Handled by subcollection
                     console.log("Data synced from cloud");
                 } else {
                     console.log("No data found, using defaults");
@@ -6007,23 +6036,60 @@
                 console.error("Sync Error:", error);
                 if (document.getElementById('app-loader')) document.getElementById('app-loader').classList.add('hidden');
             });
+
+            // Transactions Subcollection Sync
+            if (unsubscribeTransactions) { unsubscribeTransactions(); unsubscribeTransactions = null; }
+            const transRef = firestoreDB.collection('communities').doc(code).collection('transactions');
+            unsubscribeTransactions = safeOnSnapshot(transRef, (snapshot) => {
+                const trans = [];
+                snapshot.forEach(doc => {
+                    trans.push(doc.data());
+                });
+                APP_STATE.transactions = trans;
+                refreshAllUI();
+            });
         }
 
         // Clean up listeners on unload to prevent memory leaks and console errors
         window.addEventListener('beforeunload', () => {
             if (unsubscribeSnapshot) { unsubscribeSnapshot(); unsubscribeSnapshot = null; }
+            if (unsubscribeTransactions) { unsubscribeTransactions(); unsubscribeTransactions = null; }
             if (unsubscribeAccounts) { unsubscribeAccounts(); unsubscribeAccounts = null; }
         });
 
         function saveFullStateToCloud() {
             if (!firestoreDB) return;
             const code = getCurrentCommunityCode();
-            firestoreDB.collection('communities').doc(code).set(APP_STATE, { merge: true })
+            // Clone state to avoid modifying it
+            const stateToSave = JSON.parse(JSON.stringify(APP_STATE));
+            // Remove transactions from main doc save to prevent overwrite/bloat
+            delete stateToSave.transactions;
+            
+            firestoreDB.collection('communities').doc(code).set(stateToSave, { merge: true })
                 .catch(err => console.error("Save Error:", err));
+        }
+
+        async function saveTransactionToCloud(item) {
+            if (!firestoreDB || !item.id) return;
+            const code = getCurrentCommunityCode();
+            try {
+                await firestoreDB.collection('communities').doc(code).collection('transactions').doc(item.id).set(item, {merge:true});
+            } catch(e) { console.error("Save Trans Error", e); }
+        }
+
+        async function deleteTransactionFromCloud(id) {
+            if (!firestoreDB || !id) return;
+            const code = getCurrentCommunityCode();
+            try {
+                await firestoreDB.collection('communities').doc(code).collection('transactions').doc(id).delete();
+            } catch(e) { console.error("Del Trans Error", e); }
         }
 
         function saveToCloud(key, val) {
              if (!firestoreDB) return;
+             // Skip transactions from main doc update
+             if (key === 'transactions') return;
+
              const code = getCurrentCommunityCode();
              const update = {};
              update[key] = val;
@@ -6395,7 +6461,9 @@
             }
             if (APP_STATE[realKey] !== undefined) {
                 APP_STATE[realKey] = arr;
-                saveToCloud(realKey, arr);
+                if (realKey !== 'transactions') {
+                    saveToCloud(realKey, arr);
+                }
             } else {
                 localStorage.setItem(key, JSON.stringify(arr)); 
             }
@@ -7312,20 +7380,24 @@
             }
         }
         function renderBankSettings(){
-            if (bankTbody){ const arr = getBankAccounts(); 
+            const tbody = document.getElementById('bank-tbody');
+            if (tbody){ 
+                const arr = getBankAccounts() || []; 
                 
-                bankTbody.innerHTML = arr.map((x,i)=> {
+                tbody.innerHTML = arr.map((x,i)=> {
+                    if (!x) return '';
                     const type = x.type || '活存';
                     const isPetty = (type === '零用金');
-                    const bankNameDisplay = isPetty ? '-' : x.bankName;
-                    const branchDisplay = isPetty ? '-' : x.branchName;
-                    const pettyNameDisplay = isPetty ? x.pettyName : '-';
-                    const holderDisplay = isPetty ? '-' : x.holderName;
-                    const accountDisplay = isPetty ? '-' : x.accountNumber;
+                    const bankNameDisplay = isPetty ? '-' : (x.bankName || '');
+                    const branchDisplay = isPetty ? '-' : (x.branchName || '');
+                    const pettyNameDisplay = isPetty ? (x.pettyName || '') : '-';
+                    const holderDisplay = isPetty ? '-' : (x.holderName || '');
+                    const accountDisplay = isPetty ? '-' : (x.accountNumber || '');
                     
-                    return '<tr><td class="px-6 py-3">'+type+'</td><td class="px-6 py-3">'+(bankNameDisplay||'')+'</td><td class="px-6 py-3">'+(branchDisplay||'')+'</td><td class="px-6 py-3">'+(pettyNameDisplay||'')+'</td><td class="px-6 py-3">'+(holderDisplay||'')+'</td><td class="px-6 py-3">'+(accountDisplay||'')+'</td><td class="px-6 py-3"><button data-i="'+i+'" class="edit-bank text-blue-600 mr-2">編輯</button><button data-i="'+i+'" class="del-bank text-red-600">刪除</button></td></tr>';
+                    return '<tr><td class="px-6 py-3">'+type+'</td><td class="px-6 py-3">'+bankNameDisplay+'</td><td class="px-6 py-3">'+branchDisplay+'</td><td class="px-6 py-3">'+pettyNameDisplay+'</td><td class="px-6 py-3">'+holderDisplay+'</td><td class="px-6 py-3">'+accountDisplay+'</td><td class="px-6 py-3"><button data-i="'+i+'" class="edit-bank text-blue-600 mr-2">編輯</button><button data-i="'+i+'" class="del-bank text-red-600">刪除</button></td></tr>';
                 }).join('');
-                Array.from(bankTbody.querySelectorAll('.del-bank')).forEach(btn => {
+                
+                Array.from(tbody.querySelectorAll('.del-bank')).forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -7340,7 +7412,7 @@
                         });
                     });
                 });
-                Array.from(bankTbody.querySelectorAll('.edit-bank')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getBankAccounts(); openEditBank({kind:'bank', index:i, item:arr2[i]}); }); });
+                Array.from(tbody.querySelectorAll('.edit-bank')).forEach(btn=>{ btn.addEventListener('click', ()=>{ const i = parseInt(btn.getAttribute('data-i')); const arr2 = getBankAccounts(); openEditBank({kind:'bank', index:i, item:arr2[i]}); }); });
             }
         }
         
@@ -7996,6 +8068,9 @@
                 }
                 
                 setTransactions(allTrans);
+                // Save to cloud subcollection
+                saveTransactionToCloud(finalItem);
+                
                 const currentMode = editCtx.mode;
                 closeEditTransaction();
                 if (currentMode === 'income') renderIncomeDetail();
@@ -8046,6 +8121,8 @@
                                             if (!found.note.includes(`(補足編號:${item.id})`)) {
                                                 found.note = (found.note + ` (補足編號:${item.id})`).trim();
                                             }
+                                            // Save side-effect updates to cloud
+                                            saveTransactionToCloud(found);
                                         }
                                     });
                                 };
@@ -8169,6 +8246,8 @@
                         const id = btn.getAttribute('data-id');
                         const newTrans = getTransactions().filter(t => t.id !== id);
                         setTransactions(newTrans);
+                        // Delete from cloud subcollection
+                        deleteTransactionFromCloud(id);
                         renderTransactionDetail(mode);
                         updateDashboardStats();
                     });
