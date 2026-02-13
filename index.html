@@ -1931,6 +1931,24 @@
                                 </div>
                                 <input type="file" id="file-import-resident" class="hidden" accept=".xlsx, .xls" />
                             </div>
+                            <div class="px-6 py-2 border-b border-gray-200 flex gap-4 bg-gray-50">
+                                <div class="flex items-center gap-2">
+                                    <label class="text-sm text-gray-600">編號</label>
+                                    <input type="text" id="filter-resident-id" class="border rounded px-2 py-1 text-sm w-24" placeholder="篩選編號">
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <label class="text-sm text-gray-600">戶號</label>
+                                    <input type="text" id="filter-resident-unit" class="border rounded px-2 py-1 text-sm w-24" placeholder="篩選戶號">
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <label class="text-sm text-gray-600">姓名</label>
+                                    <input type="text" id="filter-resident-name" class="border rounded px-2 py-1 text-sm w-24" placeholder="篩選姓名">
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <label class="text-sm text-gray-600">棟別</label>
+                                    <input type="text" id="filter-resident-building" class="border rounded px-2 py-1 text-sm w-24" placeholder="篩選棟別">
+                                </div>
+                            </div>
                             <div class="overflow-x-auto overflow-y-auto h-[600px] whitespace-nowrap">
                                 <table class="w-full text-left text-sm text-gray-600 whitespace-nowrap">
                                     <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-bold">
@@ -7310,7 +7328,29 @@
 
         function renderResidentsDetail(){
             if (residentsDetailTbody){
-                const arr = getResidents();
+                let arr = getResidents().map((r, i) => ({...r, _originalIndex: i}));
+
+                // Filter Logic
+                const filterIdInput = document.getElementById('filter-resident-id');
+                const filterUnitInput = document.getElementById('filter-resident-unit');
+                const filterNameInput = document.getElementById('filter-resident-name');
+                const filterBuildingInput = document.getElementById('filter-resident-building');
+                
+                const filterId = filterIdInput ? filterIdInput.value.trim().toLowerCase() : '';
+                const filterUnit = filterUnitInput ? filterUnitInput.value.trim().toLowerCase() : '';
+                const filterName = filterNameInput ? filterNameInput.value.trim().toLowerCase() : '';
+                const filterBuilding = filterBuildingInput ? filterBuildingInput.value.trim().toLowerCase() : '';
+
+                if (filterId || filterUnit || filterName || filterBuilding) {
+                    arr = arr.filter((x) => {
+                        const idMatch = !filterId || String(x._originalIndex + 1).includes(filterId);
+                        const unitMatch = !filterUnit || (x.unit && x.unit.toLowerCase().includes(filterUnit));
+                        const nameMatch = !filterName || (x.name && x.name.toLowerCase().includes(filterName));
+                        const buildingMatch = !filterBuilding || (x.building && x.building.toLowerCase().includes(filterBuilding));
+                        return idMatch && unitMatch && nameMatch && buildingMatch;
+                    });
+                }
+
                 const transactions = getTransactions();
                 
                 // 1. Generate Months Range
@@ -7400,9 +7440,9 @@
 
                     return `<tr>
                             <td class="px-6 py-3">
-                                <input type="checkbox" class="chk-resident-item rounded border-gray-300 text-red-600 focus:ring-red-500" data-i="${i}">
+                                <input type="checkbox" class="chk-resident-item rounded border-gray-300 text-red-600 focus:ring-red-500" data-i="${x._originalIndex}">
                             </td>
-                            <td class="px-6 py-3">${i + 1}</td>
+                            <td class="px-6 py-3">${x._originalIndex + 1}</td>
                             <td class="px-6 py-3">${x.unit}</td>
                             <td class="px-6 py-3">${x.name}</td>
                             <td class="px-6 py-3">${x.addr || ''}</td>
@@ -7413,8 +7453,8 @@
                             <td class="px-6 py-3">${statusHtml}</td>
                             <td class="px-6 py-3 text-gray-500 text-sm">${x.note}</td>
                             <td class="px-6 py-3">
-                                <button data-i="${i}" class="edit-resident text-blue-600 mr-2">編輯</button>
-                                <button data-i="${i}" class="del-resident text-red-600">刪除</button>
+                                <button data-i="${x._originalIndex}" class="edit-resident text-blue-600 mr-2">編輯</button>
+                                <button data-i="${x._originalIndex}" class="del-resident text-red-600">刪除</button>
                             </td>
                         </tr>`;
                 }).join('');
@@ -7839,6 +7879,20 @@
         if (btnAddBuilding){ btnAddBuilding.addEventListener('click', ()=> openEditBuilding({kind:'building', index:-1, value:''})); }
         if (confirmEditBuilding){ confirmEditBuilding.addEventListener('click', ()=>{ if(!editCtx) return; const name = (inputBuildingName.value||'').trim(); const arr = getBuildings(); if (editCtx.index>=0) arr[editCtx.index]=name; else arr.push(name); setBuildings(arr); closeEditBuilding(); renderResidentsSettings(); }); }
         if (cancelEditBuilding){ cancelEditBuilding.addEventListener('click', closeEditBuilding); }
+
+        // Resident Filters
+        ['filter-resident-id', 'filter-resident-unit', 'filter-resident-name', 'filter-resident-building'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                let timeout;
+                el.addEventListener('input', () => {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => {
+                        renderResidentsDetail();
+                    }, 300);
+                });
+            }
+        });
 
         if (btnAddResident){ btnAddResident.addEventListener('click', ()=> openEditResident({kind:'resident', index:-1, item:null})); }
         if (confirmEditResident){ confirmEditResident.addEventListener('click', ()=>{ 
