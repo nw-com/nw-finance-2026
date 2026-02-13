@@ -5541,9 +5541,13 @@
         }
         function setCommunities(arr){ localStorage.setItem('communities', JSON.stringify(arr)); }
         function useCloud(){ 
+            // Force Cloud for Admin if DB is available
+            const email = getCurrentUserEmail();
+            if (isAdminEmail(email) && typeof db !== 'undefined' && db) return true;
+
             const mode = localStorage.getItem('lastLoginMode');
             if (mode === 'local') return false;
-            return !!db && cloudAvailable; 
+            return !!db && (typeof cloudAvailable !== 'undefined' ? cloudAvailable : true); 
         }
         async function fetchCommunities(){
             if (useCloud()){
@@ -5552,7 +5556,8 @@
                     code:(d.data().code||d.id), 
                     name:d.data().name||'',
                     taxId:d.data().taxId||'',
-                    service:d.data().service||''
+                    service:d.data().service||'',
+                    residentCount: (d.data().residents||[]).length
                 }));
             }
             return getCommunities();
@@ -6036,7 +6041,8 @@
             await ensureAuthForSettings();
             const communities = await fetchCommunities();
             communitySwitcherList.innerHTML = communities.map(c => {
-                return '<button data-code="'+c.code+'" data-name="'+c.name+'" class="px-4 py-3 bg-gray-100 hover:bg-red-50 hover:text-red-700 rounded text-left">'+c.name+' <span class="text-xs text-gray-400 ml-2">('+c.code+')</span></button>';
+                const countInfo = (c.residentCount !== undefined) ? ` <span class="text-xs text-blue-600 bg-blue-50 px-1 rounded ml-1">${c.residentCount}戶</span>` : '';
+                return '<button data-code="'+c.code+'" data-name="'+c.name+'" class="px-4 py-3 bg-gray-100 hover:bg-red-50 hover:text-red-700 rounded text-left flex items-center justify-between w-full"><span>'+c.name+' <span class="text-xs text-gray-400 ml-2">('+c.code+')</span></span>'+countInfo+'</button>';
             }).join('');
             communitySwitcherModal.classList.remove('hidden');
             Array.from(communitySwitcherList.querySelectorAll('button')).forEach(btn => {
